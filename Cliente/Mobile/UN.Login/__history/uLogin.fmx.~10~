@@ -1,0 +1,76 @@
+inherited Frm_Login: TFrm_Login
+  Caption = 'FormBase1'
+  ClientHeight = 537
+  ClientWidth = 313
+  DesignerMasterStyle = 3
+  inherited LayoutClient: TLayout
+    Size.Width = 313.000000000000000000
+    Size.Height = 537.000000000000000000
+    object LayoutCenter: TLayout
+      Align = Center
+      Size.Width = 210.000000000000000000
+      Size.Height = 198.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 0
+      object Edt_Username: TEdit
+        Touch.InteractiveGestures = [LongTap, DoubleTap]
+        TabOrder = 0
+        Text = 'ADMIN'
+        Position.X = 24.000000000000000000
+        Position.Y = 50.000000000000000000
+        Size.Width = 161.000000000000000000
+        Size.Height = 32.000000000000000000
+        Size.PlatformDefault = False
+      end
+      object Edt_Password: TEdit
+        Touch.InteractiveGestures = [LongTap, DoubleTap]
+        TabOrder = 1
+        Text = 'ADM10'
+        Position.X = 24.000000000000000000
+        Position.Y = 104.000000000000000000
+        Size.Width = 161.000000000000000000
+        Size.Height = 32.000000000000000000
+        Size.PlatformDefault = False
+      end
+      object lbl_username: TLabel
+        Position.X = 24.000000000000000000
+        Position.Y = 32.000000000000000000
+        Size.Width = 233.000000000000000000
+        Size.Height = 23.000000000000000000
+        Size.PlatformDefault = False
+        Text = 'Nome de usu'#225'rio'
+        TabOrder = 2
+      end
+      object lbl_password: TLabel
+        Position.X = 24.000000000000000000
+        Position.Y = 88.000000000000000000
+        Size.Width = 241.000000000000000000
+        Size.Height = 23.000000000000000000
+        Size.PlatformDefault = False
+        Text = 'Senha'
+        TabOrder = 3
+      end
+      object AniIndicator: TAniIndicator
+        Align = Bottom
+        Position.Y = 148.000000000000000000
+        Size.Width = 210.000000000000000000
+        Size.Height = 50.000000000000000000
+        Size.PlatformDefault = False
+      end
+    end
+    object btn_sign_in: TButton
+      Align = Bottom
+      Position.Y = 486.000000000000000000
+      Size.Width = 313.000000000000000000
+      Size.Height = 51.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 1
+      Text = 'Entrar'
+      OnClick = btn_sign_inClick
+    end
+  end
+  inherited DSConn: TSQLConnection
+    Left = 144
+    Top = 48
+  end
+end

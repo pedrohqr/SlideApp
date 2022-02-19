@@ -1,0 +1,259 @@
+unit uMass;
+
+interface
+
+uses
+  System.Generics.Collections;
+
+type
+  TMoment = class
+    private
+      FID : SmallInt;
+      FDescription : String;
+      function getID: SmallInt;
+      procedure setID(const Value: SmallInt);
+      function getDescription: String;
+      procedure setDescription(const Value: String);
+    public
+      property ID : SmallInt read getID write setID;
+      property Description : String read getDescription write setDescription;
+  end;
+
+type
+  TSong = class
+    private
+      FID : SmallInt;
+      FName : String;
+      FMoment : TMoment;
+      function getID: SmallInt;
+      procedure setID(const Value: SmallInt);
+      function getName: String;
+      procedure setName(const Value: String);
+    function getMoment: TMoment;
+    procedure setMoment(const Value: TMoment);
+    public
+      constructor Create(ASongID, AMomentID : SmallInt; AName, ADescription : String);
+      destructor Destroy; override;
+      property ID : SmallInt read getID write setID;
+      property Name : String read getName write setName;
+      property Moment : TMoment read getMoment write setMoment;
+  end;
+
+type
+  TMass = class
+    private
+      FID : SmallInt;
+      FTitle : String;
+      FSongs : TObjectList<TSong>;
+      FDate : TDate;
+      function getID: SmallInt;
+      procedure setID(const Value: SmallInt);
+      function getTitle: String;
+      procedure setTitle(const Value: String);
+      function getSongs: TObjectList<TSong>;
+      procedure setSongs(const Value: TObjectList<TSong>);
+      function getDate: TDate;
+      procedure setDate(const Value: TDate);
+    public
+      property ID : SmallInt read getID write setID;
+      property Title : String read getTitle write setTitle;
+      property Songs : TObjectList<TSong> read getSongs write setSongs;
+      property Date : TDate read getDate write setDate;
+
+      constructor Create;
+      destructor Destroy; override;
+
+      procedure AddSong(ASongID, AMomentID : SmallInt; AName, ADescription : String);
+      procedure RemoveSong(AID : SmallInt);
+  end;
+
+type
+  TParish = class
+    private
+      FID : Integer;
+      FName : String;
+      function getID: Integer;
+      procedure setID(const Value: Integer);
+      function getName: String;
+      procedure setName(const Value: String);
+    public
+      property ID : Integer read getID write setID;
+      property Name : String read getName write setName;
+
+      constructor Create(AID : Integer; AName : String);
+  end;
+
+implementation
+
+uses
+  System.SysUtils;
+
+{ TMusic }
+
+constructor TSong.Create(ASongID, AMomentID : SmallInt; AName, ADescription : String);
+begin
+  FID := ASongID;
+  FName := AName;
+
+  FMoment := TMoment.Create;
+  FMoment.FID := AMomentID;
+  FMoment.FDescription := ADescription;
+end;
+
+destructor TSong.Destroy;
+begin
+  FreeAndNil(FMoment);
+  inherited;
+end;
+
+function TSong.getID: SmallInt;
+begin
+  Result := FID;
+end;
+
+function TSong.getMoment: TMoment;
+begin
+  Result := FMoment;
+end;
+
+function TSong.getName: String;
+begin
+  Result := FName;
+end;
+
+procedure TSong.setID(const Value: SmallInt);
+begin
+  FID := Value;
+end;
+
+procedure TSong.setMoment(const Value: TMoment);
+begin
+  FMoment := Value;
+end;
+
+procedure TSong.setName(const Value: String);
+begin
+  FName := Value;
+end;
+
+{ TMass }
+
+procedure TMass.AddSong(ASongID, AMomentID : SmallInt; AName, ADescription : String);
+begin
+  FSongs.Add(TSong.Create(ASongID, AMomentID, AName, ADescription));
+end;
+
+constructor TMass.Create;
+begin
+  FSongs := TObjectList<TSong>.Create;
+end;
+
+destructor TMass.Destroy;
+begin
+  FreeAndNil(FSongs);
+  inherited;
+end;
+
+function TMass.getDate: TDate;
+begin
+  Result := FDate;
+end;
+
+function TMass.getID: SmallInt;
+begin
+  Result := FID;
+end;
+
+function TMass.getSongs: TObjectList<TSong>;
+begin
+  Result := FSongs;
+end;
+
+function TMass.getTitle: String;
+begin
+  Result := FTitle;
+end;
+
+procedure TMass.RemoveSong(AID: SmallInt);
+var
+  I: SmallInt;
+begin
+  for I := 0 to pred(FSongs.Count) do
+    if FSongs[I].FID = AID then
+    begin
+      FSongs.Delete(I);
+      break;
+    end;
+end;
+
+procedure TMass.setDate(const Value: TDate);
+begin
+  FDate := Value;
+end;
+
+procedure TMass.setID(const Value: SmallInt);
+begin
+  FID := Value;
+end;
+
+procedure TMass.setSongs(const Value: TObjectList<TSong>);
+begin
+  FSongs := Value;
+end;
+
+procedure TMass.setTitle(const Value: String);
+begin
+  FTitle := Value;
+end;
+
+{ TMoment }
+
+function TMoment.getDescription: String;
+begin
+  Result := FDescription;
+end;
+
+function TMoment.getID: SmallInt;
+begin
+  Result := FID;
+end;
+
+procedure TMoment.setDescription(const Value: String);
+begin
+  FDescription := Value;
+end;
+
+procedure TMoment.setID(const Value: SmallInt);
+begin
+  FID := Value;
+end;
+
+{ TParish }
+
+constructor TParish.Create(AID: Integer; AName: String);
+begin
+  FID := AID;
+  FName := AName;
+end;
+
+function TParish.getID: Integer;
+begin
+  Result := FID;
+end;
+
+function TParish.getName: String;
+begin
+  Result := FName;
+end;
+
+procedure TParish.setID(const Value: Integer);
+begin
+  FID := Value;
+end;
+
+procedure TParish.setName(const Value: String);
+begin
+  FName := Value;
+end;
+
+end.

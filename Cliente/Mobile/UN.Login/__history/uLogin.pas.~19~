@@ -1,0 +1,98 @@
+unit uLogin;
+
+interface
+
+uses
+  System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants, 
+  FMX.Types, FMX.Graphics, FMX.Controls, FMX.Forms, FMX.Dialogs, FMX.StdCtrls,
+  uBase, FMX.Controls.Presentation, FMX.Edit, FMX.Layouts, Data.DBXDataSnap,
+  Data.DBXCommon, IPPeerClient, Data.DB, Data.SqlExpr;
+
+type
+  TFrm_Login = class(TFormBase)
+    Edt_Username: TEdit;
+    LayoutCenter: TLayout;
+    Edt_Password: TEdit;
+    btn_sign_in: TButton;
+    lbl_username: TLabel;
+    lbl_password: TLabel;
+    AniIndicator: TAniIndicator;
+    procedure btn_sign_inClick(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  Frm_Login: TFrm_Login;
+
+implementation
+
+{$R *.fmx}
+
+uses uHome, uMain, DS_Functions, uClientModule, FireDAC.Comp.Client,
+  Data.FireDACJSONReflect;
+
+procedure TFrm_Login.btn_sign_inClick(Sender: TObject);
+begin
+  inherited;
+  AniIndicator.Enabled := True;
+  TThread.CreateAnonymousThread(procedure
+  var
+   Conn : TLoginClient;
+   MT : TFDMemTable;
+   DS : TFDJSONDataSets;
+  begin
+    if not DM_DataSnap.DSConn.Connected then
+      DM_DataSnap.DSConn.Connected := True;
+    Conn := TLoginClient.Create(DM_DataSnap.DSConn.DBXConnection);
+    try
+      try
+        ID_User := Conn.Auth_Login(Trim(Edt_Username.Text), Trim(Edt_Password.Text));
+        if ID_User <> 0 then
+        begin
+          DS := Conn.LoadParish(ID_User);
+          MT := TFDMemTable.Create(nil);
+          try
+            MT.AppendData(TFDJSONDataSetsReader.GetListValue(DS, 0));
+            while not MT.Eof do
+            begin
+
+              MT.Next;
+            end;
+          finally
+            if Assigned(MT) then
+              FreeAndNil(MT);
+          end;
+        end;
+
+        TThread.Synchronize(nil, procedure
+        begin
+          AniIndicator.Enabled := False;
+          if ID_User <> 0 then
+          begin
+            OpenForm(TFrm_Home);
+          end
+          else
+            raise Exception.Create('Nome de usuário ou senha inválidos!');
+        end);
+      except
+        on e : Exception do
+        TThread.Synchronize(nil, procedure
+        begin
+          AniIndicator.Enabled := False;
+          ShowMessage(e.Message);
+        end);
+      end;
+
+    finally
+      if DM_DataSnap.DSConn.Connected then
+        DM_DataSnap.DSConn.Connected := False;
+      FreeAndNil(Conn);
+    end;
+
+  end).Start;
+end;
+
+end.

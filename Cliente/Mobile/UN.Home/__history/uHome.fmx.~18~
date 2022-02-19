@@ -1,0 +1,67 @@
+inherited Frm_Home: TFrm_Home
+  Caption = 'SlideApp | Home'
+  OnCreate = FormCreate
+  OnKeyUp = FormKeyUp
+  DesignerMasterStyle = 3
+  inherited LayoutClient: TLayout
+    object LB: TListBox
+      Align = Client
+      Size.Width = 356.000000000000000000
+      Size.Height = 494.000000000000000000
+      Size.PlatformDefault = False
+      StyleLookup = 'transparentlistboxstyle'
+      TabOrder = 0
+      DisableFocusEffect = True
+      DefaultItemStyles.ItemStyle = ''
+      DefaultItemStyles.GroupHeaderStyle = ''
+      DefaultItemStyles.GroupFooterStyle = ''
+      Viewport.Width = 356.000000000000000000
+      Viewport.Height = 494.000000000000000000
+      object lbi_New_Mass: TListBoxItem
+        ItemData.Accessory = aMore
+        Size.Width = 356.000000000000000000
+        Size.Height = 65.000000000000000000
+        Size.PlatformDefault = False
+        StyleLookup = 'listboxitemrightdetail'
+        TabOrder = 0
+        Text = 'Nova Missa'
+        OnClick = lbi_New_MassClick
+      end
+      object lbi_Masses: TListBoxItem
+        ItemData.Accessory = aMore
+        Position.Y = 65.000000000000000000
+        Size.Width = 356.000000000000000000
+        Size.Height = 65.000000000000000000
+        Size.PlatformDefault = False
+        StyleLookup = 'listboxitemrightdetail'
+        TabOrder = 1
+        Text = 'Missas'
+      end
+      object lbi_Songs: TListBoxItem
+        ItemData.Accessory = aMore
+        Position.Y = 130.000000000000000000
+        Size.Width = 356.000000000000000000
+        Size.Height = 65.000000000000000000
+        Size.PlatformDefault = False
+        StyleLookup = 'listboxitemrightdetail'
+        TabOrder = 2
+        Text = 'M'#250'sicas'
+        OnClick = lbi_SongsClick
+      end
+    end
+    object cbb_parish: TComboBox
+      Align = Top
+      Margins.Left = 5.000000000000000000
+      Margins.Top = 5.000000000000000000
+      Margins.Right = 5.000000000000000000
+      Margins.Bottom = 5.000000000000000000
+      Position.X = 5.000000000000000000
+      Position.Y = 5.000000000000000000
+      Size.Width = 346.000000000000000000
+      Size.Height = 32.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 1
+      OnChange = cbb_parishChange
+    end
+  end
+end

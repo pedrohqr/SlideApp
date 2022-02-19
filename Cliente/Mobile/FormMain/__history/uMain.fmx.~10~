@@ -1,0 +1,35 @@
+object Frm_Main: TFrm_Main
+  Left = 0
+  Top = 0
+  Caption = 'SlideApp'
+  ClientHeight = 496
+  ClientWidth = 332
+  Fill.Color = xFFA7EB77
+  Fill.Kind = Solid
+  Position = DesktopCenter
+  FormFactor.Width = 320
+  FormFactor.Height = 480
+  FormFactor.Devices = [Desktop]
+  OnCreate = FormCreate
+  OnKeyUp = FormKeyUp
+  OnFocusChanged = FormFocusChanged
+  OnVirtualKeyboardShown = FormVirtualKeyboardShown
+  OnVirtualKeyboardHidden = FormVirtualKeyboardHidden
+  DesignerMasterStyle = 0
+  object VSB: TVertScrollBox
+    Align = Contents
+    Size.Width = 332.000000000000000000
+    Size.Height = 496.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 0
+    Viewport.Width = 332.000000000000000000
+    Viewport.Height = 496.000000000000000000
+    object LayoutClient: TLayout
+      Align = Client
+      Size.Width = 332.000000000000000000
+      Size.Height = 496.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 0
+    end
+  end
+end

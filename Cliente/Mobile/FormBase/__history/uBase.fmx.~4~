@@ -1,0 +1,38 @@
+object FormBase: TFormBase
+  Left = 0
+  Top = 0
+  Caption = 'FormBase'
+  ClientHeight = 536
+  ClientWidth = 356
+  Fill.Color = xFFA7EB77
+  Fill.Kind = Solid
+  FormFactor.Width = 320
+  FormFactor.Height = 480
+  FormFactor.Devices = [Desktop]
+  DesignerMasterStyle = 0
+  object LayoutClient: TLayout
+    Align = Client
+    Size.Width = 356.000000000000000000
+    Size.Height = 536.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 1
+  end
+  object DSConn: TSQLConnection
+    DriverName = 'DataSnap'
+    LoginPrompt = False
+    Params.Strings = (
+      'DriverUnit=Data.DBXDataSnap'
+      'HostName=localhost'
+      'Port=211'
+      'CommunicationProtocol=tcp/ip'
+      'DatasnapContext=datasnap/'
+      
+        'DriverAssemblyLoader=Borland.Data.TDBXClientDriverLoader,Borland' +
+        '.Data.DbxClientDriver,Version=24.0.0.0,Culture=neutral,PublicKey' +
+        'Token=91d62ebb5b0d1b1b'
+      'Filters={}')
+    Connected = True
+    Left = 200
+    Top = 112
+  end
+end

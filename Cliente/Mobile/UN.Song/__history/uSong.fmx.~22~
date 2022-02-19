@@ -1,0 +1,155 @@
+inherited Frm_Songs: TFrm_Songs
+  Caption = 'SlideApp | M'#250'sicas'
+  OnCreate = FormCreate
+  OnKeyUp = FormKeyUp
+  DesignerMasterStyle = 3
+  inherited LayoutClient: TLayout
+    object Rectangle1: TRectangle
+      Align = Top
+      Fill.Color = claWhite
+      Margins.Left = 10.000000000000000000
+      Margins.Top = 10.000000000000000000
+      Margins.Right = 10.000000000000000000
+      Position.X = 10.000000000000000000
+      Position.Y = 10.000000000000000000
+      Size.Width = 336.000000000000000000
+      Size.Height = 50.000000000000000000
+      Size.PlatformDefault = False
+      Stroke.Kind = None
+      XRadius = 15.000000000000000000
+      YRadius = 15.000000000000000000
+      object Label1: TLabel
+        Align = Client
+        AutoSize = True
+        StyledSettings = []
+        Size.Width = 336.000000000000000000
+        Size.Height = 50.000000000000000000
+        Size.PlatformDefault = False
+        TextSettings.Font.Family = 'Sylfaen'
+        TextSettings.Font.Size = 20.000000000000000000
+        TextSettings.Font.StyleExt = {00070000000000000004000000}
+        TextSettings.FontColor = claGray
+        TextSettings.HorzAlign = Center
+        Text = 'M'#218'SICAS'
+        TabOrder = 0
+      end
+    end
+    object LV: TListView
+      ItemAppearanceClassName = 'TDynamicAppearance'
+      ItemEditAppearanceClassName = 'TDynamicAppearance'
+      HeaderAppearanceClassName = 'TListHeaderObjects'
+      FooterAppearanceClassName = 'TListHeaderObjects'
+      Align = Client
+      Margins.Left = 10.000000000000000000
+      Margins.Top = 10.000000000000000000
+      Margins.Right = 10.000000000000000000
+      Margins.Bottom = 20.000000000000000000
+      Size.Width = 336.000000000000000000
+      Size.Height = 409.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 0
+      ParentShowHint = False
+      ShowHint = False
+      ItemAppearance.ItemHeight = 70
+      ItemAppearanceObjects.ItemObjects.ObjectsCollection = <
+        item
+          AppearanceObjectName = 'song'
+          AppearanceClassName = 'TTextObjectAppearance'
+          Appearance.Font.Size = 18.000000000000000000
+          Appearance.Font.StyleExt = {00060000000000000004000000}
+          Appearance.TextAlign = Leading
+          Appearance.Trimming = Character
+          Appearance.Width = 295.000000000000000000
+          Appearance.Height = 25.000000000000000000
+        end
+        item
+          AppearanceObjectName = 'artist'
+          AppearanceClassName = 'TTextObjectAppearance'
+          Appearance.Font.Size = 14.000000000000000000
+          Appearance.TextAlign = Leading
+          Appearance.Trimming = Character
+          Appearance.Width = 290.000000000000000000
+          Appearance.Height = 20.000000000000000000
+          Appearance.PlaceOffset.Y = 25.000000000000000000
+        end
+        item
+          AppearanceObjectName = 'link'
+          AppearanceClassName = 'TTextObjectAppearance'
+          Appearance.Font.Size = 14.000000000000000000
+          Appearance.Font.StyleExt = {04040000000000000004000000}
+          Appearance.TextAlign = Leading
+          Appearance.TextColor = claMediumblue
+          Appearance.Trimming = Character
+          Appearance.Width = 291.000000000000000000
+          Appearance.Height = 25.000000000000000000
+          Appearance.PlaceOffset.Y = 45.000000000000000000
+        end>
+      ItemAppearanceObjects.ItemEditObjects.ObjectsCollection = <
+        item
+          AppearanceObjectName = 'Text1'
+          AppearanceClassName = 'TTextObjectAppearance'
+        end>
+      CanSwipeDelete = False
+      OnScrollViewChange = LVScrollViewChange
+      PullToRefresh = True
+      object lbl_info: TLabel
+        Align = Client
+        Size.Width = 311.000000000000000000
+        Size.Height = 162.000000000000000000
+        Size.PlatformDefault = False
+        TextSettings.HorzAlign = Center
+        Text = 'Sem resultados...'
+        Visible = False
+        TabOrder = 0
+      end
+      object Ani: TAniIndicator
+        Align = Center
+        Visible = False
+      end
+    end
+    object Rectangle5: TRectangle
+      Align = Top
+      Fill.Color = claWhite
+      Margins.Left = 10.000000000000000000
+      Margins.Top = 5.000000000000000000
+      Margins.Right = 10.000000000000000000
+      Position.X = 10.000000000000000000
+      Position.Y = 65.000000000000000000
+      Size.Width = 336.000000000000000000
+      Size.Height = 32.000000000000000000
+      Size.PlatformDefault = False
+      Stroke.Kind = None
+      XRadius = 10.000000000000000000
+      YRadius = 10.000000000000000000
+      object Edt_Search: TEdit
+        Touch.InteractiveGestures = [LongTap, DoubleTap]
+        Align = Client
+        TabOrder = 0
+        ReturnKeyType = Search
+        Size.Width = 336.000000000000000000
+        Size.Height = 32.000000000000000000
+        Size.PlatformDefault = False
+        KillFocusByReturn = True
+        OnKeyUp = Edt_SearchKeyUp
+        object SearchEditButton1: TSearchEditButton
+          CanFocus = False
+          Cursor = crArrow
+          Size.Width = 32.000000000000000000
+          Size.Height = 32.000000000000000000
+          Size.PlatformDefault = False
+          TabOrder = 0
+          OnClick = SearchEditButton1Click
+        end
+        object ClearEditButton1: TClearEditButton
+          CanFocus = False
+          Cursor = crArrow
+          Position.X = 32.000000000000000000
+          Size.Width = 32.000000000000000000
+          Size.Height = 30.000000000000000000
+          Size.PlatformDefault = False
+          TabOrder = 1
+        end
+      end
+    end
+  end
+end
