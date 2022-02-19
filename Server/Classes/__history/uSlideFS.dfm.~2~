@@ -1,0 +1,70 @@
+object DSFS: TDSFS
+  OldCreateOrder = False
+  Height = 437
+  Width = 585
+  object frxReport1: TfrxReport
+    Version = '6.9.3'
+    DataSet = frxDBDataset1
+    DataSetName = 'frxDBDataset1'
+    DotMatrixReport = False
+    IniFile = '\Software\Fast Reports'
+    PreviewOptions.Buttons = [pbPrint, pbLoad, pbSave, pbExport, pbZoom, pbFind, pbOutline, pbPageSetup, pbTools, pbEdit, pbNavigator, pbExportQuick, pbCopy, pbSelection]
+    PreviewOptions.Zoom = 1.000000000000000000
+    PrintOptions.Printer = 'Default'
+    PrintOptions.PrintOnSheet = 0
+    ReportOptions.CreateDate = 44579.856908865740000000
+    ReportOptions.LastChange = 44579.856908865740000000
+    ScriptLanguage = 'PascalScript'
+    ScriptText.Strings = (
+      'begin'
+      ''
+      'end.')
+    Left = 440
+    Top = 136
+    Datasets = <>
+    Variables = <>
+    Style = <>
+  end
+  object frxDBDataset1: TfrxDBDataset
+    UserName = 'frxDBDataset1'
+    CloseDataSource = False
+    BCDToCurrency = False
+    Left = 440
+    Top = 208
+  end
+  object frxPPTXExport1: TfrxPPTXExport
+    UseFileCache = True
+    ShowProgress = True
+    OverwritePrompt = False
+    DataOnly = False
+    OpenAfterExport = False
+    PictureType = gpPNG
+    Left = 328
+    Top = 200
+  end
+  object FDConnection1: TFDConnection
+    Params.Strings = (
+      
+        'Database=C:\Users\pedro\Desktop\projeto_slide\Server\DataBase\SE' +
+        'RVER.FDB'
+      'User_Name=SYSDBA'
+      'Password=oraculo'
+      'DriverID=FB')
+    LoginPrompt = False
+    BeforeConnect = FDConnection1BeforeConnect
+    Left = 112
+    Top = 56
+  end
+  object FDGUIxWaitCursor1: TFDGUIxWaitCursor
+    Provider = 'Forms'
+    Left = 80
+    Top = 128
+  end
+  object FDPhysFBDriverLink1: TFDPhysFBDriverLink
+    VendorLib = 
+      'C:\Users\pedro\Desktop\projeto_slide\Server\DataBase\fbclient.dl' +
+      'l'
+    Left = 88
+    Top = 208
+  end
+end

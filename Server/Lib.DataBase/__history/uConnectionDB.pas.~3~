@@ -1,0 +1,40 @@
+unit uConnectionDB;
+
+interface
+
+uses
+  System.SysUtils, System.Classes, Datasnap.DSServer, 
+  Datasnap.DSAuth, Datasnap.DSProviderDataModuleAdapter, LibDB;
+
+type
+  TDMDB = class(TDSServerModule)
+    procedure DSServerModuleCreate(Sender: TObject);
+    procedure DSServerModuleDestroy(Sender: TObject);
+  private
+    FConnection : TConnection;
+  public
+    { Public declarations }
+  end;
+
+var
+  DMDB : TDMDB;
+
+implementation
+
+{%CLASSGROUP 'Vcl.Controls.TControl'}
+
+{$R *.dfm}
+
+procedure TDMDB.DSServerModuleCreate(Sender: TObject);
+begin
+  FConnection := TConnection.Create(Sender as TComponent);
+end;
+
+procedure TDMDB.DSServerModuleDestroy(Sender: TObject);
+begin
+  if Assigned(FConnection) then
+    FreeAndNil(FConnection);
+end;
+
+end.
+

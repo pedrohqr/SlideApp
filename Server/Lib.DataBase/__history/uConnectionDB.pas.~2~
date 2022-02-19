@@ -1,0 +1,32 @@
+unit uConnectionDB;
+
+interface
+
+uses
+  System.SysUtils, System.Classes, Datasnap.DSServer, 
+  Datasnap.DSAuth, Datasnap.DSProviderDataModuleAdapter;
+
+type
+  TDMDB = class(TDSServerModule)
+    procedure DSServerModuleCreate(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  DMDB : TDMDB;
+
+implementation
+
+{%CLASSGROUP 'Vcl.Controls.TControl'}
+
+
+procedure TDMDB.DSServerModuleCreate(Sender: TObject);
+begin
+//
+end;
+
+end.
+

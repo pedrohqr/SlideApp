@@ -1,0 +1,88 @@
+unit DM_SlideCreator;
+
+interface
+
+uses
+  System.SysUtils, System.Classes, Datasnap.DSServer, 
+  Datasnap.DSAuth, Datasnap.DSProviderDataModuleAdapter, FireDAC.Stan.Intf,
+  FireDAC.Stan.Option, FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS,
+  FireDAC.Phys.Intf, FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.DApt,
+  Data.DB, FireDAC.Comp.DataSet, FireDAC.Comp.Client, frxClass, frxDBSet,
+  frxExportBaseDialog, frxExportPPTX, frxExportPDF, FireDAC.UI.Intf,
+  FireDAC.Stan.Def, FireDAC.Stan.Pool, FireDAC.Phys, FireDAC.Phys.FB,
+  FireDAC.Phys.FBDef, FireDAC.VCLUI.Wait, FireDAC.Phys.IBBase, FireDAC.Comp.UI;
+
+type
+  TDSSlideCreator = class(TDSServerModule)
+    frxPPTXExport: TfrxPPTXExport;
+    frxDBDataset: TfrxDBDataset;
+    QuerySlide: TFDQuery;
+    frxPDFExport: TfrxPDFExport;
+    frxReportPPTX: TfrxReport;
+    FDConnection1: TFDConnection;
+    FDGUIxWaitCursor1: TFDGUIxWaitCursor;
+    FDPhysFBDriverLink1: TFDPhysFBDriverLink;
+    procedure DSServerModuleCreate(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    function Create_Slide(Mass_ID : Integer): String;
+  end;
+
+implementation
+
+{%CLASSGROUP 'Vcl.Controls.TControl'}
+
+uses uDMDB;
+
+{$R *.dfm}
+
+function TDSSlideCreator.Create_Slide(Mass_ID: Integer): String;
+var
+  FileName : String;
+begin
+  FileName := 'Missa_'+Mass_ID.ToString+'.pptx';
+  with QuerySlide do
+  begin
+    Active := False;
+    SQL.Text := 'SELECT                             '+
+                '    M.TITLE,                       '+
+                '    S.LYRICS,                      '+
+                '    MO.NAME AS MOMENT              '+
+                'FROM MASS M                        '+
+                '    INNER JOIN MASS_SONG MS        '+
+                '    ON M.MASS_ID = MS.MASS_ID      '+
+                '    INNER JOIN SONG S              '+
+                '    ON S.SONG_ID = MS.SONG_ID      '+
+                '    INNER JOIN MOMENTS MO          '+
+                '    ON MO.MOMENT_ID = MS.MOMENT_ID '+
+                'WHERE                              '+
+                '    M.MASS_ID = :pID;              ';
+    ParamByName('pID').AsInteger := Mass_ID;
+    Active := True;
+  end;
+
+  with frxPPTXExport do
+  begin
+    FileName := FileName;
+    DefaultPath := ExtractFilePath(ParamStr(0)) + 'reports\';
+  end;
+
+  with frxReportPPTX do
+  begin
+    Variables['txt_welcome'] := QuotedStr('Seja muito bem vindo!');
+    Variables['txt_paroch']  := QuotedStr('Paróquia Maria Mãe da Igreja');
+
+//    if ( FileExists(ExtractFilePath(ParamStr(0)) + '\images\harsoft.png') and (FindComponent('logoImg')<> nil ) ) then  //imagem do relatorio
+//          TfrxPictureView(FindComponent('logoImg')).Picture.LoadFromFile(ExtractFilePath(ParamStr(0)) + '\images\harsoft.png');
+  end;
+
+end;
+
+procedure TDSSlideCreator.DSServerModuleCreate(Sender: TObject);
+begin
+  QuerySlide.Connection := DMDB.FDConn;
+end;
+
+end.
+

@@ -1,0 +1,101 @@
+unit uDMDB;
+
+interface
+
+uses
+  System.SysUtils, System.Classes, Datasnap.DSServer, 
+  Datasnap.DSAuth, Datasnap.DSProviderDataModuleAdapter, LibDB,
+  FireDAC.Comp.Client, FireDAC.Stan.Intf, FireDAC.Stan.Option,
+  FireDAC.Stan.Error, FireDAC.UI.Intf, FireDAC.Phys.Intf, FireDAC.Stan.Def,
+  FireDAC.Stan.Pool, FireDAC.Stan.Async, FireDAC.Phys, FireDAC.Phys.FBDef,
+  FireDAC.VCLUI.Wait, FireDAC.Stan.Param, FireDAC.DatS, FireDAC.DApt.Intf,
+  FireDAC.DApt, Data.DB, FireDAC.Comp.DataSet, FireDAC.Comp.UI,
+  FireDAC.Phys.IBBase, FireDAC.Phys.FB, FireDAC.Stan.StorageJSON,
+  FireDAC.Stan.StorageBin;
+
+type
+  TDMDB = class(TDSServerModule)
+    FDConn: TFDConnection;
+    FDStanStorageJSONLink1: TFDStanStorageJSONLink;
+    FDPhysFBDriverLink1: TFDPhysFBDriverLink;
+    FDGUIxWaitCursor1: TFDGUIxWaitCursor;
+    Query: TFDQuery;
+    SP: TFDStoredProc;
+    FDStanStorageBinLink1: TFDStanStorageBinLink;
+    FDManager: TFDManager;
+    procedure FDConnBeforeConnect(Sender: TObject);
+    procedure DSServerModuleCreate(Sender: TObject);
+    procedure FDManagerAfterLoadConnectionDefFile(Sender: TObject);
+  private
+
+  public
+    procedure ClearAllFieldsQuery;
+    procedure ClearAllFieldsSP;
+  end;
+
+var
+  DMDB : TDMDB;
+
+implementation
+
+{%CLASSGROUP 'Vcl.Controls.TControl'}
+
+uses LibPaths, System.IniFiles;
+
+{$R *.dfm}
+
+procedure TDMDB.DSServerModuleCreate(Sender: TObject);
+begin
+  FDConn.Connected := True;
+end;
+
+procedure TDMDB.FDConnBeforeConnect(Sender: TObject);
+var
+  Ini_File : TIniFile;
+begin
+  Ini_File := TIniFile.Create(Path_Config);
+  try
+    with FDConn.Params do
+    begin
+      DriverID := 'FB';
+      Database := Path_DB;
+      UserName := Ini_File.ReadString('DATABASE', 'USER', 'SYSDBA');
+      Password := Ini_File.ReadString('DATABASE', 'PASSWORD', 'MASTERKEY');
+    end;
+  finally
+    FreeAndNil(Ini_File);
+  end;
+end;
+
+procedure TDMDB.FDManagerAfterLoadConnectionDefFile(Sender: TObject);
+begin
+
+end;
+
+/// <summary> Clear all fields of the Query.
+/// </summary>
+procedure TDMDB.ClearAllFieldsQuery;
+begin
+  if Assigned(Query) then
+  begin
+    Query.Active := False;
+    Query.Close;
+    Query.SQL.Clear;
+    Query.Params.Clear;
+  end;
+end;
+
+/// <summary> Clear of fields of the StoredProcedure.
+/// </summary>
+procedure TDMDB.ClearAllFieldsSP;
+begin
+  if Assigned(SP) then
+  begin
+    SP.Active := False;
+    SP.StoredProcName := '';
+    SP.Params.Clear;
+  end;
+end;
+
+end.
+

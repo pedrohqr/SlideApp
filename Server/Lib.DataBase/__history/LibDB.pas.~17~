@@ -1,0 +1,102 @@
+unit LibDB;
+
+interface
+
+uses FireDAC.Comp.Client, FireDAC.Comp.UI, FireDAC.Phys.FB, System.IniFiles,
+     FireDAC.Stan.StorageBin;
+
+{This unit gives a connection to database(Firebird) of server.}
+
+type
+  TConnection = class
+    private
+      Conn : TFDConnection;
+      GUI : TFDGUIxWaitCursor;
+      FDStan : TFDStanStorageBinLink;
+      Driver : TFDPhysFBDriverLink;
+      Ini_File : TIniFile;
+    public
+      Query : TFDQuery;
+      constructor Create;
+      destructor Destroy; override;
+      procedure ClearAllFieldsQuery;
+  end;
+
+implementation
+
+{ TConection }
+
+uses LibPaths, System.SysUtils;
+
+/// <summary> Clear all fields of the Query.
+/// </summary>
+procedure TConnection.ClearAllFieldsQuery;
+begin
+  if Assigned(Query) then
+  begin
+    Query.Close;
+    Query.SQL.Clear;
+    Query.Params.Clear;
+  end;
+end;
+
+constructor TConnection.Create;
+begin
+  if not Assigned(Conn) then
+  Conn := TFDConnection.Create(nil);
+
+  if not Assigned(GUI) then
+  GUI := TFDGUIxWaitCursor.Create(nil);
+
+  if not Assigned(Driver) then
+  Driver := TFDPhysFBDriverLink.Create(nil);
+
+  if not Assigned(FDStan) then
+    FDStan := TFDStanStorageBinLink.Create(nil);
+
+  if not Assigned(Query) then
+  Query := TFDQuery.Create(nil);
+
+  Driver.VendorLib := Path_VendorLibFB;
+
+  if not Assigned(Ini_File) then
+    Ini_File := TIniFile.Create(Path_Config);
+
+  with Conn.Params do
+  begin
+    DriverID := 'FB';
+    Database := Path_DB;
+    UserName := Ini_File.ReadString('DATABASE', 'USER', 'SYSDBA');
+    Password := Ini_File.ReadString('DATABASE', 'PASSWORD', 'oraculo');
+  end;
+
+  Conn.Connected := True;
+
+  Query.Connection := Conn;
+
+end;
+
+destructor TConnection.Destroy;
+begin
+  if Assigned(Query) then
+    FreeAndNil(Query);
+
+  if Assigned(FDStan) then
+    FreeAndNil(FDStan);
+
+  if Assigned(Conn) then
+    FreeAndNil(Conn);
+
+  if Assigned(GUI) then
+    FreeAndNil(GUI);
+
+  if Assigned(Driver) then
+    FreeAndNil(Driver);
+
+  if  Assigned(Ini_File) then
+    FreeAndNil(Ini_File);
+
+  inherited;
+end;
+
+end.

@@ -1,0 +1,75 @@
+unit uSlideFS;
+
+interface
+
+uses
+  System.SysUtils, System.Classes, Datasnap.DSServer, 
+  Datasnap.DSAuth, Datasnap.DSProviderDataModuleAdapter, FireDAC.Stan.Intf,
+  FireDAC.Stan.Option, FireDAC.Stan.Error, FireDAC.UI.Intf, FireDAC.Phys.Intf,
+  FireDAC.Stan.Def, FireDAC.Stan.Pool, FireDAC.Stan.Async, FireDAC.Phys,
+  FireDAC.Phys.FB, FireDAC.Phys.FBDef, FireDAC.VCLUI.Wait, FireDAC.Phys.IBBase,
+  FireDAC.Comp.UI, Data.DB, FireDAC.Comp.Client, frxClass, frxExportBaseDialog,
+  frxExportPPTX, frxDBSet;
+
+type
+  TDSFS = class(TDSServerModule)
+    frxReport1: TfrxReport;
+    frxDBDataset1: TfrxDBDataset;
+    frxPPTXExport1: TfrxPPTXExport;
+    FDConnection1: TFDConnection;
+    FDGUIxWaitCursor1: TFDGUIxWaitCursor;
+    FDPhysFBDriverLink1: TFDPhysFBDriverLink;
+    procedure FDConnection1BeforeConnect(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+implementation
+
+uses
+  System.IniFiles, LibPaths;
+
+{%CLASSGROUP 'Vcl.Controls.TControl'}
+
+{$R *.dfm}
+
+procedure TDSFS.FDConnection1BeforeConnect(Sender: TObject);
+var
+  ini : TIniFile;
+  PDataBase, PUser, PPassword : String;
+begin
+  ini := TIniFile.Create(Path_Config);
+  try
+    PDataBase := ini.ReadString('DATABASE', 'PATH', '');
+    PUser     := ini.ReadString('DATABASE', 'USER', '');
+    PPassword := ini.ReadString('DATABASE', 'PASSWORD', '');
+
+    if PDataBase.IsEmpty then
+      raise Exception.Create('Erro [DSFS]: Caminho de conexão com o banco de '+
+                             'dados não encontrado/vazio!'+#13+
+                             '[DATABASE]PATH')
+    else if PUser.IsEmpty then
+      raise Exception.Create('Erro [DSFS]: Usuário do banco de '+
+                             'dados não encontrado/vazio!'+#13+
+                             '[DATABASE]USER')
+    else if PPassword.IsEmpty then
+      raise Exception.Create('Erro [DSFS]: Senha do usuário do banco de '+
+                             'dados não encontrado/vazio!'+#13+
+                             '[DATABASE]PASSWORD');
+
+    with FDConnection1.Params do
+    begin
+      Database := PDataBase;
+      UserName := PUser;
+      Password := PPassword;
+    end;
+  finally
+    if Assigned(ini) then
+      FreeAndNil(ini);
+  end;
+end;
+
+end.
+

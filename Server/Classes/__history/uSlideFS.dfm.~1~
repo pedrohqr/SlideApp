@@ -1,0 +1,5 @@
+object DSFS: TDSFS
+  OldCreateOrder = False
+  Height = 437
+  Width = 585
+end

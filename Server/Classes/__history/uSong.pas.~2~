@@ -1,0 +1,53 @@
+unit uSong;
+
+interface
+
+uses
+  System.Classes, Data.FireDACJSONReflect;
+
+  {$METHODINFO ON}
+type
+  TSong = class(TComponent)
+    public
+      function Get_Songs(Page : SmallInt; Text : String): TFDJSONDataSets;
+  end;
+  {$METHODINFO OFF}
+
+implementation
+
+uses
+  uDMDB, System.SysUtils;
+
+const Page_Size = 50;
+
+{ TSong }
+
+/// <summary> Return the search of song, basead on page and name of song
+/// </summary>
+function TSong.Get_Songs(Page: SmallInt; Text: String): TFDJSONDataSets;
+begin
+  Result := TFDJSONDataSets.Create;
+  DMDB.Query.Active := False;
+  DMDB.ClearAllFieldsQuery;
+  DMDB.Query.SQL.Add('SELECT FIRST '+Page_Size.ToString+' SKIP '+IntToStr((Page_Size*Page)-Page_Size)+
+                     '  S.SONG_ID, '+
+                     '  S.NAME AS SONG_TITLE, '+
+                     '  P.PERSON_ID AS ARTIST_ID, '+
+                     '  P.NAME AS ARTIST_NAME, '+
+                     '  COALESCE(S.AUDIO_LINK, '''') AS AUDIO_LINK '+
+                     'FROM SONG S '+
+                     '  INNER JOIN PERSON P '+
+                     '  ON S.ARTIST_ID = P.PERSON_ID ');
+
+  if not Trim(Text).IsEmpty then
+  begin
+  DMDB.Query.SQL.Add('WHERE '+
+                     '  S.NAME = :v_text ');
+  DMDB.Query.ParamByName('v_text').AsString := '%'+Text+'%';
+  end;
+  DMDB.Query.SQL.Add('ORDER BY S.NAME;');
+
+  TFDJSONDataSetsWriter.ListAdd(Result, DMDB.Query);
+end;
+
+end.
