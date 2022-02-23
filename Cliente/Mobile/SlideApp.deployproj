@@ -4,10 +4,10 @@
         <ProjectFileVersion>12</ProjectFileVersion>
     </ProjectExtensions>
     <PropertyGroup>
-        <DeviceId Condition="'$(Platform)'=='Android'">AVD_for_5_4_FWVGA</DeviceId>
+        <DeviceId Condition="'$(Platform)'=='Android'">ZF5234JD4T</DeviceId>
         <DeviceId Condition="'$(Platform)'=='Android64'"/>
         <DeviceId Condition="'$(Platform)'=='iOSDevice64'"/>
-        <DeviceId Condition="'$(Platform)'=='iOSSimulator'">67C64C25-13BE-4E54-9FFE-4FEF700A17FD</DeviceId>
+        <DeviceId Condition="'$(Platform)'=='iOSSimulator'">iPhone</DeviceId>
     </PropertyGroup>
     <ItemGroup Condition="'$(Platform)'=='iOSDevice64'"/>
     <ItemGroup Condition="'$(Platform)'=='Win64'"/>
@@ -36,7 +36,7 @@
     <ItemGroup Condition="'$(Platform)'=='Linux64'"/>
     <ItemGroup Condition="'$(Platform)'=='OSX64'"/>
     <ItemGroup Condition="'$(Platform)'=='Android'">
-        <DeployFile Include="Android\Debug\libSlideApp.so" Condition="'$(Config)'=='Debug'">
+        <DeployFile Include="C:\SlideApp\Android\libSlideApp.so" Condition="'$(Config)'=='Debug'">
             <RemoteDir>SlideApp\library\lib\armeabi-v7a\</RemoteDir>
             <RemoteName>libSlideApp.so</RemoteName>
             <DeployClass>ProjectOutput</DeployClass>
@@ -127,7 +127,7 @@
             <RemoteCommand/>
             <Overwrite>True</Overwrite>
         </DeployFile>
-        <DeployFile Include="Android\Debug\splash_image_def.xml" Condition="'$(Config)'=='Debug'">
+        <DeployFile Include="C:\SlideApp\Android\splash_image_def.xml" Condition="'$(Config)'=='Debug'">
             <RemoteDir>SlideApp\res\drawable\</RemoteDir>
             <RemoteName>splash_image_def.xml</RemoteName>
             <DeployClass>AndroidSplashImageDef</DeployClass>
@@ -145,7 +145,7 @@
             <RemoteCommand/>
             <Overwrite>True</Overwrite>
         </DeployFile>
-        <DeployFile Include="Android\Debug\AndroidManifest.xml" Condition="'$(Config)'=='Debug'">
+        <DeployFile Include="C:\SlideApp\Android\AndroidManifest.xml" Condition="'$(Config)'=='Debug'">
             <RemoteDir>SlideApp\</RemoteDir>
             <RemoteName>AndroidManifest.xml</RemoteName>
             <DeployClass>ProjectAndroidManifest</DeployClass>
@@ -226,7 +226,7 @@
             <RemoteCommand/>
             <Overwrite>True</Overwrite>
         </DeployFile>
-        <DeployFile Include="Android\Debug\colors.xml" Condition="'$(Config)'=='Debug'">
+        <DeployFile Include="C:\SlideApp\Android\colors.xml" Condition="'$(Config)'=='Debug'">
             <RemoteDir>SlideApp\res\values\</RemoteDir>
             <RemoteName>colors.xml</RemoteName>
             <DeployClass>Android_Colors</DeployClass>
@@ -262,7 +262,7 @@
             <RemoteCommand/>
             <Overwrite>True</Overwrite>
         </DeployFile>
-        <DeployFile Include="Android\Debug\provider_paths.xml" Condition="'$(Config)'=='Debug'">
+        <DeployFile Include="C:\SlideApp\Android\provider_paths.xml" Condition="'$(Config)'=='Debug'">
             <RemoteDir>SlideApp\res\xml\</RemoteDir>
             <RemoteName>provider_paths.xml</RemoteName>
             <DeployClass>AndroidFileProvider</DeployClass>
@@ -299,7 +299,7 @@
             <RemoteCommand/>
             <Overwrite>True</Overwrite>
         </DeployFile>
-        <DeployFile Include="Android\Debug\strings.xml" Condition="'$(Config)'=='Debug'">
+        <DeployFile Include="C:\SlideApp\Android\strings.xml" Condition="'$(Config)'=='Debug'">
             <RemoteDir>SlideApp\res\values\</RemoteDir>
             <RemoteName>strings.xml</RemoteName>
             <DeployClass>Android_Strings</DeployClass>
@@ -357,6 +357,15 @@
             <RemoteDir>SlideApp\res\drawable-xlarge\</RemoteDir>
             <RemoteName>splash_image.png</RemoteName>
             <DeployClass>Android_SplashImage960</DeployClass>
+            <Operation>1</Operation>
+            <LocalCommand/>
+            <RemoteCommand/>
+            <Overwrite>True</Overwrite>
+        </DeployFile>
+        <DeployFile Include="C:\SlideApp\Android\classes.dex" Condition="'$(Config)'=='Debug'">
+            <RemoteDir>SlideApp\classes\</RemoteDir>
+            <RemoteName>classes.dex</RemoteName>
+            <DeployClass>AndroidClassesDexFile</DeployClass>
             <Operation>1</Operation>
             <LocalCommand/>
             <RemoteCommand/>
@@ -434,7 +443,7 @@
             <RemoteCommand/>
             <Overwrite>True</Overwrite>
         </DeployFile>
-        <DeployFile Include="Android\Debug\styles.xml" Condition="'$(Config)'=='Debug'">
+        <DeployFile Include="C:\SlideApp\Android\styles.xml" Condition="'$(Config)'=='Debug'">
             <RemoteDir>SlideApp\res\values\</RemoteDir>
             <RemoteName>styles.xml</RemoteName>
             <DeployClass>AndroidSplashStyles</DeployClass>
@@ -497,7 +506,7 @@
             <RemoteCommand/>
             <Overwrite>True</Overwrite>
         </DeployFile>
-        <DeployFile Include="Android\Debug\styles-v21.xml" Condition="'$(Config)'=='Debug'">
+        <DeployFile Include="C:\SlideApp\Android\styles-v21.xml" Condition="'$(Config)'=='Debug'">
             <RemoteDir>SlideApp\res\values-v21\</RemoteDir>
             <RemoteName>styles.xml</RemoteName>
             <DeployClass>AndroidSplashStylesV21</DeployClass>

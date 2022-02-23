@@ -1,0 +1,70 @@
+unit uSong;
+
+interface
+
+uses
+  System.Classes, Data.FireDACJSONReflect, LibDB;
+
+  {$METHODINFO ON}
+type
+  TSong = class(TComponent)
+    private
+      FConn : TConnection;
+    public
+      constructor Create(AOwner : TComponent); override;
+      destructor Destroy; override;
+
+      function Get_Songs(Page : SmallInt; Text : String): TFDJSONDataSets;
+  end;
+  {$METHODINFO OFF}
+
+implementation
+
+uses
+  uDMDB, System.SysUtils, FireDAC.Stan.Param;
+
+const Page_Size = 20;
+
+{ TSong }
+
+/// <summary> Return the search of song, basead on page and name of song
+/// </summary>
+constructor TSong.Create(AOwner: TComponent);
+begin
+  inherited Create(AOwner);
+  FConn := TConnection.Create(AOwner)
+end;
+
+destructor TSong.Destroy;
+begin
+  if Assigned(FConn) then
+    FreeAndNil(FConn);
+  inherited;
+end;
+
+function TSong.Get_Songs(Page: SmallInt; Text: String): TFDJSONDataSets;
+begin
+  Result := TFDJSONDataSets.Create;
+  FConn.CreateQuery;
+  FConn.Query.SQL.Add('SELECT FIRST '+Page_Size.ToString+' SKIP '+IntToStr((Page_Size*Page)-Page_Size)+
+                     '  S.SONG_ID, '+
+                     '  S.NAME AS SONG_TITLE, '+
+                     '  P.PERSON_ID AS ARTIST_ID, '+
+                     '  P.NAME AS ARTIST_NAME, '+
+                     '  COALESCE(S.AUDIO_LINK, '''') AS AUDIO_LINK '+
+                     'FROM SONG S '+
+                     '  INNER JOIN PERSON P '+
+                     '  ON S.ARTIST_ID = P.PERSON_ID ');
+
+  if not Trim(Text).IsEmpty then
+  begin
+  FConn.Query.SQL.Add('WHERE '+
+                     '  S.NAME LIKE :v_text ');
+  FConn.Query.ParamByName('v_text').AsString := '%'+Text+'%';
+  end;
+  FConn.Query.SQL.Add('ORDER BY S.NAME;');
+
+  TFDJSONDataSetsWriter.ListAdd(Result, FConn.Query);
+end;
+
+end.

@@ -206,12 +206,12 @@ begin
     FBuffer : Array[0..1023] of Byte;
     ReadByte : SmallInt;
   begin
-    if not DM_DataSnap.DSConn.Connected then
-      DM_DataSnap.DSConn.Connected := True;
-    Mass := TMassClient.Create(DM_DataSnap.DSConn.DBXConnection);
-    FStream := TFileStream.Create(PathSlide + '/Missa_'+Mass_ID.ToString+'.pptx', fmCreate);
     try
       try
+        if not DM_DataSnap.DSConn.Connected then
+          DM_DataSnap.DSConn.Connected := True;
+        Mass := TMassClient.Create(DM_DataSnap.DSConn.DBXConnection);
+        FStream := TFileStream.Create(PathSlide + '/Missa_'+Mass_ID.ToString+'.pptx', fmCreate);
         InStream := TDBXJSONTools.JSONToStream(Mass.DownloadSlide(Mass_ID));
 
         repeat
@@ -336,12 +336,12 @@ begin
     MT : TFDMemTable;
     Mass : TMassClient;
   begin
-    if not DM_DataSnap.DSConn.Connected then
-     DM_DataSnap.DSConn.Connected := True;
-    MT := TFDMemTable.Create(nil);
-    Mass := TMassClient.Create(DM_DataSnap.DSConn.DBXConnection);
     try
       try
+        if not DM_DataSnap.DSConn.Connected then
+          DM_DataSnap.DSConn.Connected := True;
+        MT := TFDMemTable.Create(nil);
+        Mass := TMassClient.Create(DM_DataSnap.DSConn.DBXConnection);
         DS := Mass.Get_Mass(Pag, User_ID, Parish_ID, Filter, Text, ASC);
         MT.Active := False;
         MT.AppendData(TFDJSONDataSetsReader.GetListValue(DS, 0));

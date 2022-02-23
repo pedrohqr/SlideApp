@@ -210,15 +210,14 @@ begin
     MT_Song : TFDMemTable;
     I : SmallInt;
   begin
-    if not DM_DataSnap.DSConn.Connected then
-     DM_DataSnap.DSConn.Connected := True;
-    Connection := TMassClient.Create(DM_DataSnap.DSConn.DBXConnection);
-    DS := TFDJSONDataSets.Create;
-    MT_Mass := TFDMemTable.Create(nil);
-    MT_Song := TFDMemTable.Create(nil);
-
     try
       try
+        if not DM_DataSnap.DSConn.Connected then
+          DM_DataSnap.DSConn.Connected := True;
+        Connection := TMassClient.Create(DM_DataSnap.DSConn.DBXConnection);
+        DS := TFDJSONDataSets.Create;
+        MT_Mass := TFDMemTable.Create(nil);
+        MT_Song := TFDMemTable.Create(nil);
         CreateFieldsMass(MT_Mass);
         CreateFieldsMass_Song(MT_Song);
         MT_Mass.Open;
@@ -449,12 +448,12 @@ begin
     MT : TFDMemTable;
     Moments : TMassClient;
   begin
-    if not DM_DataSnap.DSConn.Connected then
-     DM_DataSnap.DSConn.Connected := True;
-    MT := TFDMemTable.Create(nil);
-    Moments := TMassClient.Create(DM_DataSnap.DSConn.DBXConnection);
     try
       try
+        if not DM_DataSnap.DSConn.Connected then
+          DM_DataSnap.DSConn.Connected := True;
+        MT := TFDMemTable.Create(nil);
+        Moments := TMassClient.Create(DM_DataSnap.DSConn.DBXConnection);
         DS := Moments.Get_Moments;
         MT.Active := False;
         MT.AppendData(TFDJSONDataSetsReader.GetListValue(DS, 0));
@@ -537,12 +536,12 @@ begin
     MT : TFDMemTable;
     Song : TSongClient;
   begin
-    if not DM_DataSnap.DSConn.Connected then
-     DM_DataSnap.DSConn.Connected := True;
-    MT := TFDMemTable.Create(nil);
-    Song := TSongClient.Create(DM_DataSnap.DSConn.DBXConnection);
     try
       try
+        if not DM_DataSnap.DSConn.Connected then
+          DM_DataSnap.DSConn.Connected := True;
+        MT := TFDMemTable.Create(nil);
+        Song := TSongClient.Create(DM_DataSnap.DSConn.DBXConnection);
         DS := Song.Get_Songs(Page, Text);
         MT.Active := False;
         MT.AppendData(TFDJSONDataSetsReader.GetListValue(DS, 0));

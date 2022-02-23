@@ -1,11 +1,15 @@
 unit LibDB;
 
+//##############################
+//Author : Pedro Henrique de Queiroz Ramos
+//Date : 22/02/2022
+//This unit gives a connection to database(Firebird) of server
+//##############################
+
 interface
 
 uses FireDAC.Comp.Client, FireDAC.Comp.UI, FireDAC.Phys.FB, System.IniFiles,
      FireDAC.Stan.StorageBin, System.Classes;
-
-{This unit gives a connection to database(Firebird) of server.}
 
 type
   TConnection = class(TComponent)
@@ -24,6 +28,8 @@ type
 
       procedure ClearAllFieldsQuery;
       procedure ClearAllFieldsSP;
+      procedure CreateQuery;
+      procedure CreateSP(const ANameSP : String);
   end;
 
 implementation
@@ -72,17 +78,29 @@ begin
   begin
     DriverID := 'FB';
     Database := Path_DB;
-    UserName := Ini_File.ReadString('DATABASE', 'USER', 'SYSDBA');
-    Password := Ini_File.ReadString('DATABASE', 'PASSWORD', 'MASTERKEY');
+    UserName := Ini_File.ReadString('DATABASE', 'USER', 'sysdba');
+    Password := Ini_File.ReadString('DATABASE', 'PASSWORD', 'masterkey');
+    Values['CharacterSet'] := 'ISO8859_1';
   end;
 
   Conn.Connected := True;
+end;
 
-  Query := TFDQuery.Create(AOwner);
+procedure TConnection.CreateQuery;
+begin
+  if Assigned(Query) then
+    FreeAndNil(Query);
+  Query := TFDQuery.Create(Self.Owner);
   Query.Connection := Conn;
+end;
 
-  SP := TFDStoredProc.Create(AOwner);
+procedure TConnection.CreateSP(const ANameSP: String);
+begin
+  if Assigned(SP) then
+    FreeAndNil(SP);
+  SP := TFDStoredProc.Create(Self.Owner);
   SP.Connection := Conn;
+  SP.StoredProcName := ANameSP;
 end;
 
 destructor TConnection.Destroy;

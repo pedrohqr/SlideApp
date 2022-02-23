@@ -117,11 +117,6 @@
             <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="Classes\uMass.pas"/>
-        <DCCReference Include="Lib.DataBase\uDMDB.pas">
-            <Form>DMDB</Form>
-            <FormType>dfm</FormType>
-            <DesignClass>TDSServerModule</DesignClass>
-        </DCCReference>
         <DCCReference Include="Classes\uSong.pas"/>
         <DCCReference Include="Classes\DM_SlideCreator.pas">
             <Form>DSSlideCreator</Form>
@@ -160,7 +155,7 @@
                 </Excluded_Packages>
             </Delphi.Personality>
             <Deployment Version="3">
-                <DeployFile LocalName="Win32\Debug\Server.exe" Configuration="Debug" Class="ProjectOutput">
+                <DeployFile LocalName="C:\SlideApp\Server\Server.exe" Configuration="Debug" Class="ProjectOutput">
                     <Platform Name="Win32">
                         <RemoteName>Server.exe</RemoteName>
                         <Overwrite>true</Overwrite>

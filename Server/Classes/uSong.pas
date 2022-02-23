@@ -3,12 +3,17 @@ unit uSong;
 interface
 
 uses
-  System.Classes, Data.FireDACJSONReflect;
+  System.Classes, Data.FireDACJSONReflect, LibDB;
 
   {$METHODINFO ON}
 type
   TSong = class(TComponent)
+    private
+      FConn : TConnection;
     public
+      constructor Create(AOwner : TComponent); override;
+      destructor Destroy; override;
+
       function Get_Songs(Page : SmallInt; Text : String): TFDJSONDataSets;
   end;
   {$METHODINFO OFF}
@@ -16,7 +21,7 @@ type
 implementation
 
 uses
-  uDMDB, System.SysUtils, FireDAC.Stan.Param;
+   System.SysUtils, FireDAC.Stan.Param;
 
 const Page_Size = 20;
 
@@ -24,12 +29,24 @@ const Page_Size = 20;
 
 /// <summary> Return the search of song, basead on page and name of song
 /// </summary>
+constructor TSong.Create(AOwner: TComponent);
+begin
+  inherited Create(AOwner);
+  FConn := TConnection.Create(AOwner)
+end;
+
+destructor TSong.Destroy;
+begin
+  if Assigned(FConn) then
+    FreeAndNil(FConn);
+  inherited;
+end;
+
 function TSong.Get_Songs(Page: SmallInt; Text: String): TFDJSONDataSets;
 begin
   Result := TFDJSONDataSets.Create;
-  DMDB.Query.Active := False;
-  DMDB.ClearAllFieldsQuery;
-  DMDB.Query.SQL.Add('SELECT FIRST '+Page_Size.ToString+' SKIP '+IntToStr((Page_Size*Page)-Page_Size)+
+  FConn.CreateQuery;
+  FConn.Query.SQL.Add('SELECT FIRST '+Page_Size.ToString+' SKIP '+IntToStr((Page_Size*Page)-Page_Size)+
                      '  S.SONG_ID, '+
                      '  S.NAME AS SONG_TITLE, '+
                      '  P.PERSON_ID AS ARTIST_ID, '+
@@ -41,13 +58,13 @@ begin
 
   if not Trim(Text).IsEmpty then
   begin
-  DMDB.Query.SQL.Add('WHERE '+
+  FConn.Query.SQL.Add('WHERE '+
                      '  S.NAME LIKE :v_text ');
-  DMDB.Query.ParamByName('v_text').AsString := '%'+Text+'%';
+  FConn.Query.ParamByName('v_text').AsString := '%'+Text+'%';
   end;
-  DMDB.Query.SQL.Add('ORDER BY S.NAME;');
+  FConn.Query.SQL.Add('ORDER BY S.NAME;');
 
-  TFDJSONDataSetsWriter.ListAdd(Result, DMDB.Query);
+  TFDJSONDataSetsWriter.ListAdd(Result, FConn.Query);
 end;
 
 end.

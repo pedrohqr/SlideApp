@@ -1,0 +1,59 @@
+unit Lib.AcessManagement;
+
+//##############################
+//Author : Pedro Henrique de Queiroz Ramos
+//Date : 22/02/2022
+//This class do a simultaneus management acess to server database, alocating each
+//client in a queue to be process by server
+//##############################
+
+interface
+
+uses
+  LibDB, System.Classes, System.SysUtils;
+
+  type
+    TQueueAcess = class(TThread)
+      private
+        FThreadMethod : TProc;
+      public
+        constructor Create;
+        destructor Destroy; override;
+
+        procedure Execute; override;
+        procedure AddMethod(const AMethod : TProc);
+
+    end;
+
+implementation
+
+const CCapacity = 10;
+
+{ TQueueAcess }
+
+procedure TQueueAcess.AddMethod(const AMethod: TProc);
+begin
+  FThreadMethod := AMethod;
+end;
+
+constructor TQueueAcess.Create;
+begin
+  inherited Create;
+  FreeOnTerminate := False;
+end;
+
+destructor TQueueAcess.Destroy;
+begin
+
+  inherited;
+end;
+procedure TQueueAcess.Execute;
+begin
+  if Assigned(FThreadMethod) then
+  begin
+    FThreadMethod;
+    FThreadMethod := nil;
+  end;
+end;
+
+end.

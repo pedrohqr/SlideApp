@@ -50,7 +50,7 @@
     <Transaction>2022/02/16 20:20:00.000.071,C:\Program Files (x86)\Embarcadero\Studio\21.0\source\fmx\FMX.WebBrowser.Delegate.Cocoa.pas=</Transaction>
   </Transactions>
 	<ActiveMobileDevice>
-		<NoProfile iOSSimulator="iPhone5" Android="AVD_for_5_4_FWVGA" Android64=""/>
+		<NoProfile iOSSimulator="iPhone5" Android="ZF5234JD4T" Android64=""/>
 		<PMacBigSur iOSSimulator="iPhone"/>
 	</ActiveMobileDevice>
 	<ProjectSortOrder AutoSort="0" SortType="0">

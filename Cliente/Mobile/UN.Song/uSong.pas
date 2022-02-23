@@ -115,12 +115,12 @@ begin
     MT : TFDMemTable;
     Song : TSongClient;
   begin
-    if not DM_DataSnap.DSConn.Connected then
-     DM_DataSnap.DSConn.Connected := True;
-    MT := TFDMemTable.Create(nil);
-    Song := TSongClient.Create(DM_DataSnap.DSConn.DBXConnection);
     try
       try
+        if not DM_DataSnap.DSConn.Connected then
+          DM_DataSnap.DSConn.Connected := True;
+        MT := TFDMemTable.Create(nil);
+        Song := TSongClient.Create(DM_DataSnap.DSConn.DBXConnection);
         DS := Song.Get_Songs(Page, Text);
         MT.Active := False;
         MT.AppendData(TFDJSONDataSetsReader.GetListValue(DS, 0));

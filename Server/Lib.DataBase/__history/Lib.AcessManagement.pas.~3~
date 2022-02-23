@@ -1,0 +1,53 @@
+unit Lib.AcessManagement;
+
+//##############################
+//Author : Pedro Henrique de Queiroz Ramos
+//Date : 22/02/2022
+//This class do a simultaneus management acess to server database, alocating each
+//client in a queue to be process by server
+//##############################
+
+interface
+
+uses
+  LibDB, System.Generics.Collections;
+
+  type
+    TQueueAcess = class
+      private
+        FCapacity : SmallInt;
+        FFirst : SmallInt;
+        FLast : SmallInt;
+        FConnection : TQueue<TConnection>;
+      public
+        constructor Create;
+        destructor Destroy; override;
+    end;
+
+var QueueAcess : TQueueAcess;
+
+implementation
+
+uses
+  System.SysUtils;
+
+const CCapacity = 10;
+
+{ TQueueAcess }
+
+constructor TQueueAcess.Create;
+begin
+  inherited;
+  FCapacity := CCapacity;
+  FConnection := TQueue<TConnection>.Create;
+  FConnection.Capacity := CCapacity;
+end;
+
+destructor TQueueAcess.Destroy;
+begin
+  FConnection.Clear;
+  FConnection.Free;
+  inherited;
+end;
+
+end.

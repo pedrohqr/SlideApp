@@ -13,6 +13,7 @@ object FManagement: TFManagement
   OldCreateOrder = False
   WindowState = wsMaximized
   OnClose = FormClose
+  OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 13
   object lbl_song: TLabel

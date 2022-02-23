@@ -45,11 +45,11 @@ begin
    MT : TFDMemTable;
    DS : TFDJSONDataSets;
   begin
-    if not DM_DataSnap.DSConn.Connected then
-      DM_DataSnap.DSConn.Connected := True;
-    Conn := TLoginClient.Create(DM_DataSnap.DSConn.DBXConnection);
     try
       try
+        if not DM_DataSnap.DSConn.Connected then
+          DM_DataSnap.DSConn.Connected := True;
+        Conn := TLoginClient.Create(DM_DataSnap.DSConn.DBXConnection);
         Frm_Main.ID_User := Conn.Auth_Login(Trim(Edt_Username.Text), Trim(Edt_Password.Text));
         if Frm_Main.ID_User <> 0 then
         begin

@@ -12,7 +12,12 @@ uses
   {$METHODINFO ON}
 type
   TLogin = class(TComponent)
+  private
+    FConn : TConnection;
   public
+    constructor Create(AOwner : TComponent); override;
+    destructor Destroy; override;
+
     function Auth_Login(Username, Password : String): Integer;
     function Register_User(Name, Username, Password: String): String;
     function LoadParish(ID_User : Integer): TFDJSONDataSets;
@@ -21,8 +26,7 @@ type
 
 implementation
 
-uses FireDAC.Stan.Param, FireDAC.Stan.Def, FireDAC.DApt, FireDAC.Stan.Async,
-  uDMDB;
+uses FireDAC.Stan.Param, FireDAC.Stan.Def, FireDAC.DApt, FireDAC.Stan.Async;
 
 
 /// <summary> Verify integrity of the user by Username and Password
@@ -33,24 +37,35 @@ uses FireDAC.Stan.Param, FireDAC.Stan.Def, FireDAC.DApt, FireDAC.Stan.Async,
 function TLogin.Auth_Login(Username, Password: String): Integer;
 begin
   Result := 0;
-
-  DMDB.ClearAllFieldsQuery;
-
-  with DMDB.Query do
+  FConn.CreateQuery;
+  with FConn.Query do
   begin
-    SQL.Add('SELECT                      '+
+    SQL.Text := 'SELECT                      '+
             '    USER_ID                 '+
             'FROM                        '+
             '    USER_APP                '+
             'WHERE                       '+
             '    LOGIN = :vUsername AND  '+
-            '    PW    = :vPassword;     ');
+            '    PW    = :vPassword;     ';
     ParamByName('vUsername').AsString := Username;
     ParamByName('vPassword').AsString := Password;
-    Open;
+    Active := True;
     if RecordCount > 0 then
       Result := FieldByName('USER_ID').AsInteger;
   end;
+end;
+
+constructor TLogin.Create(AOwner: TComponent);
+begin
+  inherited Create(AOwner);
+  FConn := TConnection.Create(AOwner);
+end;
+
+destructor TLogin.Destroy;
+begin
+  if Assigned(FConn) then
+    FreeAndNil(FConn);
+  inherited;
 end;
 
 /// <summary> Load the Parishs that user is registred
@@ -59,19 +74,20 @@ function TLogin.LoadParish(ID_User: Integer): TFDJSONDataSets;
 begin
   Result := TFDJSONDataSets.Create;
 
-  DMDB.ClearAllFieldsQuery;
-
-  with DMDB.Query do
+  FConn.CreateQuery;
+  with FConn.Query do
   begin
-    SQL.Add('SELECT                                '+
-            '   P.*                                '+
-            'FROM                                  '+
-            '   PARISH_USER PU INNER JOIN PARISH P '+
-            '   ON PU.PARISH_ID = P.PARISH_ID      '+
-            'WHERE                                 '+
-            '    PU.USER_ID = :vID_User;           ');
+    SQL.Text := 'SELECT                                '+
+                '   P.*                                '+
+                'FROM                                  '+
+                '   PARISH_USER PU INNER JOIN PARISH P '+
+                '   ON PU.PARISH_ID = P.PARISH_ID      '+
+                'WHERE                                 '+
+                '    PU.USER_ID = :vID_User;           ';
     ParamByName('vID_User').AsInteger := ID_User;
-    TFDJSONDataSetsWriter.ListAdd(Result, DMDB.Query);
+    Active := True;
+    Close;
+    TFDJSONDataSetsWriter.ListAdd(Result, FConn.Query);
   end;
 end;
 
@@ -83,11 +99,9 @@ function TLogin.Register_User(Name, Username, Password: String): String;
 begin
   Result := '';
   try
-    DMDB.ClearAllFieldsSP;
-
-    with DMDB.SP do
+    FConn.CreateSP('REG_USER');
+    with FConn.SP do
     begin
-      StoredProcName := 'REG_USER';
       Params.ParamByName('V_NAME').AsString := Name;
       Params.ParamByName('V_LOGIN').AsString := Username;
       Params.ParamByName('V_PW').AsString := Password;
@@ -97,6 +111,5 @@ begin
     Result := e.Message;
   end;
 end;
-
 end.
 

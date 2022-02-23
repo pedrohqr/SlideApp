@@ -12,9 +12,12 @@ uses
 type
   TMass = class(TComponent)
     private
-    function Create_Slide(Mass_ID: Integer): String;
-
+      FConn : TConnection;
+      function Create_Slide(Mass_ID: Integer): String;
     public
+      constructor Create(AOwner : TComponent); override;
+      destructor Destroy; override;
+
       function Get_Moments: TFDJSONDataSets;
       function Get_Mass(const pag : SmallInt; User_ID, Parish_ID : Integer;
                       Filter, Text : String; Asc : Boolean): TFDJSONDataSets;
@@ -26,7 +29,7 @@ type
 implementation
 
 uses
-  System.SysUtils, FireDAC.Stan.Param, uDMDB, DM_SlideCreator, System.IOUtils,
+  System.SysUtils, FireDAC.Stan.Param, DM_SlideCreator, System.IOUtils,
   Data.DBXJSONCommon;
 
 const Page_Size = 20;
@@ -51,16 +54,15 @@ function TMass.Get_Mass(const pag: SmallInt; User_ID, Parish_ID: Integer;
                   Filter, Text : String; Asc : Boolean): TFDJSONDataSets;
 begin
   Result := TFDJSONDataSets.Create;
-  DMDB.Query.Active := False;
-  DMDB.ClearAllFieldsQuery;
+  FConn.CreateQuery;
   if Pag > 1 then
   begin
-  DMDB.Query.SQL.Add('SELECT FIRST :pPageSize SKIP :pPage ');
-  DMDB.Query.ParamByName('pPage').Value := (Page_Size*Pag)-Page_Size;
+  FConn.Query.SQL.Add('SELECT FIRST :pPageSize SKIP :pPage ');
+  FConn.Query.ParamByName('pPage').Value := (Page_Size*Pag)-Page_Size;
   end
   else
-  DMDB.Query.SQL.Add('SELECT FIRST :pPageSize SKIP 0 ');
-  DMDB.Query.SQL.Add('    M.MASS_ID,         '+
+  FConn.Query.SQL.Add('SELECT FIRST :pPageSize SKIP 0 ');
+  FConn.Query.SQL.Add('    M.MASS_ID,         '+
                      '    M.TITLE,           '+
                      '    P.NAME AS UNAME,   '+
                      '    M.MASS_DATE,       '+
@@ -75,42 +77,42 @@ begin
 
   if not Text.IsEmpty then
   begin
-  DMDB.Query.SQL.Add(' AND ((M.TITLE LIKE :pText)  OR     '+
+  FConn.Query.SQL.Add(' AND ((M.TITLE LIKE :pText)  OR     '+
                      '      (M.TITLE LIKE :pText)         '+
 //                     '      (M.MASS_DATE = :pText)        '+
                      '     )                              ');
-  DMDB.Query.ParamByName('pText').AsString := '%'+Text+'%';
+  FConn.Query.ParamByName('pText').AsString := '%'+Text+'%';
   end;
-  DMDB.Query.ParamByName('pPageSize').AsInteger := Page_Size;
-  DMDB.Query.ParamByName('pParishID').AsInteger := Parish_ID;
+  FConn.Query.ParamByName('pPageSize').AsInteger := Page_Size;
+  FConn.Query.ParamByName('pParishID').AsInteger := Parish_ID;
 
   if User_ID <> 0 then
   begin
-  DMDB.Query.SQL.Add(' AND (M.USER_ID = :pID)  ');
-  DMDB.Query.ParamByName('pID').AsInteger := User_ID;
+  FConn.Query.SQL.Add(' AND (M.USER_ID = :pID)  ');
+  FConn.Query.ParamByName('pID').AsInteger := User_ID;
   end;
 
   if Trim(Filter) = 'DATE' then
-    DMDB.Query.SQL.Add(' ORDER BY M.MASS_DATE ')
+    FConn.Query.SQL.Add(' ORDER BY M.MASS_DATE ')
   else
   if Trim(Filter) = 'DATE_GEN' then
-    DMDB.Query.SQL.Add(' ORDER BY M.GENERATE_DATE ')
+    FConn.Query.SQL.Add(' ORDER BY M.GENERATE_DATE ')
   else
   if Trim(Filter) = 'TITLE' then
-    DMDB.Query.SQL.Add(' ORDER BY M.TITLE ')
+    FConn.Query.SQL.Add(' ORDER BY M.TITLE ')
   else
   if Trim(Filter) = 'MASS_ID' then
-    DMDB.Query.SQL.Add(' ORDER BY M.MASS_ID ')
+    FConn.Query.SQL.Add(' ORDER BY M.MASS_ID ')
   else
   if Trim(Filter) = 'USER_ID' then
-    DMDB.Query.SQL.Add(' ORDER BY M.USER_ID ');
+    FConn.Query.SQL.Add(' ORDER BY M.USER_ID ');
 
   if Asc then
-    DMDB.Query.SQL.Add(' ASC;')
+    FConn.Query.SQL.Add(' ASC;')
   else
-    DMDB.Query.SQL.Add(' DESC;');
+    FConn.Query.SQL.Add(' DESC;');
 
-  TFDJSONDataSetsWriter.ListAdd(Result, DMDB.Query);
+  TFDJSONDataSetsWriter.ListAdd(Result, FConn.Query);
 end;
 
 /// <summary> Return all moments and your ID's into the TFDJSONDataSets
@@ -118,10 +120,9 @@ end;
 function TMass.Get_Moments: TFDJSONDataSets;
 begin
   Result := TFDJSONDataSets.Create;
-  DMDB.Query.Active := False;
-  DMDB.ClearAllFieldsQuery;
-  DMDB.Query.SQL.Text := 'SELECT * FROM MOMENTS;';
-  TFDJSONDataSetsWriter.ListAdd(Result, DMDB.Query);
+  FConn.CreateQuery;
+  FConn.Query.SQL.Text := 'SELECT * FROM MOMENTS;';
+  TFDJSONDataSetsWriter.ListAdd(Result, FConn.Query);
 end;
 
 /// <summary> Return the song of search, using pagination. If the text is empty,
@@ -130,10 +131,8 @@ end;
 function TMass.Get_Songs(pag: SmallInt; Text: String): TFDJSONDataSets;
 begin
   Result := TFDJSONDataSets.Create;
-  DMDB.Query.Active := False;
-  DMDB.ClearAllFieldsQuery;
-
-  DMDB.Query.SQL.Add('SELECT                           '+
+  FConn.CreateQuery;
+  FConn.Query.SQL.Add('SELECT                           '+
                      '    S.SONG_ID,                   '+
                      '    S.NAME,                      '+
                      '    P.NAME AS ARTIST,            '+
@@ -144,12 +143,12 @@ begin
                      '    ON S.ARTIST_ID = P.PERSON_ID ');
   if not Trim(Text).IsEmpty then
   begin
-  DMDB.Query.SQL.Add('WHERE                            '+
+  FConn.Query.SQL.Add('WHERE                            '+
                      '    S.NAME LIKE :pNameMusic         ');
-  DMDB.Query.ParamByName('pNameMusic').AsString := '%'+Text+'%';
+  FConn.Query.ParamByName('pNameMusic').AsString := '%'+Text+'%';
   end;
-  DMDB.Query.SQL.Add('ORDER BY S.NAME;');
-  TFDJSONDataSetsWriter.ListAdd(Result, DMDB.Query);
+  FConn.Query.SQL.Add('ORDER BY S.NAME;');
+  TFDJSONDataSetsWriter.ListAdd(Result, FConn.Query);
 end;
 
 /// <summary> Register a new mass in database
@@ -166,36 +165,34 @@ begin
      Mass_MT.AppendData(TFDJSONDataSetsReader.GetListValue(DS, 0));
      Mass_Song_MT.AppendData(TFDJSONDataSetsReader.GetListValue(DS, 1));
 
-     DMDB.ClearAllFieldsSP;
-     DMDB.SP.StoredProcName := 'REG_MASS';
+     FConn.CreateSP('REG_MASS');
      while not Mass_MT.Eof do
      with Mass_MT do
      begin
-       DMDB.SP.Prepare;
-       DMDB.SP.ParamByName('V_MASS_ID').AsInteger        := FieldByName('MASS_ID').AsInteger;
-       DMDB.SP.ParamByName('V_TITLE').AsString           := FieldByName('TITLE').AsString;
-       DMDB.SP.ParamByName('V_MASS_DATE').AsDateTime     := FieldByName('MASS_DATE').AsDateTime;
-       DMDB.SP.ParamByName('V_LIT_TIME_ID').AsInteger    := FieldByName('LIT_TIME_ID').AsInteger;
-       DMDB.SP.ParamByName('V_GENERATE_DATE').AsDateTime := FieldByName('GENERATE_DATE').AsDateTime;
-       DMDB.SP.ParamByName('V_USER_ID').AsInteger        := FieldByName('USER_ID').AsInteger;
-       DMDB.SP.ParamByName('V_PARISH_ID').AsInteger      := FieldByName('PARISH_ID').AsInteger;
-       DMDB.SP.ExecProc;
+       FConn.SP.Prepare;
+       FConn.SP.ParamByName('V_MASS_ID').AsInteger        := FieldByName('MASS_ID').AsInteger;
+       FConn.SP.ParamByName('V_TITLE').AsString           := FieldByName('TITLE').AsString;
+       FConn.SP.ParamByName('V_MASS_DATE').AsDateTime     := FieldByName('MASS_DATE').AsDateTime;
+       FConn.SP.ParamByName('V_LIT_TIME_ID').AsInteger    := FieldByName('LIT_TIME_ID').AsInteger;
+       FConn.SP.ParamByName('V_GENERATE_DATE').AsDateTime := FieldByName('GENERATE_DATE').AsDateTime;
+       FConn.SP.ParamByName('V_USER_ID').AsInteger        := FieldByName('USER_ID').AsInteger;
+       FConn.SP.ParamByName('V_PARISH_ID').AsInteger      := FieldByName('PARISH_ID').AsInteger;
+       FConn.SP.ExecProc;
 
-       Mass_ID := DMDB.SP.ParamByName('PID').AsInteger;
+       Mass_ID := FConn.SP.ParamByName('PID').AsInteger;
 
-       DMDB.ClearAllFieldsSP;
-       DMDB.SP.StoredProcName := 'REG_MASS_SONG';
+       FConn.CreateSP('REG_MASS_SONG');
        while not Mass_Song_MT.Eof do
        with Mass_Song_MT do
        begin
-         DMDB.SP.Prepare;
-         DMDB.SP.ParamByName('V_MASS_SONG_ID').Clear;
-         DMDB.SP.ParamByName('V_MASS_ID').AsInteger      := Mass_ID;
-         DMDB.SP.ParamByName('V_SONG_ID').AsInteger      := FieldByName('SONG_ID').AsInteger;
-         DMDB.SP.ParamByName('V_MOMENT_ID').AsInteger    := FieldByName('MOMENT_ID').AsInteger;
-         DMDB.SP.ParamByName('V_SONG_ORDER').AsInteger   := FieldByName('SONG_ORDER').AsInteger;
-         DMDB.SP.ParamByName('V_SONG_ORDER').Clear;
-         DMDB.SP.ExecProc;
+         FConn.SP.Prepare;
+         FConn.SP.ParamByName('V_MASS_SONG_ID').Clear;
+         FConn.SP.ParamByName('V_MASS_ID').AsInteger      := Mass_ID;
+         FConn.SP.ParamByName('V_SONG_ID').AsInteger      := FieldByName('SONG_ID').AsInteger;
+         FConn.SP.ParamByName('V_MOMENT_ID').AsInteger    := FieldByName('MOMENT_ID').AsInteger;
+         FConn.SP.ParamByName('V_SONG_ORDER').AsInteger   := FieldByName('SONG_ORDER').AsInteger;
+         FConn.SP.ParamByName('V_SONG_ORDER').Clear;
+         FConn.SP.ExecProc;
          Next;
        end;
 
@@ -211,13 +208,21 @@ begin
   end;
 end;
 
+constructor TMass.Create(AOwner: TComponent);
+begin
+  inherited Create(AOwner);
+  FConn := TConnection.Create(AOwner);
+end;
+
 function TMass.Create_Slide(Mass_ID: Integer): String;
 var
   FileName : String;
 begin
   FileName := 'Missa_'+Mass_ID.ToString+'.pptx';
-  with DSSlideCreator.QuerySlide do
+  FConn.CreateQuery;
+  with FConn.Query do
   begin
+
     Active := False;
     SQL.Text := 'SELECT                            '+
                 '   M.TITLE,                       '+
@@ -241,17 +246,17 @@ begin
     Active := True;
   end;
 
+  DSSlideCreator.frxDBDataset.DataSet := FConn.Query;
 
   DSSlideCreator.frxPPTXExport.FileName := FileName;
   DSSlideCreator.frxPPTXExport.DefaultPath := ExtractFilePath(ParamStr(0)) + 'reports\';
 
-
   with DSSlideCreator.frxReportPPTX do
   begin
     Variables['txt_welcome'] := QuotedStr('Seja muito bem vindo!');
-    Variables['txt_title']  := QuotedStr(DSSlideCreator.QuerySlide.FieldByName('TITLE').AsString);
-    Variables['txt_parish']  := QuotedStr(DSSlideCreator.QuerySlide.FieldByName('PARISH_NAME').AsString);
-    Variables['txt_date']  := QuotedStr(DSSlideCreator.QuerySlide.FieldByName('MASS_DATE').AsString);
+    Variables['txt_title']  := QuotedStr(FConn.Query.FieldByName('TITLE').AsString);
+    Variables['txt_parish']  := QuotedStr(FConn.Query.FieldByName('PARISH_NAME').AsString);
+    Variables['txt_date']  := QuotedStr(FConn.Query.FieldByName('MASS_DATE').AsString);
 
 //    if ( FileExists(ExtractFilePath(ParamStr(0)) + '\images\harsoft.png') and (FindComponent('logoImg')<> nil ) ) then  //imagem do relatorio
 //          TfrxPictureView(FindComponent('logoImg')).Picture.LoadFromFile(ExtractFilePath(ParamStr(0)) + '\images\harsoft.png');
@@ -262,6 +267,13 @@ begin
     DSSlideCreator.frxReportPPTX.Export(DSSlideCreator.frxPPTXExport);
     Result := TPath.Combine(DSSlideCreator.frxPPTXExport.DefaultPath, FileName);
   end;
+end;
+
+destructor TMass.Destroy;
+begin
+  if Assigned(FConn) then
+    FreeAndNil(FConn);
+  inherited;
 end;
 
 /// <summary> Return the File in JSON format

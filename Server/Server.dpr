@@ -11,7 +11,6 @@ uses
   LibPaths in 'Lib.General\LibPaths.pas',
   Frm_Management in 'Frm_Management.pas' {FManagement},
   uMass in 'Classes\uMass.pas',
-  uDMDB in 'Lib.DataBase\uDMDB.pas' {DMDB: TDSServerModule},
   uSong in 'Classes\uSong.pas',
   DM_SlideCreator in 'Classes\DM_SlideCreator.pas' {DSSlideCreator: TDSServerModule};
 
@@ -22,7 +21,6 @@ begin
   Application.MainFormOnTaskbar := True;
   Application.CreateForm(TFMain, FMain);
   Application.CreateForm(TServerContainer1, ServerContainer1);
-  Application.CreateForm(TDMDB, DMDB);
   Application.CreateForm(TDSSlideCreator, DSSlideCreator);
   Application.Run;
   ReportMemoryLeaksOnShutdown := True;

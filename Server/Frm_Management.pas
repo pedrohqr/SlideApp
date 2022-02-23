@@ -6,7 +6,7 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ToolWin, Vcl.ComCtrls, Vcl.Menus,
   Vcl.StdCtrls, REST.Types, Data.Bind.Components, Data.Bind.ObjectScope,
-  REST.Client, Vcl.WinXCtrls, Vcl.Grids;
+  REST.Client, Vcl.WinXCtrls, Vcl.Grids, LibDB;
 
 type
   TFManagement = class(TForm)
@@ -30,7 +30,9 @@ type
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure Btn_SearchClick(Sender: TObject);
     procedure btn_register_songClick(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
   private
+    FConn : TConnection;
     function FormatLineBreak(Text: String): String;
     function SearchArtist(Code : String): Integer;
     function SearchSong(Code: String): Integer;
@@ -45,7 +47,7 @@ implementation
 
 {$R *.dfm}
 
-uses Frm_Main, System.JSON, System.Generics.Collections, uDMDB, FireDAC.Stan.Param;
+uses Frm_Main, System.JSON, System.Generics.Collections, FireDAC.Stan.Param;
 
 /// <summary> Format the '\n' to lineBrak of Delphi
 /// </summary>
@@ -66,18 +68,17 @@ end;
 procedure TFManagement.btn_register_songClick(Sender: TObject);
 begin
   try
-    with DMDB do
+    with FConn do
     begin
-      ClearAllFieldsSP;
-      SP.StoredProcName := 'REG_ARTIST';
+      CreateSP('REG_ARTIST');
+
       SP.Prepare;
       SP.ParamByName('V_PERSON_ID').AsInteger := SearchArtist(lbl_id_art.Caption);
       SP.ParamByName('V_NAME').AsString       := Edt_Artist.Text;
       SP.ParamByName('V_CODE').AsString       := lbl_id_art.Caption;
       SP.ExecProc;
 
-      ClearAllFieldsQuery;
-      SP.StoredProcName := 'REG_SONG';
+      CreateSP('REG_SONG');
       SP.Prepare;
       SP.ParamByName('V_SONG_ID').AsInteger   := SearchSong(lbl_id_song.Caption);
       SP.ParamByName('V_NAME').AsString       := Edt_Song.Text;
@@ -164,18 +165,25 @@ end;
 
 procedure TFManagement.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
+  if Assigned(FConn) then
+    FreeAndNil(FConn);
   FMain.Show;
   Action := TCloseAction.caFree;
   FManagement := nil;
+end;
+
+procedure TFManagement.FormCreate(Sender: TObject);
+begin
+  FConn := TConnection.Create(Self);
 end;
 
 /// <summary> Find for Code of the person and returns the ID
 /// </summary>
 function TFManagement.SearchArtist(Code: String): Integer;
 begin
-  with DMDB do
+  with FConn do
   begin
-    ClearAllFieldsQuery;
+    CreateQuery;
     Query.SQL.Add('SELECT PERSON_ID FROM PERSON WHERE CODE LIKE :v_code;');
     Query.ParamByName('v_code').AsString := Code;
     Query.Open;
@@ -190,9 +198,9 @@ end;
 /// </summary>
 function TFManagement.SearchSong(Code: String): Integer;
 begin
-  with DMDB do
+  with FConn do
   begin
-    ClearAllFieldsQuery;
+    CreateQuery;
     Query.SQL.Add('SELECT SONG_ID FROM SONG WHERE CODE LIKE :v_code;');
     Query.ParamByName('v_code').AsString := Code;
     Query.Open;
