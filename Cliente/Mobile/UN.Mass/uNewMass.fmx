@@ -49,10 +49,14 @@ inherited Frm_New_Mass: TFrm_New_Mass
       Size.Height = 403.000000000000000000
       Size.PlatformDefault = False
       TabHeight = 49.000000000000000000
-      TabIndex = 0
+      TabIndex = 2
       TabOrder = 1
       TabPosition = None
       Sizes = (
+        331s
+        403s
+        331s
+        403s
         331s
         403s
         331s
@@ -61,7 +65,7 @@ inherited Frm_New_Mass: TFrm_New_Mass
         CustomIcon = <
           item
           end>
-        IsSelected = True
+        IsSelected = False
         Size.Width = 8.000000000000000000
         Size.Height = 8.000000000000000000
         Size.PlatformDefault = False
@@ -173,7 +177,7 @@ inherited Frm_New_Mass: TFrm_New_Mass
           end
           object Calendar: TCalendar
             Align = Horizontal
-            Date = 44608.000000000000000000
+            Date = 44615.000000000000000000
             Position.Y = 50.000000000000000000
             Size.Width = 311.000000000000000000
             Size.Height = 0.000000000000000000
@@ -470,6 +474,88 @@ inherited Frm_New_Mass: TFrm_New_Mass
               Text = 'Adicionar '#224' missa'
               TabOrder = 0
             end
+          end
+        end
+      end
+      object TabItem3: TTabItem
+        CustomIcon = <
+          item
+          end>
+        IsSelected = True
+        Size.Width = 8.000000000000000000
+        Size.Height = 8.000000000000000000
+        Size.PlatformDefault = False
+        StyleLookup = ''
+        TabOrder = 0
+        Text = 'TabItem3'
+        object Rectangle7: TRectangle
+          Align = Top
+          Fill.Color = claWhite
+          Margins.Left = 10.000000000000000000
+          Margins.Top = 10.000000000000000000
+          Margins.Right = 10.000000000000000000
+          Position.X = 10.000000000000000000
+          Position.Y = 10.000000000000000000
+          Size.Width = 311.000000000000000000
+          Size.Height = 32.000000000000000000
+          Size.PlatformDefault = False
+          Stroke.Kind = None
+          XRadius = 15.000000000000000000
+          YRadius = 15.000000000000000000
+          object Label5: TLabel
+            Align = Client
+            StyledSettings = []
+            Size.Width = 311.000000000000000000
+            Size.Height = 32.000000000000000000
+            Size.PlatformDefault = False
+            TextSettings.Font.Family = 'Sylfaen'
+            TextSettings.Font.Size = 20.000000000000000000
+            TextSettings.Font.StyleExt = {00070000000000000004000000}
+            TextSettings.FontColor = claGray
+            TextSettings.HorzAlign = Center
+            Text = 'LEITURAS'
+            TabOrder = 0
+          end
+        end
+      end
+      object TabItem4: TTabItem
+        CustomIcon = <
+          item
+          end>
+        IsSelected = False
+        Size.Width = 8.000000000000000000
+        Size.Height = 8.000000000000000000
+        Size.PlatformDefault = False
+        StyleLookup = ''
+        TabOrder = 0
+        Text = 'TabItem4'
+        object Rectangle8: TRectangle
+          Align = Top
+          Fill.Color = claWhite
+          Margins.Left = 10.000000000000000000
+          Margins.Top = 10.000000000000000000
+          Margins.Right = 10.000000000000000000
+          Position.X = 10.000000000000000000
+          Position.Y = 10.000000000000000000
+          Size.Width = 311.000000000000000000
+          Size.Height = 32.000000000000000000
+          Size.PlatformDefault = False
+          Stroke.Kind = None
+          XRadius = 15.000000000000000000
+          YRadius = 15.000000000000000000
+          object Label6: TLabel
+            Align = Client
+            StyledSettings = []
+            Size.Width = 311.000000000000000000
+            Size.Height = 32.000000000000000000
+            Size.PlatformDefault = False
+            TextSettings.Font.Family = 'Sylfaen'
+            TextSettings.Font.Size = 20.000000000000000000
+            TextSettings.Font.StyleExt = {00070000000000000004000000}
+            TextSettings.FontColor = claGray
+            TextSettings.HorzAlign = Center
+            Text = 'ORA'#199#195'O EUCAR'#205'STICA'
+            TabOrder = 0
           end
         end
       end

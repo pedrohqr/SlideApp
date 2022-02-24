@@ -49,6 +49,12 @@ type
     btn_Mass_Date: TButton;
     Ani: TAniIndicator;
     ClearEditButton1: TClearEditButton;
+    TabItem3: TTabItem;
+    Rectangle7: TRectangle;
+    Label5: TLabel;
+    TabItem4: TTabItem;
+    Rectangle8: TRectangle;
+    Label6: TLabel;
     procedure btn_add_musicClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure SearchEditButton1Click(Sender: TObject);

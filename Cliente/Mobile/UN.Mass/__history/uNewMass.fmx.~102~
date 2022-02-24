@@ -49,7 +49,7 @@ inherited Frm_New_Mass: TFrm_New_Mass
       Size.Height = 403.000000000000000000
       Size.PlatformDefault = False
       TabHeight = 49.000000000000000000
-      TabIndex = 1
+      TabIndex = 0
       TabOrder = 1
       TabPosition = None
       Sizes = (
@@ -61,7 +61,7 @@ inherited Frm_New_Mass: TFrm_New_Mass
         CustomIcon = <
           item
           end>
-        IsSelected = False
+        IsSelected = True
         Size.Width = 8.000000000000000000
         Size.Height = 8.000000000000000000
         Size.PlatformDefault = False
@@ -127,6 +127,7 @@ inherited Frm_New_Mass: TFrm_New_Mass
               end>
             OnDeletingItem = LV_MMDeletingItem
             OnDeleteItem = LV_MMDeleteItem
+            DeleteButtonText = 'Excluir'
             object lbl_info_LV_Mass: TLabel
               Align = Client
               Size.Width = 311.000000000000000000
@@ -172,14 +173,14 @@ inherited Frm_New_Mass: TFrm_New_Mass
           end
           object Calendar: TCalendar
             Align = Horizontal
-            Date = 44599.000000000000000000
+            Date = 44614.000000000000000000
             Position.Y = 50.000000000000000000
             Size.Width = 311.000000000000000000
             Size.Height = 0.000000000000000000
             Size.PlatformDefault = False
             TabOrder = 2
             TodayDefault = True
-            OnDayClick = CalendarDayClick
+            OnDateSelected = CalendarDateSelected
           end
         end
         object btn_Done_Mass: TRectangle
@@ -238,7 +239,7 @@ inherited Frm_New_Mass: TFrm_New_Mass
         CustomIcon = <
           item
           end>
-        IsSelected = True
+        IsSelected = False
         Size.Width = 8.000000000000000000
         Size.Height = 8.000000000000000000
         Size.PlatformDefault = False
@@ -389,6 +390,7 @@ inherited Frm_New_Mass: TFrm_New_Mass
                 AppearanceObjectName = 'Text1'
                 AppearanceClassName = 'TTextObjectAppearance'
               end>
+            CanSwipeDelete = False
             OnItemClickEx = LV_SearchItemClickEx
             object lbl_info_lv_search: TLabel
               Align = Top
@@ -397,6 +399,7 @@ inherited Frm_New_Mass: TFrm_New_Mass
               Size.PlatformDefault = False
               TextSettings.HorzAlign = Center
               Text = 'Sem resultados...'
+              Visible = False
               TabOrder = 0
             end
             object Ani: TAniIndicator

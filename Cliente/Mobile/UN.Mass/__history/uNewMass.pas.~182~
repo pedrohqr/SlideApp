@@ -7,12 +7,12 @@ uses
   FMX.Types, FMX.Graphics, FMX.Controls, FMX.Forms, FMX.Dialogs, FMX.StdCtrls,
   uBase, FMX.ListView.Types, FMX.ListView.Appearances,
   FMX.ListView.Adapters.Base, FMX.Controls.Presentation, FMX.Objects,
-  FMX.ListView, FMX.Layouts, FMX.TabControl, FMX.ListBox, FMX.Edit,
+  FMX.ListView, FMX.Layouts, FMX.TabControl, FMX.Edit,
   Data.DBXDataSnap, Data.DBXCommon, IPPeerClient, Data.DB, Data.SqlExpr,
   FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Param,
   FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf, FireDAC.DApt.Intf,
   FireDAC.Comp.DataSet, FireDAC.Comp.Client, FireDAC.Stan.StorageJSON,
-  FMX.Gestures, uMass, FMX.Calendar;
+  FMX.Gestures, uMass, FMX.Calendar, FMX.ListBox;
 
 type
   TFrm_New_Mass = class(TFormBase)
@@ -65,8 +65,8 @@ type
     procedure btn_Done_MassClick(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure btn_Mass_DateClick(Sender: TObject);
-    procedure CalendarDayClick(Sender: TObject);
     procedure ClearEditButton1Click(Sender: TObject);
+    procedure CalendarDateSelected(Sender: TObject);
   private
     Mass : TMass;
     Page : SmallInt;
@@ -89,7 +89,8 @@ implementation
 {$R *.fmx}
 
 uses
-  Data.FireDACJSONReflect, DS_Functions, uClientModule, Lib_General, uHome;
+  Data.FireDACJSONReflect, DS_Functions, uClientModule, Lib_General, uHome,
+  uMain, FMX.Ani, FMX.DialogService;
 
 procedure TFrm_New_Mass.btn_addClick(Sender: TObject);
 begin
@@ -209,15 +210,14 @@ begin
     MT_Song : TFDMemTable;
     I : SmallInt;
   begin
-    if not DM_DataSnap.DSConn.Connected then
-     DM_DataSnap.DSConn.Connected := True;
-    Connection := TMassClient.Create(DM_DataSnap.DSConn.DBXConnection);
-    DS := TFDJSONDataSets.Create;
-    MT_Mass := TFDMemTable.Create(nil);
-    MT_Song := TFDMemTable.Create(nil);
-
     try
       try
+        if not DM_DataSnap.DSConn.Connected then
+          DM_DataSnap.DSConn.Connected := True;
+        Connection := TMassClient.Create(DM_DataSnap.DSConn.DBXConnection);
+        DS := TFDJSONDataSets.Create;
+        MT_Mass := TFDMemTable.Create(nil);
+        MT_Song := TFDMemTable.Create(nil);
         CreateFieldsMass(MT_Mass);
         CreateFieldsMass_Song(MT_Song);
         MT_Mass.Open;
@@ -230,8 +230,8 @@ begin
           FieldByName('MASS_DATE').AsDateTime     := Mass.Date;
           FieldByName('LIT_TIME_ID').AsInteger    := 1;
           FieldByName('GENERATE_DATE').AsDateTime := Now;
-          FieldByName('USER_ID').AsInteger        := ID_User;
-          FieldByName('PARISH_ID').AsInteger      := ID_Parish_Active;
+          FieldByName('USER_ID').AsInteger        := Frm_Main.ID_User;
+          FieldByName('PARISH_ID').AsInteger      := Frm_Main.ID_Parish_Active;
           Post;
         end;
 
@@ -288,9 +288,9 @@ begin
     ShowMessage('Não é possível finalizar uma missa sem músicas!')
   else
   begin
-    MessageDlg('Deseja finalizar e enviar todas as músicas?', System.UITypes.TMsgDlgType.mtInformation,
-    [System.UITypes.TMsgDlgBtn.mbYes,System.UITypes.TMsgDlgBtn.mbNo], 0,
-    procedure(const AResult: System.UITypes.TModalResult)
+    TDialogService.MessageDialog('Deseja finalizar e enviar todas as músicas?', TMsgDlgType.mtInformation,
+    [TMsgDlgBtn.mbYes, TMsgDlgBtn.mbNo], TMsgDlgBtn.mbYes, 0,
+    procedure(const AResult: TModalResult)
     begin
       case AResult of
         mrYES:
@@ -306,15 +306,15 @@ procedure TFrm_New_Mass.btn_Mass_DateClick(Sender: TObject);
 begin
   inherited;
   if Calendar.Height = 0 then
-    Calendar.AnimateFloat('Height', Lay_Tab1.Height-Lay_Tools.Height,
+    TAnimator.AnimateFloat(Calendar, 'Height', Lay_Tab1.Height-Lay_Tools.Height,
                           0.1, TAnimationType.InOut, TInterpolationType.Linear)
   else
-    Calendar.AnimateFloat('Height', 0,
+    TAnimator.AnimateFloat(Calendar, 'Height', 0,
                           0.1, TAnimationType.InOut, TInterpolationType.Linear)
 end;
 
 /// <summary> Clear all results of music
-procedure TFrm_New_Mass.CalendarDayClick(Sender: TObject);
+procedure TFrm_New_Mass.CalendarDateSelected(Sender: TObject);
 begin
   inherited;
   Mass.Date := Calendar.Date;
@@ -448,12 +448,12 @@ begin
     MT : TFDMemTable;
     Moments : TMassClient;
   begin
-    if not DM_DataSnap.DSConn.Connected then
-     DM_DataSnap.DSConn.Connected := True;
-    MT := TFDMemTable.Create(nil);
-    Moments := TMassClient.Create(DM_DataSnap.DSConn.DBXConnection);
     try
       try
+        if not DM_DataSnap.DSConn.Connected then
+          DM_DataSnap.DSConn.Connected := True;
+        MT := TFDMemTable.Create(nil);
+        Moments := TMassClient.Create(DM_DataSnap.DSConn.DBXConnection);
         DS := Moments.Get_Moments;
         MT.Active := False;
         MT.AppendData(TFDJSONDataSetsReader.GetListValue(DS, 0));
@@ -536,12 +536,12 @@ begin
     MT : TFDMemTable;
     Song : TSongClient;
   begin
-    if not DM_DataSnap.DSConn.Connected then
-     DM_DataSnap.DSConn.Connected := True;
-    MT := TFDMemTable.Create(nil);
-    Song := TSongClient.Create(DM_DataSnap.DSConn.DBXConnection);
     try
       try
+        if not DM_DataSnap.DSConn.Connected then
+          DM_DataSnap.DSConn.Connected := True;
+        MT := TFDMemTable.Create(nil);
+        Song := TSongClient.Create(DM_DataSnap.DSConn.DBXConnection);
         DS := Song.Get_Songs(Page, Text);
         MT.Active := False;
         MT.AppendData(TFDJSONDataSetsReader.GetListValue(DS, 0));
