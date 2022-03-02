@@ -28,7 +28,8 @@ type
 
       procedure ClearAllFieldsQuery;
       procedure ClearAllFieldsSP;
-      procedure CreateQuery;
+      procedure CreateQuery; Overload;
+      procedure CreateQuery(var AQuery : TFDQuery); Overload;
       procedure CreateSP(const ANameSP : String);
   end;
 
@@ -86,12 +87,24 @@ begin
   Conn.Connected := True;
 end;
 
+/// <summary> Create a new TFDQuery using var Query
+/// </summary>
 procedure TConnection.CreateQuery;
 begin
   if Assigned(Query) then
     FreeAndNil(Query);
   Query := TFDQuery.Create(Self.Owner);
   Query.Connection := Conn;
+end;
+
+/// <summary> Create a new TFDQuery assigning to TConnection
+/// </summary>
+procedure TConnection.CreateQuery(var AQuery : TFDQuery);
+begin
+  if Assigned(AQuery) then
+    FreeAndNil(AQuery);
+  AQuery := TFDQuery.Create(Self);
+  AQuery.Connection := Conn;
 end;
 
 procedure TConnection.CreateSP(const ANameSP: String);

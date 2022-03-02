@@ -19,6 +19,7 @@ type
       destructor Destroy; override;
 
       function Get_Moments: TFDJSONDataSets;
+      function Get_EucPrayer: TFDJSONDataSets;
       function Get_Mass(const pag : SmallInt; User_ID, Parish_ID : Integer;
                       Filter, Text : String; Asc : Boolean): TFDJSONDataSets;
       function Get_Songs(pag : SmallInt; Text : String): TFDJSONDataSets;
@@ -175,6 +176,13 @@ begin
        FConn.SP.ParamByName('V_MASS_DATE').AsDateTime     := FieldByName('MASS_DATE').AsDateTime;
        FConn.SP.ParamByName('V_LIT_TIME_ID').AsInteger    := FieldByName('LIT_TIME_ID').AsInteger;
        FConn.SP.ParamByName('V_GENERATE_DATE').AsDateTime := FieldByName('GENERATE_DATE').AsDateTime;
+       FConn.SP.ParamByName('V_ASSEMBLY_PRAYER').AsString := FieldByName('ASSEMBLY_PRAYER').AsString;
+       FConn.SP.ParamByName('V_FREADING').AsString        := FieldByName('FIRST_READING').AsString;
+       FConn.SP.ParamByName('V_SREADING').AsString        := FieldByName('SECOND_READING').AsString;
+       FConn.SP.ParamByName('V_GOSPEL').AsString          := FieldByName('GOSPEL').AsString;
+       FConn.SP.ParamByName('V_PSALM_L').AsString         := FieldByName('PSALM_LYRICS').AsString;
+       FConn.SP.ParamByName('V_PSALM_T').AsString     := FieldByName('PSALM_TITLE').AsString;
+       FConn.SP.ParamByName('V_EPRAYER_ID').AsInteger     := FieldByName('EPRAYER_ID').AsInteger;
        FConn.SP.ParamByName('V_USER_ID').AsInteger        := FieldByName('USER_ID').AsInteger;
        FConn.SP.ParamByName('V_PARISH_ID').AsInteger      := FieldByName('PARISH_ID').AsInteger;
        FConn.SP.ExecProc;
@@ -217,55 +225,182 @@ end;
 function TMass.Create_Slide(Mass_ID: Integer): String;
 var
   FileName : String;
+  Query_Song1,
+  Query_Song2,
+  Query_Song3,
+  Query_Song4 : TFDQuery;
 begin
-  FileName := 'Missa_'+Mass_ID.ToString+'.pptx';
-  FConn.CreateQuery;
-  with FConn.Query do
-  begin
+  try
+    FileName := 'Missa_'+Mass_ID.ToString+'.pptx';
 
-    Active := False;
-    SQL.Text := 'SELECT                            '+
-                '   M.TITLE,                       '+
-                '   M.MASS_DATE,                   '+
-                '   COALESCE(P.NAME, '''')         '+
-                '        AS PARISH_NAME,           '+
-                '   S.LYRICS,                      '+
-                '   MO.NAME AS MOMENT              '+
-                'FROM MASS M                       '+
-                '   INNER JOIN MASS_SONG MS        '+
-                '   ON M.MASS_ID = MS.MASS_ID      '+
-                '   INNER JOIN SONG S              '+
-                '   ON S.SONG_ID = MS.SONG_ID      '+
-                '   INNER JOIN MOMENTS MO          '+
-                '   ON MO.MOMENT_ID = MS.MOMENT_ID '+
-                '   INNER JOIN PARISH P            '+
-                '   ON P.PARISH_ID = M.PARISH_ID   '+
-                'WHERE                             '+
-                '    M.MASS_ID = :pID;             ';
-    ParamByName('pID').AsInteger := Mass_ID;
-    Active := True;
-  end;
+    FConn.CreateQuery(Query_Song1);
+    with Query_Song1 do
+    begin
+      Active := False;
+      SQL.Text := 'SELECT                              '+
+                  '   COALESCE(S.LYRICS, '''')         '+
+                  '   AS LYRICS,                       '+
+                  '   MS.SONG_ORDER,                   '+
+                  '   COALESCE(MO.NAME, '''')          '+
+                  '   AS MOMENT                        '+
+                  'FROM MASS M                         '+
+                  '   INNER JOIN MASS_SONG MS          '+
+                  '   ON M.MASS_ID = MS.MASS_ID        '+
+                  '   INNER JOIN SONG S                '+
+                  '   ON S.SONG_ID = MS.SONG_ID        '+
+                  '   INNER JOIN MOMENTS MO            '+
+                  '   ON MO.MOMENT_ID = MS.MOMENT_ID   '+
+                  'WHERE                               '+
+                  '   MS.MOMENT_ID <= 3 AND            '+//get songs until Gloria
+                  '   M.MASS_ID = :pID                 '+
+                  'ORDER BY MS.SONG_ORDER;             ';
+      ParamByName('pID').AsInteger := Mass_ID;
+      Active := True;
+    end;
 
-  DSSlideCreator.frxDBDataset.DataSet := FConn.Query;
+    FConn.CreateQuery(Query_Song2);
+    with Query_Song2 do
+    begin
+      Active := False;
+      SQL.Text := 'SELECT                              '+
+                  '   COALESCE(S.LYRICS, '''')         '+
+                  '   AS LYRICS,                       '+
+                  '   MS.SONG_ORDER,                   '+
+                  '   COALESCE(MO.NAME, '''')          '+
+                  '   AS MOMENT                        '+
+                  'FROM MASS M                         '+
+                  '   INNER JOIN MASS_SONG MS          '+
+                  '   ON M.MASS_ID = MS.MASS_ID        '+
+                  '   INNER JOIN SONG S                '+
+                  '   ON S.SONG_ID = MS.SONG_ID        '+
+                  '   INNER JOIN MOMENTS MO            '+
+                  '   ON MO.MOMENT_ID = MS.MOMENT_ID   '+
+                  'WHERE                               '+
+                  '   (MS.MOMENT_ID = 5) AND           '+//get the aclaim
+                  '   M.MASS_ID = :pID                 '+
+                  'ORDER BY MS.SONG_ORDER;             ';
+      ParamByName('pID').AsInteger := Mass_ID;
+      Active := True;
+    end;
 
-  DSSlideCreator.frxPPTXExport.FileName := FileName;
-  DSSlideCreator.frxPPTXExport.DefaultPath := ExtractFilePath(ParamStr(0)) + 'reports\';
+    FConn.CreateQuery(Query_Song3);
+    with Query_Song3 do
+    begin
+      Active := False;
+      SQL.Text := 'SELECT                              '+
+                  '   COALESCE(S.LYRICS, '''')         '+
+                  '   AS LYRICS,                       '+
+                  '   MS.SONG_ORDER,                   '+
+                  '   COALESCE(MO.NAME, '''')          '+
+                  '   AS MOMENT                        '+
+                  'FROM MASS M                         '+
+                  '   INNER JOIN MASS_SONG MS          '+
+                  '   ON M.MASS_ID = MS.MASS_ID        '+
+                  '   INNER JOIN SONG S                '+
+                  '   ON S.SONG_ID = MS.SONG_ID        '+
+                  '   INNER JOIN MOMENTS MO            '+
+                  '   ON MO.MOMENT_ID = MS.MOMENT_ID   '+
+                  'WHERE                               '+
+                  '   (MS.MOMENT_ID > 5 AND MS.MOMENT_ID <= 7) AND '+//get from offertory to saint
+                  '   M.MASS_ID = :pID                 '+
+                  'ORDER BY MS.SONG_ORDER;             ';
+      ParamByName('pID').AsInteger := Mass_ID;
+      Active := True;
+    end;
 
-  with DSSlideCreator.frxReportPPTX do
-  begin
-    Variables['txt_welcome'] := QuotedStr('Seja muito bem vindo!');
-    Variables['txt_title']  := QuotedStr(FConn.Query.FieldByName('TITLE').AsString);
-    Variables['txt_parish']  := QuotedStr(FConn.Query.FieldByName('PARISH_NAME').AsString);
-    Variables['txt_date']  := QuotedStr(FConn.Query.FieldByName('MASS_DATE').AsString);
+    FConn.CreateQuery(Query_Song4);
+    with Query_Song4 do
+    begin
+      Active := False;
+      SQL.Text := 'SELECT                              '+
+                  '   COALESCE(S.LYRICS, '''')         '+
+                  '   AS LYRICS,                       '+
+                  '   MS.SONG_ORDER,                   '+
+                  '   COALESCE(MO.NAME, '''')          '+
+                  '   AS MOMENT                        '+
+                  'FROM MASS M                         '+
+                  '   INNER JOIN MASS_SONG MS          '+
+                  '   ON M.MASS_ID = MS.MASS_ID        '+
+                  '   INNER JOIN SONG S                '+
+                  '   ON S.SONG_ID = MS.SONG_ID        '+
+                  '   INNER JOIN MOMENTS MO            '+
+                  '   ON MO.MOMENT_ID = MS.MOMENT_ID   '+
+                  'WHERE                               '+
+                  '   (MS.MOMENT_ID >= 9) AND          '+//get communion to ahead
+                  '   M.MASS_ID = :pID                 '+
+                  'ORDER BY MS.SONG_ORDER;             ';
+      ParamByName('pID').AsInteger := Mass_ID;
+      Active := True;
+    end;
 
-//    if ( FileExists(ExtractFilePath(ParamStr(0)) + '\images\harsoft.png') and (FindComponent('logoImg')<> nil ) ) then  //imagem do relatorio
-//          TfrxPictureView(FindComponent('logoImg')).Picture.LoadFromFile(ExtractFilePath(ParamStr(0)) + '\images\harsoft.png');
-    PrepareReport;
-    PrintOptions.ShowDialog := False;
-    DSSlideCreator.frxPPTXExport.ShowDialog := False;
-    DSSlideCreator.frxPPTXExport.OpenAfterExport := False;
-    DSSlideCreator.frxReportPPTX.Export(DSSlideCreator.frxPPTXExport);
-    Result := TPath.Combine(DSSlideCreator.frxPPTXExport.DefaultPath, FileName);
+    FConn.CreateQuery;
+    with FConn.Query do
+    begin
+      SQL.Text := 'SELECT '+
+                  '   M.TITLE, '+
+                  '   COALESCE(P.NAME, '''') '+
+                  '   AS PARISH_NAME, '+
+                  '   M.MASS_DATE, '+
+                  '   M.FIRST_READING, '+
+                  '   COALESCE(M.SECOND_READING, '''') '+
+                  '   AS SECOND_READING, '+
+                  '   M.GOSPEL, '+
+                  '   M.PSALM_TITLE, '+
+                  '   M.PSALM_LYRICS, '+
+                  '   COALESCE(M.ASSEMBLY_PRAYER, '''') '+
+                  '   AS ASSEMBLY_PRAYER, '+
+                  '   EP.TEXT AS EPRAYER '+
+                  'FROM MASS M '+
+                  'LEFT JOIN PARISH P '+
+                  'ON P.PARISH_ID = M.PARISH_ID '+
+                  'LEFT JOIN EUCHARISTIC_PRAYER EP '+
+                  'ON M.EPRAYER_ID = EP.EPRAYER_ID '+
+                  'WHERE M.MASS_ID = :pID;';
+      ParamByName('pID').AsInteger := Mass_ID;
+      Active := True;
+    end;
+
+    DSSlideCreator.frxDBDS_Mass.DataSet := FConn.Query;
+    DSSlideCreator.frxDBDS_Song1.DataSet := Query_Song1;
+    DSSlideCreator.frxDBDS_Song2.DataSet := Query_Song2;
+    DSSlideCreator.frxDBDS_Song3.DataSet := Query_Song3;
+    DSSlideCreator.frxDBDS_Song4.DataSet := Query_Song4;
+
+
+    DSSlideCreator.frxPPTXExport.FileName := FileName;
+    DSSlideCreator.frxPPTXExport.DefaultPath := ExtractFilePath(ParamStr(0)) + 'reports\';
+
+    with DSSlideCreator.frxReportPPTX do
+    begin
+      Variables['txt_welcome'] := QuotedStr('Seja muito bem vindo!');
+      Variables['txt_title']  := QuotedStr(FConn.Query.FieldByName('TITLE').AsString);
+      Variables['txt_parish']  := QuotedStr(FConn.Query.FieldByName('PARISH_NAME').AsString);
+      Variables['txt_date']  := QuotedStr(FConn.Query.FieldByName('MASS_DATE').AsString);
+      Variables['First_Reading']  := QuotedStr(FConn.Query.FieldByName('FIRST_READING').AsString);
+      Variables['Second_Reading']  := QuotedStr(FConn.Query.FieldByName('SECOND_READING').AsString);
+      Variables['PSalm_Title']  := QuotedStr(FConn.Query.FieldByName('PSALM_TITLE').AsString);
+      Variables['PSalm_Lyrics']  := QuotedStr(FConn.Query.FieldByName('PSALM_LYRICS').AsString);
+      Variables['Assembly_Prayer']  := QuotedStr(FConn.Query.FieldByName('ASSEMBLY_PRAYER').AsString);
+      Variables['EPrayer']  := QuotedStr(FConn.Query.FieldByName('EPRAYER').AsString);
+
+//      if ( FileExists(ExtractFilePath(ParamStr(0)) + '\images\harsoft.png') and (FindComponent('logoImg')<> nil ) ) then  //imagem do relatorio
+//            TfrxPictureView(FindComponent('logoImg')).Picture.LoadFromFile(ExtractFilePath(ParamStr(0)) + '\images\harsoft.png');
+      PrepareReport;
+      PrintOptions.ShowDialog := False;
+      DSSlideCreator.frxPPTXExport.ShowDialog := False;
+      DSSlideCreator.frxPPTXExport.OpenAfterExport := False;
+      DSSlideCreator.frxReportPPTX.Export(DSSlideCreator.frxPPTXExport);
+      Result := TPath.Combine(DSSlideCreator.frxPPTXExport.DefaultPath, FileName);
+    end;
+  finally
+    if Assigned(Query_Song1) then
+      FreeAndNil(Query_Song1);
+    if Assigned(Query_Song2) then
+      FreeAndNil(Query_Song2);
+    if Assigned(Query_Song3) then
+      FreeAndNil(Query_Song3);
+    if Assigned(Query_Song4) then
+      FreeAndNil(Query_Song4);
   end;
 end;
 
@@ -284,15 +419,27 @@ var
   FilePath : String;
 begin
   FilePath := ExtractFilePath(ParamStr(0)) + 'reports\Missa_'+Mass_ID.ToString+'.pptx';
-  FStream := TFileStream.Create(FilePath, fmOpenRead);
   try
     if not FileExists(FilePath) then
-      raise Exception.Create('Server: Arquivo não encontrado em:'+FilePath)
-    else
-      Result := TDBXJSONTools.StreamToJSON(FStream, 0, FStream.Size);
+      Create_Slide(Mass_ID);
+    FStream := TFileStream.Create(FilePath, fmOpenRead);
+    Result := TDBXJSONTools.StreamToJSON(FStream, 0, FStream.Size);
   finally
-    FreeAndNil(FStream);
+    if Assigned(FStream) then
+      FreeAndNil(FStream);
   end;
+end;
+
+/// <summary> Return the Eucharistic Prayers
+/// </summary>
+function TMass.Get_EucPrayer: TFDJSONDataSets;
+begin
+  Result := TFDJSONDataSets.Create;
+  FConn.CreateQuery;
+  FConn.Query.SQL.Text := 'SELECT '+
+                          ' EPRAYER_ID, NAME '+
+                          'FROM EUCHARISTIC_PRAYER;';
+  TFDJSONDataSetsWriter.ListAdd(Result, FConn.Query);
 end;
 
 end.

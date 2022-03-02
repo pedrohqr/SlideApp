@@ -15,9 +15,13 @@ uses
 type
   TDSSlideCreator = class(TDSServerModule)
     frxPPTXExport: TfrxPPTXExport;
-    frxDBDataset: TfrxDBDataset;
+    frxDBDS_Song1: TfrxDBDataset;
     frxPDFExport: TfrxPDFExport;
     frxReportPPTX: TfrxReport;
+    frxDBDS_Mass: TfrxDBDataset;
+    frxDBDS_Song2: TfrxDBDataset;
+    frxDBDS_Song3: TfrxDBDataset;
+    frxDBDS_Song4: TfrxDBDataset;
   private
     { Private declarations }
   public

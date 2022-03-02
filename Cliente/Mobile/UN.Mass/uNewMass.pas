@@ -29,7 +29,6 @@ type
     LV_Search: TListView;
     Rectangle2: TRectangle;
     Label2: TLabel;
-    Rectangle3: TRectangle;
     cbb_Moments: TComboBox;
     Rectangle4: TRectangle;
     Label3: TLabel;
@@ -41,8 +40,6 @@ type
     lbl_info_lv_search: TLabel;
     GestureManager1: TGestureManager;
     lbl_info_LV_Mass: TLabel;
-    btn_Done_Mass: TRectangle;
-    lbl_done_mass: TLabel;
     Rectangle6: TRectangle;
     Edt_Title: TEdit;
     Calendar: TCalendar;
@@ -52,9 +49,25 @@ type
     TabItem3: TTabItem;
     Rectangle7: TRectangle;
     Label5: TLabel;
+    btn_EPrayers: TButton;
+    btn_Done_Mass: TRectangle;
+    lbl_done_mass: TLabel;
     TabItem4: TTabItem;
     Rectangle8: TRectangle;
     Label6: TLabel;
+    cbb_EPrayers: TComboBox;
+    Rectangle10: TRectangle;
+    Label7: TLabel;
+    Rectangle11: TRectangle;
+    Label8: TLabel;
+    LB_Readings: TListBox;
+    Edt_Prayers: TEdit;
+    Edt_PSalm_Title: TEdit;
+    Edt_PSalm_Lyrics: TEdit;
+    btn_Readings: TButton;
+    LBI_FReading: TListBoxItem;
+    LBI_SReading: TListBoxItem;
+    LBI_Gospel: TListBoxItem;
     procedure btn_add_musicClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure SearchEditButton1Click(Sender: TObject);
@@ -73,11 +86,16 @@ type
     procedure btn_Mass_DateClick(Sender: TObject);
     procedure ClearEditButton1Click(Sender: TObject);
     procedure CalendarDateSelected(Sender: TObject);
+    procedure btn_EPrayersClick(Sender: TObject);
+    procedure btn_ReadingsClick(Sender: TObject);
+    procedure LBI_FReadingClick(Sender: TObject);
+    procedure LBI_SReadingClick(Sender: TObject);
+    procedure LBI_GospelClick(Sender: TObject);
   private
     Mass : TMass;
     Page : SmallInt;
-    procedure LoadMoments;
-    procedure InsertMoments(AID : SmallInt; AName : String);
+    procedure LoadMassData;
+    procedure InsertCbb(AID : SmallInt; AName : String; cbb : TComboBox);
     procedure SearchMusic(Text : String);
     procedure ClearSearch;
     procedure Insert_LVItem_Music(AID : Integer; AName, AArtist, ALink: String);
@@ -194,6 +212,41 @@ begin
     end;
     with AddFieldDef do
     begin
+      Name := 'ASSEMBLY_PRAYER';
+      DataType := ftString;
+    end;
+    with AddFieldDef do
+    begin
+      Name := 'FIRST_READING';
+      DataType := ftString;
+    end;
+    with AddFieldDef do
+    begin
+      Name := 'SECOND_READING';
+      DataType := ftString;
+    end;
+    with AddFieldDef do
+    begin
+      Name := 'GOSPEL';
+      DataType := ftString;
+    end;
+    with AddFieldDef do
+    begin
+      Name := 'PSALM_LYRICS';
+      DataType := ftString;
+    end;
+    with AddFieldDef do
+    begin
+      Name := 'PSALM_TITLE';
+      DataType := ftString;
+    end;
+    with AddFieldDef do
+    begin
+      Name := 'EPRAYER_ID';
+      DataType := ftInteger;
+    end;
+    with AddFieldDef do
+    begin
       Name := 'USER_ID';
       DataType := ftInteger;
     end;
@@ -236,8 +289,25 @@ begin
           FieldByName('MASS_DATE').AsDateTime     := Mass.Date;
           FieldByName('LIT_TIME_ID').AsInteger    := 1;
           FieldByName('GENERATE_DATE').AsDateTime := Now;
+          FieldByName('FIRST_READING').AsString   := LB_Readings.ListItems[0].ItemData.Detail;
+          FieldByName('GOSPEL').AsString          := LB_Readings.ListItems[2].ItemData.Detail;
+          FieldByName('PSALM_LYRICS').AsString    := Edt_PSalm_Lyrics.Text;
+          FieldByName('PSALM_TITLE').AsString     := Edt_PSalm_Title.Text;
+          FieldByName('EPRAYER_ID').AsInteger     := cbb_EPrayers.ListItems[cbb_EPrayers.ItemIndex].Tag;
           FieldByName('USER_ID').AsInteger        := Frm_Main.ID_User;
           FieldByName('PARISH_ID').AsInteger      := Frm_Main.ID_Parish_Active;
+
+          //default
+          if not Trim(Edt_Prayers.Text).IsEmpty then
+            FieldByName('ASSEMBLY_PRAYER').AsString := Edt_Prayers.Text
+          else
+            FieldByName('ASSEMBLY_PRAYER').Clear;
+          if not ((Trim(LB_Readings.ListItems[1].ItemData.Detail).IsEmpty) or
+            (LB_Readings.ListItems[1].ItemData.Detail = 'Clique aqui para adicionar')) then
+            FieldByName('SECOND_READING').AsString  := LB_Readings.ListItems[1].ItemData.Detail
+          else
+            FieldByName('SECOND_READING').Clear;
+
           Post;
         end;
 
@@ -290,8 +360,25 @@ procedure TFrm_New_Mass.btn_Done_MassClick(Sender: TObject);
 begin
   inherited;
   Mass.Title := Edt_Title.Text;
+  if Trim(Edt_Title.Text).IsEmpty then
+    ShowMessage('Adicione um título para a missa!')
+  else
   if LV_MM.Items.Count = 0 then
     ShowMessage('Não é possível finalizar uma missa sem músicas!')
+  else
+  if (Trim(LB_Readings.ListItems[0].ItemData.Detail).IsEmpty) or
+  (LB_Readings.ListItems[0].ItemData.Detail='Clique aqui para adicionar') then
+    ShowMessage('Necessário adicionar a Primeira Leitura!')
+  else
+  if (Trim(LB_Readings.ListItems[2].ItemData.Detail).IsEmpty) or
+  (LB_Readings.ListItems[2].ItemData.Detail='Clique aqui para adicionar') then
+    ShowMessage('Necessário adicionar o Evangelho!')
+  else
+  if Trim(Edt_PSalm_Title.Text).IsEmpty or Trim(Edt_PSalm_Lyrics.Text).IsEmpty then
+    ShowMessage('Necessário adicionar o título e o refrão do Salmo Responsorial!')
+  else
+  if cbb_EPrayers.ItemIndex = -1 then
+    ShowMessage('Necessário incluir uma oração eucarística!')
   else
   begin
     TDialogService.MessageDialog('Deseja finalizar e enviar todas as músicas?', TMsgDlgType.mtInformation,
@@ -308,6 +395,12 @@ begin
   end;
 end;
 
+procedure TFrm_New_Mass.btn_EPrayersClick(Sender: TObject);
+begin
+  inherited;
+  TabControl1.ActiveTab := TabItem4;
+end;
+
 procedure TFrm_New_Mass.btn_Mass_DateClick(Sender: TObject);
 begin
   inherited;
@@ -317,6 +410,12 @@ begin
   else
     TAnimator.AnimateFloat(Calendar, 'Height', 0,
                           0.1, TAnimationType.InOut, TInterpolationType.Linear)
+end;
+
+procedure TFrm_New_Mass.btn_ReadingsClick(Sender: TObject);
+begin
+  inherited;
+  TabControl1.ActiveTab := TabItem3;
 end;
 
 /// <summary> Clear all results of music
@@ -352,8 +451,11 @@ end;
 procedure TFrm_New_Mass.FormCreate(Sender: TObject);
 begin
   inherited;
+  {$IFDEF MSWINDOWS}
+  TabControl1.TabPosition := TTabPosition.Dots;
+  {$ENDIF}
   TabControl1.ActiveTab := TabItem1;
-  LoadMoments;
+  LoadMassData;
   lbl_info_LV_Mass.Visible := True;
   Mass := TMass.Create;
   Mass.Date := Now;
@@ -373,7 +475,7 @@ begin
   if Key = vkHardwareBack then
   begin
     Key := 0;
-    if TabControl1.ActiveTab = TabItem2 then
+    if TabControl1.ActiveTab <> TabItem1 then
       TabControl1.ActiveTab := TabItem1
     else
     begin
@@ -386,18 +488,16 @@ begin
   end;
 end;
 
-/// <summary> Insert the moment in the ComboBox
-/// </summary>
-procedure TFrm_New_Mass.InsertMoments(AID: SmallInt; AName: String);
+procedure TFrm_New_Mass.InsertCbb(AID: SmallInt; AName: String; cbb : TComboBox);
 var
   Item : TListBoxItem;
 begin
-  Item := TListBoxItem.Create(cbb_Moments);
-  cbb_Moments.BeginUpdate;
-  Item.Parent := cbb_Moments;
+  Item := TListBoxItem.Create(cbb);
+  cbb.BeginUpdate;
+  Item.Parent := cbb;
   Item.Text := AName;
   Item.Tag := AID;
-  cbb_Moments.EndUpdate;
+  cbb.EndUpdate;
 end;
 
 /// <summary> Insert the ListViewItem in the LV of the mass
@@ -444,23 +544,54 @@ begin
   LV_Search.EndUpdate;
 end;
 
-/// <summary> Load all moments of mass in the ComboBox
+/// <summary> Load all moments of mass and the eucharist prayers in the ComboBox
 /// </summary>
-procedure TFrm_New_Mass.LoadMoments;
+procedure TFrm_New_Mass.LBI_FReadingClick(Sender: TObject);
+begin
+  inherited;
+  InputBox('Primeira Leitura','Título','',
+  procedure(const AResult: TModalResult; const AValue: string)
+  begin
+    LB_Readings.ListItems[0].ItemData.Detail := AValue;
+  end);
+end;
+
+procedure TFrm_New_Mass.LBI_GospelClick(Sender: TObject);
+begin
+  inherited;
+  InputBox('Evangelho','Título','',
+  procedure(const AResult: TModalResult; const AValue: string)
+  begin
+    LB_Readings.ListItems[2].ItemData.Detail := AValue;
+  end);
+end;
+
+procedure TFrm_New_Mass.LBI_SReadingClick(Sender: TObject);
+begin
+  inherited;
+  InputBox('Segunda Leitura','Título','',
+  procedure(const AResult: TModalResult; const AValue: string)
+  begin
+    LB_Readings.ListItems[1].ItemData.Detail := AValue;
+  end);
+end;
+
+procedure TFrm_New_Mass.LoadMassData;
 begin
   TThread.CreateAnonymousThread(procedure
   var
     DS : TFDJSONDataSets;
     MT : TFDMemTable;
-    Moments : TMassClient;
+    MassDS : TMassClient;
   begin
     try
       try
         if not DM_DataSnap.DSConn.Connected then
           DM_DataSnap.DSConn.Connected := True;
         MT := TFDMemTable.Create(nil);
-        Moments := TMassClient.Create(DM_DataSnap.DSConn.DBXConnection);
-        DS := Moments.Get_Moments;
+        MassDS := TMassClient.Create(DM_DataSnap.DSConn.DBXConnection);
+        //get the moments
+        DS := MassDS.Get_Moments;
         MT.Active := False;
         MT.AppendData(TFDJSONDataSetsReader.GetListValue(DS, 0));
         MT.Active := True;
@@ -471,8 +602,28 @@ begin
           while not MT.Eof do
           with MT do
           begin
-            InsertMoments(FieldByName('MOMENT_ID').AsInteger,
-                          FieldByName('NAME').AsString);
+            InsertCbb(FieldByName('MOMENT_ID').AsInteger,
+                          FieldByName('NAME').AsString,
+                          cbb_Moments);
+            Next;
+          end;
+        end);
+        MT.EmptyDataSet;
+        //get eucharistic prayers
+        DS := MassDS.Get_EucPrayer;
+        MT.Active := False;
+        MT.AppendData(TFDJSONDataSetsReader.GetListValue(DS, 0));
+        MT.Active := True;
+
+        TThread.Synchronize(nil, procedure
+        begin
+          cbb_EPrayers.Items.Clear;
+          while not MT.Eof do
+          with MT do
+          begin
+            InsertCbb(FieldByName('EPRAYER_ID').AsInteger,
+                      FieldByName('NAME').AsString,
+                      cbb_EPrayers);
             Next;
           end;
         end);
@@ -485,8 +636,8 @@ begin
     finally
       if DM_DataSnap.DSConn.Connected then
         DM_DataSnap.DSConn.Connected := False;
-      if Assigned(Moments) then
-        FreeAndNil(Moments);
+      if Assigned(MassDS) then
+        FreeAndNil(MassDS);
       if Assigned(MT) then
         FreeAndNil(MT);
     end;

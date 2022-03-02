@@ -4,42 +4,42 @@
     <Transaction>2022/01/16 10:55:31.000.336,=C:\Users\pedro\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
     <Transaction>2022/01/20 15:14:48.000.739,=C:\Users\pedro\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
     <Transaction>2022/01/21 09:32:33.000.113,=C:\Users\pedro\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
-    <Transaction>2022/01/21 09:33:05.000.807,C:\Users\pedro\Desktop\projeto_slide\Cliente\Mobile\FormMain\uMain.fmx=C:\Users\pedro\Documents\Embarcadero\Studio\Projects\Unit1.fmx</Transaction>
-    <Transaction>2022/01/21 09:33:05.000.807,C:\Users\pedro\Desktop\projeto_slide\Cliente\Mobile\FormMain\uMain.pas=C:\Users\pedro\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
-    <Transaction>2022/01/21 09:33:24.000.539,C:\Users\pedro\Desktop\projeto_slide\Cliente\Mobile\SlideApp.dproj=C:\Users\pedro\Documents\Embarcadero\Studio\Projects\Project1.dproj</Transaction>
+    <Transaction>2022/01/21 09:33:05.000.807,C:\Users\pedro\Documents\Embarcadero\Studio\Projects\Unit1.pas=C:\Users\pedro\Desktop\projeto_slide\Cliente\Mobile\FormMain\uMain.pas</Transaction>
+    <Transaction>2022/01/21 09:33:05.000.807,C:\Users\pedro\Documents\Embarcadero\Studio\Projects\Unit1.fmx=C:\Users\pedro\Desktop\projeto_slide\Cliente\Mobile\FormMain\uMain.fmx</Transaction>
+    <Transaction>2022/01/21 09:33:24.000.539,C:\Users\pedro\Documents\Embarcadero\Studio\Projects\Project1.dproj=C:\Users\pedro\Desktop\projeto_slide\Cliente\Mobile\SlideApp.dproj</Transaction>
     <Transaction>2022/01/21 09:48:03.000.484,=C:\Users\pedro\Desktop\projeto_slide\Cliente\Mobile\Unit1.pas</Transaction>
-    <Transaction>2022/01/21 09:49:11.000.539,C:\Users\pedro\Desktop\projeto_slide\Cliente\Mobile\FormBase\uBase.pas=C:\Users\pedro\Desktop\projeto_slide\Cliente\Mobile\Unit1.pas</Transaction>
-    <Transaction>2022/01/21 09:49:11.000.539,C:\Users\pedro\Desktop\projeto_slide\Cliente\Mobile\FormBase\uBase.fmx=C:\Users\pedro\Desktop\projeto_slide\Cliente\Mobile\Unit1.fmx</Transaction>
+    <Transaction>2022/01/21 09:49:11.000.539,C:\Users\pedro\Desktop\projeto_slide\Cliente\Mobile\Unit1.pas=C:\Users\pedro\Desktop\projeto_slide\Cliente\Mobile\FormBase\uBase.pas</Transaction>
+    <Transaction>2022/01/21 09:49:11.000.539,C:\Users\pedro\Desktop\projeto_slide\Cliente\Mobile\Unit1.fmx=C:\Users\pedro\Desktop\projeto_slide\Cliente\Mobile\FormBase\uBase.fmx</Transaction>
     <Transaction>2022/01/21 09:49:35.000.031,=C:\Users\pedro\Desktop\projeto_slide\Cliente\Mobile\Unit1.pas</Transaction>
-    <Transaction>2022/01/21 09:55:16.000.776,C:\Users\pedro\Desktop\projeto_slide\Cliente\Mobile\UN.Login\uLogin.fmx=C:\Users\pedro\Desktop\projeto_slide\Cliente\Mobile\Unit1.fmx</Transaction>
-    <Transaction>2022/01/21 09:55:16.000.776,C:\Users\pedro\Desktop\projeto_slide\Cliente\Mobile\UN.Login\uLogin.pas=C:\Users\pedro\Desktop\projeto_slide\Cliente\Mobile\Unit1.pas</Transaction>
+    <Transaction>2022/01/21 09:55:16.000.776,C:\Users\pedro\Desktop\projeto_slide\Cliente\Mobile\Unit1.pas=C:\Users\pedro\Desktop\projeto_slide\Cliente\Mobile\UN.Login\uLogin.pas</Transaction>
+    <Transaction>2022/01/21 09:55:16.000.776,C:\Users\pedro\Desktop\projeto_slide\Cliente\Mobile\Unit1.fmx=C:\Users\pedro\Desktop\projeto_slide\Cliente\Mobile\UN.Login\uLogin.fmx</Transaction>
     <Transaction>2022/01/21 10:05:15.000.972,=C:\Users\pedro\Desktop\projeto_slide\Cliente\Lib.DataSnap.Client\DS_Functions.pas</Transaction>
-    <Transaction>2022/01/21 10:05:19.000.804,=C:\Users\pedro\Desktop\projeto_slide\Cliente\Lib.DataSnap.Client\uConnectionDS.pas</Transaction>
     <Transaction>2022/01/21 10:05:19.000.793,=C:\Users\pedro\Desktop\projeto_slide\Cliente\Lib.DataSnap.Client\uClientModule.pas</Transaction>
+    <Transaction>2022/01/21 10:05:19.000.804,=C:\Users\pedro\Desktop\projeto_slide\Cliente\Lib.DataSnap.Client\uConnectionDS.pas</Transaction>
     <Transaction>2022/01/21 10:05:46.000.148,=C:\Users\pedro\Desktop\projeto_slide\Cliente\Lib.General\Lib_General.pas</Transaction>
     <Transaction>2022/01/21 10:23:25.000.720,=C:\Users\pedro\Desktop\projeto_slide\Cliente\Mobile\Unit1.pas</Transaction>
     <Transaction>2022/01/21 10:24:01.000.047,C:\Users\pedro\Desktop\projeto_slide\Cliente\Lib.DataSnap.Client\DS_Functions.pas=</Transaction>
-    <Transaction>2022/01/21 10:24:07.000.971,C:\Users\pedro\Desktop\projeto_slide\Cliente\Lib.DataSnap.Client\DS_Functions.pas=C:\Users\pedro\Desktop\projeto_slide\Cliente\Mobile\Unit1.pas</Transaction>
+    <Transaction>2022/01/21 10:24:07.000.971,C:\Users\pedro\Desktop\projeto_slide\Cliente\Mobile\Unit1.pas=C:\Users\pedro\Desktop\projeto_slide\Cliente\Lib.DataSnap.Client\DS_Functions.pas</Transaction>
     <Transaction>2022/01/21 10:26:59.000.089,=C:\Users\pedro\Desktop\projeto_slide\Cliente\Mobile\Unit1.pas</Transaction>
-    <Transaction>2022/01/21 10:28:51.000.571,C:\Users\pedro\Desktop\projeto_slide\Cliente\Mobile\UN.Home\uHome.pas=C:\Users\pedro\Desktop\projeto_slide\Cliente\Mobile\Unit1.pas</Transaction>
-    <Transaction>2022/01/21 10:28:51.000.571,C:\Users\pedro\Desktop\projeto_slide\Cliente\Mobile\UN.Home\uHome.fmx=C:\Users\pedro\Desktop\projeto_slide\Cliente\Mobile\Unit1.fmx</Transaction>
+    <Transaction>2022/01/21 10:28:51.000.571,C:\Users\pedro\Desktop\projeto_slide\Cliente\Mobile\Unit1.pas=C:\Users\pedro\Desktop\projeto_slide\Cliente\Mobile\UN.Home\uHome.pas</Transaction>
+    <Transaction>2022/01/21 10:28:51.000.571,C:\Users\pedro\Desktop\projeto_slide\Cliente\Mobile\Unit1.fmx=C:\Users\pedro\Desktop\projeto_slide\Cliente\Mobile\UN.Home\uHome.fmx</Transaction>
     <Transaction>2022/01/22 13:39:54.000.807,=C:\Users\pedro\Desktop\projeto_slide\Cliente\Mobile\Unit1.pas</Transaction>
-    <Transaction>2022/01/22 14:15:58.000.333,C:\Users\pedro\Desktop\projeto_slide\Cliente\Mobile\Unit1.fmx=C:\Users\pedro\Desktop\projeto_slide\Cliente\Mobile\UN.Mass\uNewMass.fmx</Transaction>
-    <Transaction>2022/01/22 14:15:58.000.333,C:\Users\pedro\Desktop\projeto_slide\Cliente\Mobile\Unit1.pas=C:\Users\pedro\Desktop\projeto_slide\Cliente\Mobile\UN.Mass\uNewMass.pas</Transaction>
+    <Transaction>2022/01/22 14:15:58.000.333,C:\Users\pedro\Desktop\projeto_slide\Cliente\Mobile\UN.Mass\uNewMass.fmx=C:\Users\pedro\Desktop\projeto_slide\Cliente\Mobile\Unit1.fmx</Transaction>
+    <Transaction>2022/01/22 14:15:58.000.333,C:\Users\pedro\Desktop\projeto_slide\Cliente\Mobile\UN.Mass\uNewMass.pas=C:\Users\pedro\Desktop\projeto_slide\Cliente\Mobile\Unit1.pas</Transaction>
     <Transaction>2022/01/22 14:17:32.000.004,=C:\Users\pedro\Desktop\projeto_slide\Cliente\Mobile\Unit1.pas</Transaction>
-    <Transaction>2022/01/22 14:25:03.000.836,C:\Users\pedro\Desktop\projeto_slide\Cliente\Mobile\Unit1.fmx=C:\Users\pedro\Desktop\projeto_slide\Cliente\Mobile\UN.Music\uSelMusic.fmx</Transaction>
-    <Transaction>2022/01/22 14:25:03.000.836,C:\Users\pedro\Desktop\projeto_slide\Cliente\Mobile\Unit1.pas=C:\Users\pedro\Desktop\projeto_slide\Cliente\Mobile\UN.Music\uSelMusic.pas</Transaction>
+    <Transaction>2022/01/22 14:25:03.000.836,C:\Users\pedro\Desktop\projeto_slide\Cliente\Mobile\UN.Music\uSelMusic.pas=C:\Users\pedro\Desktop\projeto_slide\Cliente\Mobile\Unit1.pas</Transaction>
+    <Transaction>2022/01/22 14:25:03.000.836,C:\Users\pedro\Desktop\projeto_slide\Cliente\Mobile\UN.Music\uSelMusic.fmx=C:\Users\pedro\Desktop\projeto_slide\Cliente\Mobile\Unit1.fmx</Transaction>
     <Transaction>2022/01/25 18:18:39.000.788,C:\Users\pedro\Desktop\projeto_slide\Cliente\Mobile\UN.Music\uSelMusic.pas=</Transaction>
     <Transaction>2022/01/26 15:49:17.000.626,C:\Users\pedro\Desktop\projeto_slide\Cliente\Lib.DataSnap.Client\uConnectionDS.pas=</Transaction>
     <Transaction>2022/02/06 12:04:56.000.103,=C:\Users\pedro\Desktop\projeto_slide\Cliente\Mobile\Unit1.pas</Transaction>
-    <Transaction>2022/02/06 12:05:37.000.847,C:\Users\pedro\Desktop\projeto_slide\Cliente\Classes\uMass.pas=C:\Users\pedro\Desktop\projeto_slide\Cliente\Mobile\Unit1.pas</Transaction>
+    <Transaction>2022/02/06 12:05:37.000.847,C:\Users\pedro\Desktop\projeto_slide\Cliente\Mobile\Unit1.pas=C:\Users\pedro\Desktop\projeto_slide\Cliente\Classes\uMass.pas</Transaction>
     <Transaction>2022/02/06 23:38:01.000.457,=C:\Users\pedro\Desktop\projeto_slide\Cliente\Mobile\Unit1.pas</Transaction>
-    <Transaction>2022/02/06 23:38:37.000.593,C:\Users\pedro\Desktop\projeto_slide\Cliente\Mobile\UN.Song\uSong.pas=C:\Users\pedro\Desktop\projeto_slide\Cliente\Mobile\Unit1.pas</Transaction>
-    <Transaction>2022/02/06 23:38:37.000.593,C:\Users\pedro\Desktop\projeto_slide\Cliente\Mobile\UN.Song\uSong.fmx=C:\Users\pedro\Desktop\projeto_slide\Cliente\Mobile\Unit1.fmx</Transaction>
+    <Transaction>2022/02/06 23:38:37.000.593,C:\Users\pedro\Desktop\projeto_slide\Cliente\Mobile\Unit1.pas=C:\Users\pedro\Desktop\projeto_slide\Cliente\Mobile\UN.Song\uSong.pas</Transaction>
+    <Transaction>2022/02/06 23:38:37.000.593,C:\Users\pedro\Desktop\projeto_slide\Cliente\Mobile\Unit1.fmx=C:\Users\pedro\Desktop\projeto_slide\Cliente\Mobile\UN.Song\uSong.fmx</Transaction>
     <Transaction>2022/02/08 17:42:43.000.529,=C:\Users\pedro\Desktop\projeto_slide\Cliente\Mobile\Unit1.pas</Transaction>
     <Transaction>2022/02/09 14:47:45.000.737,=C:\Users\pedro\Desktop\projeto_slide\Cliente\Mobile\Unit1.pas</Transaction>
-    <Transaction>2022/02/09 14:48:02.000.371,C:\Users\pedro\Desktop\projeto_slide\Cliente\Mobile\UN.Mass\uMassList.pas=C:\Users\pedro\Desktop\projeto_slide\Cliente\Mobile\Unit1.pas</Transaction>
-    <Transaction>2022/02/09 14:48:02.000.371,C:\Users\pedro\Desktop\projeto_slide\Cliente\Mobile\UN.Mass\uMassList.fmx=C:\Users\pedro\Desktop\projeto_slide\Cliente\Mobile\Unit1.fmx</Transaction>
+    <Transaction>2022/02/09 14:48:02.000.371,C:\Users\pedro\Desktop\projeto_slide\Cliente\Mobile\Unit1.pas=C:\Users\pedro\Desktop\projeto_slide\Cliente\Mobile\UN.Mass\uMassList.pas</Transaction>
+    <Transaction>2022/02/09 14:48:02.000.371,C:\Users\pedro\Desktop\projeto_slide\Cliente\Mobile\Unit1.fmx=C:\Users\pedro\Desktop\projeto_slide\Cliente\Mobile\UN.Mass\uMassList.fmx</Transaction>
     <Transaction>2022/02/10 18:58:42.000.801,=C:\Users\pedro\Desktop\projeto_slide\KastriFree-master\API\DW.Androidapi.JNI.FileProvider.pas</Transaction>
     <Transaction>2022/02/10 18:59:42.000.735,=C:\Users\pedro\Desktop\projeto_slide\KastriFree-master\Core\DW.Android.Helpers.pas</Transaction>
     <Transaction>2022/02/10 19:03:54.000.060,=C:\Users\pedro\Desktop\projeto_slide\KastriFree-master\Include\DW.GlobalDefines.inc</Transaction>
@@ -50,7 +50,7 @@
     <Transaction>2022/02/16 20:20:00.000.071,C:\Program Files (x86)\Embarcadero\Studio\21.0\source\fmx\FMX.WebBrowser.Delegate.Cocoa.pas=</Transaction>
   </Transactions>
 	<ActiveMobileDevice>
-		<NoProfile iOSSimulator="iPhone5" Android="AVD_for_5_4_FWVGA" Android64=""/>
+		<NoProfile iOSSimulator="iPhone5" Android="ZF5234JD4T" Android64="AVD_for_Nexus_9_by_Google"/>
 		<PMacBigSur iOSSimulator="iPhone"/>
 	</ActiveMobileDevice>
 	<ProjectSortOrder AutoSort="0" SortType="0">

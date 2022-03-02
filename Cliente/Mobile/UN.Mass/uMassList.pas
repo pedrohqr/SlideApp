@@ -394,8 +394,6 @@ end;
 
 procedure TFrm_Mass.LVItemClickEx(const Sender: TObject; ItemIndex: Integer;
   const LocalClickPos: TPointF; const ItemObject: TListItemDrawable);
-var
-  Stream : TFileStream;
 begin
   inherited;
   if Assigned(ItemObject) then

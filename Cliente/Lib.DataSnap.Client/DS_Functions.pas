@@ -1,6 +1,6 @@
 //
 // Created by the DataSnap proxy generator.
-// 09/02/2022 23:10:50
+// 28/02/2022 15:49:56
 //
 
 unit DS_Functions;
@@ -27,6 +27,7 @@ type
   TMassClient = class(TDSAdminClient)
   private
     FGet_MomentsCommand: TDBXCommand;
+    FGet_EucPrayerCommand: TDBXCommand;
     FGet_MassCommand: TDBXCommand;
     FGet_SongsCommand: TDBXCommand;
     FDownloadSlideCommand: TDBXCommand;
@@ -36,6 +37,7 @@ type
     constructor Create(ADBXConnection: TDBXConnection; AInstanceOwner: Boolean); overload;
     destructor Destroy; override;
     function Get_Moments: TFDJSONDataSets;
+    function Get_EucPrayer: TFDJSONDataSets;
     function Get_Mass(pag: SmallInt; User_ID: Integer; Parish_ID: Integer; Filter: string; Text: string; Asc: Boolean): TFDJSONDataSets;
     function Get_Songs(pag: SmallInt; Text: string): TFDJSONDataSets;
     function DownloadSlide(Mass_ID: Integer): TJSONArray;
@@ -146,6 +148,31 @@ begin
       Result := TFDJSONDataSets(FUnMarshal.UnMarshal(FGet_MomentsCommand.Parameters[0].Value.GetJSONValue(True)));
       if FInstanceOwner then
         FGet_MomentsCommand.FreeOnExecute(Result);
+    finally
+      FreeAndNil(FUnMarshal)
+    end
+  end
+  else
+    Result := nil;
+end;
+
+function TMassClient.Get_EucPrayer: TFDJSONDataSets;
+begin
+  if FGet_EucPrayerCommand = nil then
+  begin
+    FGet_EucPrayerCommand := FDBXConnection.CreateCommand;
+    FGet_EucPrayerCommand.CommandType := TDBXCommandTypes.DSServerMethod;
+    FGet_EucPrayerCommand.Text := 'TMass.Get_EucPrayer';
+    FGet_EucPrayerCommand.Prepare;
+  end;
+  FGet_EucPrayerCommand.ExecuteUpdate;
+  if not FGet_EucPrayerCommand.Parameters[0].Value.IsNull then
+  begin
+    FUnMarshal := TDBXClientCommand(FGet_EucPrayerCommand.Parameters[0].ConnectionHandler).GetJSONUnMarshaler;
+    try
+      Result := TFDJSONDataSets(FUnMarshal.UnMarshal(FGet_EucPrayerCommand.Parameters[0].Value.GetJSONValue(True)));
+      if FInstanceOwner then
+        FGet_EucPrayerCommand.FreeOnExecute(Result);
     finally
       FreeAndNil(FUnMarshal)
     end
@@ -277,6 +304,7 @@ end;
 destructor TMassClient.Destroy;
 begin
   FGet_MomentsCommand.DisposeOf;
+  FGet_EucPrayerCommand.DisposeOf;
   FGet_MassCommand.DisposeOf;
   FGet_SongsCommand.DisposeOf;
   FDownloadSlideCommand.DisposeOf;

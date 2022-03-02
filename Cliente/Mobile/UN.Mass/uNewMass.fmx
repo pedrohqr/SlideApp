@@ -1,6 +1,6 @@
 inherited Frm_New_Mass: TFrm_New_Mass
   Caption = 'FormBase1'
-  ClientHeight = 493
+  ClientHeight = 494
   ClientWidth = 351
   OnCreate = FormCreate
   OnDestroy = FormDestroy
@@ -8,7 +8,7 @@ inherited Frm_New_Mass: TFrm_New_Mass
   DesignerMasterStyle = 3
   inherited LayoutClient: TLayout
     Size.Width = 351.000000000000000000
-    Size.Height = 493.000000000000000000
+    Size.Height = 494.000000000000000000
     object Rectangle1: TRectangle
       Align = Top
       Fill.Color = claWhite
@@ -46,26 +46,26 @@ inherited Frm_New_Mass: TFrm_New_Mass
       Margins.Right = 10.000000000000000000
       Margins.Bottom = 20.000000000000000000
       Size.Width = 331.000000000000000000
-      Size.Height = 403.000000000000000000
+      Size.Height = 404.000000000000000000
       Size.PlatformDefault = False
       TabHeight = 49.000000000000000000
-      TabIndex = 2
+      TabIndex = 0
       TabOrder = 1
       TabPosition = None
       Sizes = (
         331s
-        403s
+        404s
         331s
-        403s
+        404s
         331s
-        403s
+        404s
         331s
-        403s)
+        404s)
       object TabItem1: TTabItem
         CustomIcon = <
           item
           end>
-        IsSelected = False
+        IsSelected = True
         Size.Width = 8.000000000000000000
         Size.Height = 8.000000000000000000
         Size.PlatformDefault = False
@@ -79,7 +79,7 @@ inherited Frm_New_Mass: TFrm_New_Mass
           Margins.Left = 10.000000000000000000
           Margins.Right = 10.000000000000000000
           Size.Width = 311.000000000000000000
-          Size.Height = 321.000000000000000000
+          Size.Height = 322.000000000000000000
           Size.PlatformDefault = False
           TabOrder = 2
           object LV_MM: TListView
@@ -91,7 +91,7 @@ inherited Frm_New_Mass: TFrm_New_Mass
             FooterAppearanceClassName = 'TListHeaderObjects'
             Align = Client
             Size.Width = 311.000000000000000000
-            Size.Height = 271.000000000000000000
+            Size.Height = 272.000000000000000000
             Size.PlatformDefault = False
             TabOrder = 0
             ItemAppearance.ItemHeight = 75
@@ -174,10 +174,36 @@ inherited Frm_New_Mass: TFrm_New_Mass
               Text = 'btn_Mass_Date'
               OnClick = btn_Mass_DateClick
             end
+            object btn_EPrayers: TButton
+              Align = Right
+              Position.X = 142.000000000000000000
+              Position.Y = 1.000000000000000000
+              Size.Width = 73.000000000000000000
+              Size.Height = 48.000000000000000000
+              Size.PlatformDefault = False
+              StyleLookup = 'speedbuttonstyle'
+              TabOrder = 2
+              Text = 'Ora'#231#245'es Eucat'#237'sticas'
+              TextSettings.WordWrap = True
+              OnClick = btn_EPrayersClick
+            end
+            object btn_Readings: TButton
+              Align = Right
+              Position.X = 69.000000000000000000
+              Position.Y = 1.000000000000000000
+              Size.Width = 73.000000000000000000
+              Size.Height = 48.000000000000000000
+              Size.PlatformDefault = False
+              StyleLookup = 'speedbuttonstyle'
+              TabOrder = 3
+              Text = 'Leituras e Salmo'
+              TextSettings.WordWrap = True
+              OnClick = btn_ReadingsClick
+            end
           end
           object Calendar: TCalendar
             Align = Horizontal
-            Date = 44615.000000000000000000
+            Date = 44621.000000000000000000
             Position.Y = 50.000000000000000000
             Size.Width = 311.000000000000000000
             Size.Height = 0.000000000000000000
@@ -185,32 +211,6 @@ inherited Frm_New_Mass: TFrm_New_Mass
             TabOrder = 2
             TodayDefault = True
             OnDateSelected = CalendarDateSelected
-          end
-        end
-        object btn_Done_Mass: TRectangle
-          Align = Bottom
-          Fill.Color = xFFF8F596
-          Margins.Left = 10.000000000000000000
-          Margins.Top = 5.000000000000000000
-          Margins.Right = 10.000000000000000000
-          Margins.Bottom = 5.000000000000000000
-          Position.X = 10.000000000000000000
-          Position.Y = 363.000000000000000000
-          Size.Width = 311.000000000000000000
-          Size.Height = 35.000000000000000000
-          Size.PlatformDefault = False
-          Stroke.Kind = None
-          XRadius = 10.000000000000000000
-          YRadius = 10.000000000000000000
-          OnClick = btn_Done_MassClick
-          object lbl_done_mass: TLabel
-            Align = Client
-            Size.Width = 311.000000000000000000
-            Size.Height = 35.000000000000000000
-            Size.PlatformDefault = False
-            TextSettings.HorzAlign = Center
-            Text = 'Finalizar e Enviar'
-            TabOrder = 0
           end
         end
         object Rectangle6: TRectangle
@@ -232,10 +232,37 @@ inherited Frm_New_Mass: TFrm_New_Mass
             Align = Client
             TabOrder = 0
             MaxLength = 200
+            TextSettings.HorzAlign = Center
             Size.Width = 311.000000000000000000
             Size.Height = 32.000000000000000000
             Size.PlatformDefault = False
             TextPrompt = '(T'#237'tulo da Missa)'
+          end
+        end
+        object btn_Done_Mass: TRectangle
+          Align = Bottom
+          Fill.Color = xFFF8F596
+          Margins.Left = 10.000000000000000000
+          Margins.Top = 5.000000000000000000
+          Margins.Right = 10.000000000000000000
+          Margins.Bottom = 5.000000000000000000
+          Position.X = 10.000000000000000000
+          Position.Y = 364.000000000000000000
+          Size.Width = 311.000000000000000000
+          Size.Height = 35.000000000000000000
+          Size.PlatformDefault = False
+          Stroke.Kind = None
+          XRadius = 10.000000000000000000
+          YRadius = 10.000000000000000000
+          OnClick = btn_Done_MassClick
+          object lbl_done_mass: TLabel
+            Align = Client
+            Size.Width = 311.000000000000000000
+            Size.Height = 35.000000000000000000
+            Size.PlatformDefault = False
+            TextSettings.HorzAlign = Center
+            Text = 'Finalizar e Enviar'
+            TabOrder = 0
           end
         end
       end
@@ -255,7 +282,7 @@ inherited Frm_New_Mass: TFrm_New_Mass
         object Lay_Tab2: TLayout
           Align = Client
           Size.Width = 331.000000000000000000
-          Size.Height = 403.000000000000000000
+          Size.Height = 404.000000000000000000
           Size.PlatformDefault = False
           TabOrder = 0
           object Rectangle2: TRectangle
@@ -267,13 +294,13 @@ inherited Frm_New_Mass: TFrm_New_Mass
             Position.X = 10.000000000000000000
             Position.Y = 10.000000000000000000
             Size.Width = 311.000000000000000000
-            Size.Height = 32.000000000000000000
+            Size.Height = 66.000000000000000000
             Size.PlatformDefault = False
             Stroke.Kind = None
             XRadius = 15.000000000000000000
             YRadius = 15.000000000000000000
             object Label2: TLabel
-              Align = Client
+              Align = Top
               StyledSettings = []
               Size.Width = 311.000000000000000000
               Size.Height = 32.000000000000000000
@@ -284,28 +311,13 @@ inherited Frm_New_Mass: TFrm_New_Mass
               TextSettings.FontColor = claGray
               TextSettings.HorzAlign = Center
               Text = 'SELECIONE O MOMENTO'
-              TabOrder = 0
+              TabOrder = 1
             end
-          end
-          object Rectangle3: TRectangle
-            Align = Top
-            Fill.Color = claWhite
-            Margins.Left = 30.000000000000000000
-            Margins.Top = 10.000000000000000000
-            Margins.Right = 30.000000000000000000
-            Position.X = 30.000000000000000000
-            Position.Y = 52.000000000000000000
-            Size.Width = 271.000000000000000000
-            Size.Height = 45.000000000000000000
-            Size.PlatformDefault = False
-            Stroke.Kind = None
-            XRadius = 10.000000000000000000
-            YRadius = 10.000000000000000000
             object cbb_Moments: TComboBox
               Align = Client
               Margins.Left = 5.000000000000000000
               Margins.Right = 5.000000000000000000
-              Size.Width = 261.000000000000000000
+              Size.Width = 301.000000000000000000
               Size.Height = 32.000000000000000000
               Size.PlatformDefault = False
               StyleLookup = 'ComboBox'
@@ -319,7 +331,7 @@ inherited Frm_New_Mass: TFrm_New_Mass
             Margins.Top = 10.000000000000000000
             Margins.Right = 10.000000000000000000
             Position.X = 10.000000000000000000
-            Position.Y = 107.000000000000000000
+            Position.Y = 86.000000000000000000
             Size.Width = 311.000000000000000000
             Size.Height = 32.000000000000000000
             Size.PlatformDefault = False
@@ -352,7 +364,7 @@ inherited Frm_New_Mass: TFrm_New_Mass
             Margins.Right = 10.000000000000000000
             Margins.Bottom = 20.000000000000000000
             Size.Width = 311.000000000000000000
-            Size.Height = 162.000000000000000000
+            Size.Height = 184.000000000000000000
             Size.PlatformDefault = False
             TabOrder = 0
             ItemAppearance.ItemHeight = 70
@@ -418,7 +430,7 @@ inherited Frm_New_Mass: TFrm_New_Mass
             Margins.Top = 5.000000000000000000
             Margins.Right = 10.000000000000000000
             Position.X = 10.000000000000000000
-            Position.Y = 144.000000000000000000
+            Position.Y = 123.000000000000000000
             Size.Width = 311.000000000000000000
             Size.Height = 32.000000000000000000
             Size.PlatformDefault = False
@@ -457,7 +469,7 @@ inherited Frm_New_Mass: TFrm_New_Mass
           object btn_add: TRectangle
             Align = Bottom
             Fill.Color = xFFF8F596
-            Position.Y = 368.000000000000000000
+            Position.Y = 369.000000000000000000
             Size.Width = 331.000000000000000000
             Size.Height = 35.000000000000000000
             Size.PlatformDefault = False
@@ -481,13 +493,15 @@ inherited Frm_New_Mass: TFrm_New_Mass
         CustomIcon = <
           item
           end>
-        IsSelected = True
+        IsSelected = False
         Size.Width = 8.000000000000000000
         Size.Height = 8.000000000000000000
         Size.PlatformDefault = False
         StyleLookup = ''
         TabOrder = 0
         Text = 'TabItem3'
+        ExplicitSize.cx = 8.000000000000000000
+        ExplicitSize.cy = 8.000000000000000000
         object Rectangle7: TRectangle
           Align = Top
           Fill.Color = claWhite
@@ -497,16 +511,16 @@ inherited Frm_New_Mass: TFrm_New_Mass
           Position.X = 10.000000000000000000
           Position.Y = 10.000000000000000000
           Size.Width = 311.000000000000000000
-          Size.Height = 32.000000000000000000
+          Size.Height = 183.000000000000000000
           Size.PlatformDefault = False
           Stroke.Kind = None
           XRadius = 15.000000000000000000
           YRadius = 15.000000000000000000
           object Label5: TLabel
-            Align = Client
+            Align = Top
             StyledSettings = []
             Size.Width = 311.000000000000000000
-            Size.Height = 32.000000000000000000
+            Size.Height = 35.000000000000000000
             Size.PlatformDefault = False
             TextSettings.Font.Family = 'Sylfaen'
             TextSettings.Font.Size = 20.000000000000000000
@@ -515,6 +529,96 @@ inherited Frm_New_Mass: TFrm_New_Mass
             TextSettings.HorzAlign = Center
             Text = 'LEITURAS'
             TabOrder = 0
+          end
+          object LB_Readings: TListBox
+            Align = Client
+            Margins.Left = 10.000000000000000000
+            Margins.Right = 10.000000000000000000
+            Margins.Bottom = 3.000000000000000000
+            Size.Width = 291.000000000000000000
+            Size.Height = 145.000000000000000000
+            Size.PlatformDefault = False
+            TabOrder = 1
+            DisableFocusEffect = True
+            DefaultItemStyles.ItemStyle = ''
+            DefaultItemStyles.GroupHeaderStyle = ''
+            DefaultItemStyles.GroupFooterStyle = ''
+            Viewport.Width = 291.000000000000000000
+            Viewport.Height = 145.000000000000000000
+            object LBI_FReading: TListBoxItem
+              ItemData.Detail = 'Clique aqui para adicionar'
+              StyleLookup = 'listboxitembottomdetail'
+              TabOrder = 0
+              Text = 'Primeira Leitura'
+              OnClick = LBI_FReadingClick
+            end
+            object LBI_SReading: TListBoxItem
+              ItemData.Detail = 'Clique aqui para adicionar'
+              Position.Y = 44.000000000000000000
+              StyleLookup = 'listboxitembottomdetail'
+              TabOrder = 1
+              Text = 'Segunda Leitura'
+              OnClick = LBI_SReadingClick
+            end
+            object LBI_Gospel: TListBoxItem
+              ItemData.Detail = 'Clique aqui para adicionar'
+              Position.Y = 88.000000000000000000
+              StyleLookup = 'listboxitembottomdetail'
+              TabOrder = 2
+              Text = 'Evangelho'
+              OnClick = LBI_GospelClick
+            end
+          end
+        end
+        object Rectangle10: TRectangle
+          Align = Top
+          Fill.Color = claWhite
+          Margins.Left = 10.000000000000000000
+          Margins.Top = 10.000000000000000000
+          Margins.Right = 10.000000000000000000
+          Position.X = 10.000000000000000000
+          Position.Y = 203.000000000000000000
+          Size.Width = 311.000000000000000000
+          Size.Height = 110.000000000000000000
+          Size.PlatformDefault = False
+          Stroke.Kind = None
+          XRadius = 15.000000000000000000
+          YRadius = 15.000000000000000000
+          object Label7: TLabel
+            Align = Top
+            StyledSettings = []
+            Size.Width = 311.000000000000000000
+            Size.Height = 35.000000000000000000
+            Size.PlatformDefault = False
+            TextSettings.Font.Family = 'Sylfaen'
+            TextSettings.Font.Size = 20.000000000000000000
+            TextSettings.Font.StyleExt = {00070000000000000004000000}
+            TextSettings.FontColor = claGray
+            TextSettings.HorzAlign = Center
+            Text = 'SALMO RESPONSORIAL'
+            TabOrder = 0
+          end
+          object Edt_PSalm_Title: TEdit
+            Touch.InteractiveGestures = [LongTap, DoubleTap]
+            Align = Top
+            TabOrder = 1
+            TextSettings.HorzAlign = Center
+            Position.Y = 35.000000000000000000
+            Size.Width = 311.000000000000000000
+            Size.Height = 32.000000000000000000
+            Size.PlatformDefault = False
+            TextPrompt = '(T'#237'tulo)'
+          end
+          object Edt_PSalm_Lyrics: TEdit
+            Touch.InteractiveGestures = [LongTap, DoubleTap]
+            Align = Top
+            TabOrder = 2
+            TextSettings.HorzAlign = Center
+            Position.Y = 67.000000000000000000
+            Size.Width = 311.000000000000000000
+            Size.Height = 32.000000000000000000
+            Size.PlatformDefault = False
+            TextPrompt = '(Refr'#227'o)'
           end
         end
       end
@@ -538,13 +642,51 @@ inherited Frm_New_Mass: TFrm_New_Mass
           Position.X = 10.000000000000000000
           Position.Y = 10.000000000000000000
           Size.Width = 311.000000000000000000
-          Size.Height = 32.000000000000000000
+          Size.Height = 79.000000000000000000
           Size.PlatformDefault = False
           Stroke.Kind = None
           XRadius = 15.000000000000000000
           YRadius = 15.000000000000000000
           object Label6: TLabel
+            Align = Top
+            StyledSettings = []
+            Size.Width = 311.000000000000000000
+            Size.Height = 33.000000000000000000
+            Size.PlatformDefault = False
+            TextSettings.Font.Family = 'Sylfaen'
+            TextSettings.Font.Size = 20.000000000000000000
+            TextSettings.Font.StyleExt = {00070000000000000004000000}
+            TextSettings.FontColor = claGray
+            TextSettings.HorzAlign = Center
+            Text = 'ORA'#199#195'O EUCAR'#205'STICA'
+            TabOrder = 1
+          end
+          object cbb_EPrayers: TComboBox
             Align = Client
+            Margins.Left = 5.000000000000000000
+            Margins.Right = 5.000000000000000000
+            Size.Width = 301.000000000000000000
+            Size.Height = 32.000000000000000000
+            Size.PlatformDefault = False
+            TabOrder = 0
+          end
+        end
+        object Rectangle11: TRectangle
+          Align = Top
+          Fill.Color = claWhite
+          Margins.Left = 10.000000000000000000
+          Margins.Top = 10.000000000000000000
+          Margins.Right = 10.000000000000000000
+          Position.X = 10.000000000000000000
+          Position.Y = 99.000000000000000000
+          Size.Width = 311.000000000000000000
+          Size.Height = 78.000000000000000000
+          Size.PlatformDefault = False
+          Stroke.Kind = None
+          XRadius = 15.000000000000000000
+          YRadius = 15.000000000000000000
+          object Label8: TLabel
+            Align = Top
             StyledSettings = []
             Size.Width = 311.000000000000000000
             Size.Height = 32.000000000000000000
@@ -554,8 +696,18 @@ inherited Frm_New_Mass: TFrm_New_Mass
             TextSettings.Font.StyleExt = {00070000000000000004000000}
             TextSettings.FontColor = claGray
             TextSettings.HorzAlign = Center
-            Text = 'ORA'#199#195'O EUCAR'#205'STICA'
+            Text = 'PRECES'
             TabOrder = 0
+          end
+          object Edt_Prayers: TEdit
+            Touch.InteractiveGestures = [LongTap, DoubleTap]
+            Align = Client
+            TabOrder = 1
+            Margins.Left = 5.000000000000000000
+            Margins.Right = 5.000000000000000000
+            Size.Width = 301.000000000000000000
+            Size.Height = 32.000000000000000000
+            Size.PlatformDefault = False
           end
         end
       end
