@@ -10,7 +10,8 @@ uses System.SysUtils, System.Classes,
   Datasnap.DSProxyObjectiveCiOS, Datasnap.DSProxyCsharpSilverlight,
   Datasnap.DSProxyFreePascal_iOS,
   IPPeerServer, IPPeerAPI, Datasnap.DSAuth, Datasnap.DSMetadata,
-  Datasnap.DSServerMetadata, Datasnap.DSHTTP;
+  Datasnap.DSServerMetadata, Datasnap.DSHTTP, IdHTTPWebBrokerBridge,
+  Vcl.AppEvnts;
 
 type
   TServerContainer1 = class(TDataModule)
@@ -28,8 +29,9 @@ type
       var PersistentClass: TPersistentClass);
     procedure DSSC_SongGetClass(DSServerClass: TDSServerClass;
       var PersistentClass: TPersistentClass);
+    procedure DataModuleCreate(Sender: TObject);
   private
-    { Private declarations }
+    FServer: TIdHTTPWebBrokerBridge;
   public
   end;
 
@@ -42,6 +44,17 @@ implementation
 {$R *.dfm}
 
 uses uLogin, uMass, uSong;
+
+procedure TServerContainer1.DataModuleCreate(Sender: TObject);
+begin
+  FServer := TIdHTTPWebBrokerBridge.Create(Self);
+  if not FServer.Active then
+  begin
+    FServer.Bindings.Clear;
+    FServer.DefaultPort := StrToInt('5859');
+    FServer.Active := True;
+  end;
+end;
 
 procedure TServerContainer1.DSSC_LoginGetClass(
   DSServerClass: TDSServerClass; var PersistentClass: TPersistentClass);

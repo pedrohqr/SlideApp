@@ -45,6 +45,8 @@ type
     procedure SearchEditButton1Click(Sender: TObject);
     procedure LVItemClickEx(const Sender: TObject; ItemIndex: Integer;
       const LocalClickPos: TPointF; const ItemObject: TListItemDrawable);
+    procedure LVUpdateObjects(const Sender: TObject;
+      const AItem: TListViewItem);
   private
     ASC : Boolean;
     ALL_USERS : Boolean;
@@ -426,6 +428,40 @@ begin
       else
         ShowMessage('Erro: Arquivo não encontrado');
   end;
+end;
+
+procedure TFrm_Mass.LVUpdateObjects(const Sender: TObject;
+  const AItem: TListViewItem);
+var
+  Mass_Title: TListItemText;
+  Text: string;
+  AvailableWidth, aux, Height_LV: Single;
+begin
+  AvailableWidth := TListView(Sender).Width - TListView(Sender).ItemSpaces.Left
+    - TListView(Sender).ItemSpaces.Right - 60;//60 is sum of two width images
+
+  Mass_Title := TListItemText(AItem.View.FindDrawable('title'));
+  Text := Mass_Title.Text;
+
+  // Calculate item height based on text in the Mass_Title
+  aux := GetTextHeight(Mass_Title, AvailableWidth, Text);
+  Height_LV := TListItemText(AItem.View.FindDrawable('lbl_user')).Height +
+               TListItemText(AItem.View.FindDrawable('user')).Height +
+               TListItemText(AItem.View.FindDrawable('lbl_mass_date')).Height +
+               TListItemText(AItem.View.FindDrawable('mass_date')).Height;
+  AItem.Height := Round(aux) + Round(Height_LV);
+  Mass_Title.Height := aux;
+  Mass_Title.Width := AvailableWidth;
+
+  TListItemText(AItem.View.FindDrawable('lbl_user')).PlaceOffset.Y := Mass_Title.Height;
+  aux := Mass_Title.Height + TListItemText(AItem.View.FindDrawable('lbl_user')).Height;
+  TListItemText(AItem.View.FindDrawable('user')).PlaceOffset.Y := aux;
+  aux := aux + TListItemText(AItem.View.FindDrawable('user')).Height;
+  TListItemText(AItem.View.FindDrawable('lbl_mass_date')).PlaceOffset.Y := aux;
+  TListItemText(AItem.View.FindDrawable('lbl_gen_mass')).PlaceOffset.Y := aux;
+  aux := aux + TListItemText(AItem.View.FindDrawable('lbl_mass_date')).Height;
+  TListItemText(AItem.View.FindDrawable('mass_date')).PlaceOffset.Y := aux;
+  TListItemText(AItem.View.FindDrawable('gen_mass')).PlaceOffset.Y := aux;
 end;
 
 procedure TFrm_Mass.SearchEditButton1Click(Sender: TObject);

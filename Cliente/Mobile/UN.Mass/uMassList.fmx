@@ -1,12 +1,12 @@
 inherited Frm_Mass: TFrm_Mass
   Caption = 'SlideApp | Missas'
   ClientHeight = 501
-  ClientWidth = 343
+  ClientWidth = 342
   OnCreate = FormCreate
   OnKeyUp = FormKeyUp
   DesignerMasterStyle = 3
   inherited LayoutClient: TLayout
-    Size.Width = 343.000000000000000000
+    Size.Width = 342.000000000000000000
     Size.Height = 501.000000000000000000
     object LV: TListView
       Touch.InteractiveGestures = [DoubleTap]
@@ -14,12 +14,13 @@ inherited Frm_Mass: TFrm_Mass
       ItemEditAppearanceClassName = 'TDynamicAppearance'
       HeaderAppearanceClassName = 'TListHeaderObjects'
       FooterAppearanceClassName = 'TListHeaderObjects'
+      OnUpdateObjects = LVUpdateObjects
       Align = Client
       Margins.Left = 10.000000000000000000
       Margins.Top = 5.000000000000000000
       Margins.Right = 10.000000000000000000
       Margins.Bottom = 10.000000000000000000
-      Size.Width = 323.000000000000000000
+      Size.Width = 322.000000000000000000
       Size.Height = 389.000000000000000000
       Size.PlatformDefault = False
       TabOrder = 0
@@ -31,7 +32,8 @@ inherited Frm_Mass: TFrm_Mass
           Appearance.Font.Size = 18.000000000000000000
           Appearance.Font.StyleExt = {00060000000000000004000000}
           Appearance.TextAlign = Leading
-          Appearance.Trimming = Word
+          Appearance.WordWrap = True
+          Appearance.Trimming = Character
           Appearance.Width = 241.000000000000000000
           Appearance.Height = 25.000000000000000000
           Appearance.PlaceOffset.X = 30.000000000000000000
@@ -43,7 +45,6 @@ inherited Frm_Mass: TFrm_Mass
           Appearance.TextAlign = Leading
           Appearance.TextVertAlign = Leading
           Appearance.WordWrap = True
-          Appearance.Width = 311.000000000000000000
           Appearance.Height = 23.000000000000000000
           Appearance.PlaceOffset.Y = 37.000000000000000000
         end
@@ -64,7 +65,6 @@ inherited Frm_Mass: TFrm_Mass
           Appearance.TextAlign = Leading
           Appearance.WordWrap = True
           Appearance.Trimming = Word
-          Appearance.Width = 303.000000000000000000
           Appearance.Height = 14.000000000000000000
           Appearance.PlaceOffset.Y = 24.000000000000000000
         end
@@ -151,7 +151,7 @@ inherited Frm_Mass: TFrm_Mass
       Margins.Right = 10.000000000000000000
       Position.X = 10.000000000000000000
       Position.Y = 10.000000000000000000
-      Size.Width = 323.000000000000000000
+      Size.Width = 322.000000000000000000
       Size.Height = 50.000000000000000000
       Size.PlatformDefault = False
       Stroke.Kind = None
@@ -161,7 +161,7 @@ inherited Frm_Mass: TFrm_Mass
         Align = Client
         AutoSize = True
         StyledSettings = []
-        Size.Width = 323.000000000000000000
+        Size.Width = 322.000000000000000000
         Size.Height = 50.000000000000000000
         Size.PlatformDefault = False
         TextSettings.Font.Family = 'Sylfaen'
@@ -181,7 +181,7 @@ inherited Frm_Mass: TFrm_Mass
       Margins.Right = 10.000000000000000000
       Position.X = 10.000000000000000000
       Position.Y = 65.000000000000000000
-      Size.Width = 323.000000000000000000
+      Size.Width = 322.000000000000000000
       Size.Height = 32.000000000000000000
       Size.PlatformDefault = False
       Stroke.Kind = None
@@ -191,7 +191,7 @@ inherited Frm_Mass: TFrm_Mass
         Touch.InteractiveGestures = [LongTap, DoubleTap]
         Align = Client
         TabOrder = 0
-        Size.Width = 291.799987792968800000
+        Size.Width = 290.799987792968800000
         Size.Height = 32.000000000000000000
         Size.PlatformDefault = False
         object SearchEditButton1: TSearchEditButton

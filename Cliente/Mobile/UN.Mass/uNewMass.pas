@@ -12,7 +12,7 @@ uses
   FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Param,
   FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf, FireDAC.DApt.Intf,
   FireDAC.Comp.DataSet, FireDAC.Comp.Client, FireDAC.Stan.StorageJSON,
-  FMX.Gestures, uMass, FMX.Calendar, FMX.ListBox;
+  FMX.Gestures, uMass, FMX.Calendar, FMX.ListBox, System.ImageList, FMX.ImgList;
 
 type
   TFrm_New_Mass = class(TFormBase)
@@ -68,6 +68,8 @@ type
     LBI_FReading: TListBoxItem;
     LBI_SReading: TListBoxItem;
     LBI_Gospel: TListBoxItem;
+    ImageList1: TImageList;
+    cb_CampFrat: TCheckBox;
     procedure btn_add_musicClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure SearchEditButton1Click(Sender: TObject);
@@ -91,6 +93,7 @@ type
     procedure LBI_FReadingClick(Sender: TObject);
     procedure LBI_SReadingClick(Sender: TObject);
     procedure LBI_GospelClick(Sender: TObject);
+    procedure LV_SearchScrollViewChange(Sender: TObject);
   private
     Mass : TMass;
     Page : SmallInt;
@@ -142,6 +145,20 @@ begin
   inherited;
   ClearSearch;
   TabControl1.ActiveTab := TabItem2;
+end;
+
+/// <summary> Create fields to use in insert of MASS_PRAY table on Server
+/// </summary>
+procedure CreateFieldsMass_Pray(var MT : TFDMemTable);
+begin
+  with MT.FieldDefs do
+  begin
+    with AddFieldDef do
+    begin
+      Name := 'PRAY_ID';
+      DataType := ftInteger;
+    end;
+  end;
 end;
 
 /// <summary> Create fields to use in insert of MASS_SONG table on Server
@@ -214,31 +231,37 @@ begin
     begin
       Name := 'ASSEMBLY_PRAYER';
       DataType := ftString;
+      Size := 1000;
     end;
     with AddFieldDef do
     begin
       Name := 'FIRST_READING';
       DataType := ftString;
+      Size := 1000;
     end;
     with AddFieldDef do
     begin
       Name := 'SECOND_READING';
       DataType := ftString;
+      Size := 1000;
     end;
     with AddFieldDef do
     begin
       Name := 'GOSPEL';
       DataType := ftString;
+      Size := 1000;
     end;
     with AddFieldDef do
     begin
       Name := 'PSALM_LYRICS';
       DataType := ftString;
+      Size := 1000;
     end;
     with AddFieldDef do
     begin
       Name := 'PSALM_TITLE';
       DataType := ftString;
+      Size := 1000;
     end;
     with AddFieldDef do
     begin
@@ -255,6 +278,11 @@ begin
       Name := 'PARISH_ID';
       DataType := ftInteger;
     end;
+    with AddFieldDef do
+    begin
+      Name := 'PRAY_ID';
+      DataType := ftInteger;
+    end;
   end;
 end;
 
@@ -267,6 +295,7 @@ begin
     DS : TFDJSONDataSets;
     MT_Mass : TFDMemTable;
     MT_Song : TFDMemTable;
+    MT_Pray : TFDMemTable;
     I : SmallInt;
   begin
     try
@@ -275,10 +304,13 @@ begin
           DM_DataSnap.DSConn.Connected := True;
         Connection := TMassClient.Create(DM_DataSnap.DSConn.DBXConnection);
         DS := TFDJSONDataSets.Create;
-        MT_Mass := TFDMemTable.Create(nil);
-        MT_Song := TFDMemTable.Create(nil);
+        MT_Mass := TFDMemTable.Create(Self);
+        MT_Song := TFDMemTable.Create(Self);
+        MT_Pray := TFDMemTable.Create(Self);
         CreateFieldsMass(MT_Mass);
         CreateFieldsMass_Song(MT_Song);
+        CreateFieldsMass_Pray(MT_Pray);
+        MT_Pray.Open;
         MT_Mass.Open;
         MT_Song.Open;
         with MT_Mass do
@@ -311,6 +343,14 @@ begin
           Post;
         end;
 
+        if cb_CampFrat.IsChecked then
+        with MT_Pray do
+        begin
+          Append;
+          FieldByName('PRAY_ID').AsInteger := 1; //oração da campanha da fraternidade
+          Post;
+        end;
+
         with MT_Song do
         for I := 0 to pred(Mass.Songs.Count) do
         begin
@@ -325,6 +365,7 @@ begin
 
         TFDJSONDataSetsWriter.ListAdd(DS, MT_Mass);
         TFDJSONDataSetsWriter.ListAdd(DS, MT_Song);
+        TFDJSONDataSetsWriter.ListAdd(DS, MT_Pray);
         Connection.Register_Mass(DS);
 
         TThread.Synchronize(nil, procedure
@@ -552,7 +593,9 @@ begin
   InputBox('Primeira Leitura','Título','',
   procedure(const AResult: TModalResult; const AValue: string)
   begin
-    LB_Readings.ListItems[0].ItemData.Detail := AValue;
+    case AResult of
+      mrOk : LB_Readings.ListItems[0].ItemData.Detail := AValue;
+    end;
   end);
 end;
 
@@ -562,7 +605,9 @@ begin
   InputBox('Evangelho','Título','',
   procedure(const AResult: TModalResult; const AValue: string)
   begin
-    LB_Readings.ListItems[2].ItemData.Detail := AValue;
+    case AResult of
+      mrOk : LB_Readings.ListItems[2].ItemData.Detail := AValue;
+    end;
   end);
 end;
 
@@ -572,7 +617,9 @@ begin
   InputBox('Segunda Leitura','Título','',
   procedure(const AResult: TModalResult; const AValue: string)
   begin
-    LB_Readings.ListItems[1].ItemData.Detail := AValue;
+    case AResult of
+      mrOk : LB_Readings.ListItems[1].ItemData.Detail := AValue;
+    end;
   end);
 end;
 
@@ -670,6 +717,32 @@ begin
   if ItemObject.Name = 'link' then
   begin
     OpenYouTubeVideo(ItemObject.Data.AsString);
+  end;
+end;
+
+procedure TFrm_New_Mass.LV_SearchScrollViewChange(Sender: TObject);
+var
+  nTop, scrollTot: single;
+begin
+  nTop := LV_Search.GetItemRect(LV_Search.ItemCount - 1).top +
+    LV_Search.ScrollViewPos - LV_Search.SideSpace - LV_Search.LocalRect.top;
+  scrollTot := nTop + LV_Search.GetItemRect(LV_Search.ItemCount - 1).height -
+    LV_Search.height;
+  if LV_Search.ScrollViewPos = scrollTot then
+  begin
+    TThread.CreateAnonymousThread(
+      procedure
+      begin
+        TThread.Synchronize(nil,
+          procedure
+          begin
+            Inc(Page, 1);
+            if Edt_Search_Music.Text.IsEmpty then
+              SearchMusic('')
+            else
+              SearchMusic(Edt_Search_Music.Text);
+          end);
+      end).Start;
   end;
 end;
 

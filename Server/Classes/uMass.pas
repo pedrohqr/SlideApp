@@ -14,6 +14,7 @@ type
     private
       FConn : TConnection;
       function Create_Slide(Mass_ID: Integer): String;
+      function getUpperCaseParish(Mass_ID: Integer): Boolean;
     public
       constructor Create(AOwner : TComponent); override;
       destructor Destroy; override;
@@ -158,13 +159,16 @@ procedure TMass.Register_Mass(var DS: TFDJSONDataSets);
 var
   Mass_MT      : TFDMemTable;
   Mass_Song_MT : TFDMemTable;
+  Mass_Pray_MT : TFDMemTable;
   Mass_ID      : Integer;
 begin
-  Mass_MT      := TFDMemTable.Create(nil);
-  Mass_Song_MT := TFDMemTable.Create(nil);
+  Mass_MT      := TFDMemTable.Create(Self);
+  Mass_Song_MT := TFDMemTable.Create(Self);
+  Mass_Pray_MT := TFDMemTable.Create(Self);
   try
      Mass_MT.AppendData(TFDJSONDataSetsReader.GetListValue(DS, 0));
      Mass_Song_MT.AppendData(TFDJSONDataSetsReader.GetListValue(DS, 1));
+     Mass_Pray_MT.AppendData(TFDJSONDataSetsReader.GetListValue(DS, 2));
 
      FConn.CreateSP('REG_MASS');
      while not Mass_MT.Eof do
@@ -181,13 +185,24 @@ begin
        FConn.SP.ParamByName('V_SREADING').AsString        := FieldByName('SECOND_READING').AsString;
        FConn.SP.ParamByName('V_GOSPEL').AsString          := FieldByName('GOSPEL').AsString;
        FConn.SP.ParamByName('V_PSALM_L').AsString         := FieldByName('PSALM_LYRICS').AsString;
-       FConn.SP.ParamByName('V_PSALM_T').AsString     := FieldByName('PSALM_TITLE').AsString;
+       FConn.SP.ParamByName('V_PSALM_T').AsString         := FieldByName('PSALM_TITLE').AsString;
        FConn.SP.ParamByName('V_EPRAYER_ID').AsInteger     := FieldByName('EPRAYER_ID').AsInteger;
        FConn.SP.ParamByName('V_USER_ID').AsInteger        := FieldByName('USER_ID').AsInteger;
        FConn.SP.ParamByName('V_PARISH_ID').AsInteger      := FieldByName('PARISH_ID').AsInteger;
        FConn.SP.ExecProc;
 
        Mass_ID := FConn.SP.ParamByName('PID').AsInteger;
+
+       FConn.CreateSP('REG_MASS_PRAY');
+       while not Mass_Pray_MT.Eof do
+       with Mass_Pray_MT do
+       begin
+         FConn.SP.Prepare;
+         FConn.SP.ParamByName('V_PRAY_ID').AsInteger := FieldByName('PRAY_ID').AsInteger;
+         FConn.SP.ParamByName('V_MASS_ID').AsInteger := Mass_ID;
+         FConn.SP.ExecProc;
+         Next;
+       end;
 
        FConn.CreateSP('REG_MASS_SONG');
        while not Mass_Song_MT.Eof do
@@ -213,6 +228,8 @@ begin
       FreeAndNil(Mass_MT);
     if Assigned(Mass_Song_MT) then
       FreeAndNil(Mass_Song_MT);
+    if Assigned(Mass_Pray_MT) then
+      FreeAndNil(Mass_Pray_MT);
   end;
 end;
 
@@ -225,35 +242,110 @@ end;
 function TMass.Create_Slide(Mass_ID: Integer): String;
 var
   FileName : String;
+  Upper_Case : Boolean;
   Query_Song1,
   Query_Song2,
   Query_Song3,
-  Query_Song4 : TFDQuery;
+  Query_Song4,
+  Query_Pray : TFDQuery;
 begin
   try
     FileName := 'Missa_'+Mass_ID.ToString+'.pptx';
+    Upper_Case := getUpperCaseParish(Mass_ID);
+
+    FConn.CreateQuery;
+    with FConn.Query do
+    begin
+      if Upper_Case then
+      SQL.Add('SELECT '+
+              '   UPPER(M.TITLE) AS TITLE, '+
+              '   UPPER(COALESCE(P.NAME, '''')) '+
+              '   AS PARISH_NAME, '+
+              '   M.MASS_DATE, '+
+              '   UPPER(M.FIRST_READING) AS FIRST_READING, '+
+              '   UPPER(COALESCE(M.SECOND_READING, '''')) '+
+              '   AS SECOND_READING, '+
+              '   UPPER(M.GOSPEL) AS GOSPEL, '+
+              '   UPPER(M.PSALM_TITLE) AS PSALM_TITLE, '+
+              '   UPPER(M.PSALM_LYRICS) AS PSALM_LYRICS, '+
+              '   UPPER(COALESCE(M.ASSEMBLY_PRAYER, '''')) '+
+              '   AS ASSEMBLY_PRAYER, '+
+              '   UPPER(EPT.TEXT) AS TEXT '+
+              'FROM MASS M '+
+              'LEFT JOIN PARISH P '+
+              'ON P.PARISH_ID = M.PARISH_ID '+
+              'INNER JOIN EPRAYER_TEXT EPT '+
+              'ON EPT.EPRAYER_TEXT_ID = M.EPRAYER_ID '+
+              'WHERE M.MASS_ID = :pID '+
+              'ORDER BY EPT.ORDER_TEXT;')
+      else
+      SQL.Add('SELECT '+
+              '   M.TITLE, '+
+              '   COALESCE(P.NAME, '''') '+
+              '   AS PARISH_NAME, '+
+              '   COALESCE(P.UPPER_CASE, ''Y'') '+
+              '   AS UPPER_CASE, '+
+              '   M.MASS_DATE, '+
+              '   M.FIRST_READING, '+
+              '   COALESCE(M.SECOND_READING, '''') '+
+              '   AS SECOND_READING, '+
+              '   M.GOSPEL, '+
+              '   M.PSALM_TITLE, '+
+              '   M.PSALM_LYRICS, '+
+              '   COALESCE(M.ASSEMBLY_PRAYER, '''') '+
+              '   AS ASSEMBLY_PRAYER, '+
+              '   EPT.TEXT '+
+              'FROM MASS M '+
+              'LEFT JOIN PARISH P '+
+              'ON P.PARISH_ID = M.PARISH_ID '+
+              'INNER JOIN EPRAYER_TEXT EPT '+
+              'ON EPT.EPRAYER_TEXT_ID = M.EPRAYER_ID '+
+              'WHERE M.MASS_ID = :pID '+
+              'ORDER BY EPT.ORDER_TEXT;');
+      ParamByName('pID').AsInteger := Mass_ID;
+      Active := True;
+    end;
 
     FConn.CreateQuery(Query_Song1);
     with Query_Song1 do
     begin
       Active := False;
-      SQL.Text := 'SELECT                              '+
-                  '   COALESCE(S.LYRICS, '''')         '+
-                  '   AS LYRICS,                       '+
-                  '   MS.SONG_ORDER,                   '+
-                  '   COALESCE(MO.NAME, '''')          '+
-                  '   AS MOMENT                        '+
-                  'FROM MASS M                         '+
-                  '   INNER JOIN MASS_SONG MS          '+
-                  '   ON M.MASS_ID = MS.MASS_ID        '+
-                  '   INNER JOIN SONG S                '+
-                  '   ON S.SONG_ID = MS.SONG_ID        '+
-                  '   INNER JOIN MOMENTS MO            '+
-                  '   ON MO.MOMENT_ID = MS.MOMENT_ID   '+
-                  'WHERE                               '+
-                  '   MS.MOMENT_ID <= 3 AND            '+//get songs until Gloria
-                  '   M.MASS_ID = :pID                 '+
-                  'ORDER BY MS.SONG_ORDER;             ';
+      if Upper_Case then
+      SQL.Add('SELECT                              '+
+              '   UPPER(COALESCE(S.LYRICS, ''''))  '+
+              '   AS LYRICS,                       '+
+              '   MS.SONG_ORDER,                   '+
+              '   UPPER(COALESCE(MO.NAME, ''''))   '+
+              '   AS MOMENT                        '+
+              'FROM MASS M                         '+
+              '   INNER JOIN MASS_SONG MS          '+
+              '   ON M.MASS_ID = MS.MASS_ID        '+
+              '   INNER JOIN SONG S                '+
+              '   ON S.SONG_ID = MS.SONG_ID        '+
+              '   INNER JOIN MOMENTS MO            '+
+              '   ON MO.MOMENT_ID = MS.MOMENT_ID   '+
+              'WHERE                               '+
+              '   MS.MOMENT_ID <= 3 AND            '+//get songs until Gloria
+              '   M.MASS_ID = :pID                 '+
+              'ORDER BY MS.SONG_ORDER;             ')
+      else
+      SQL.Add('SELECT                              '+
+              '   COALESCE(S.LYRICS, '''')         '+
+              '   AS LYRICS,                       '+
+              '   MS.SONG_ORDER,                   '+
+              '   COALESCE(MO.NAME, '''')          '+
+              '   AS MOMENT                        '+
+              'FROM MASS M                         '+
+              '   INNER JOIN MASS_SONG MS          '+
+              '   ON M.MASS_ID = MS.MASS_ID        '+
+              '   INNER JOIN SONG S                '+
+              '   ON S.SONG_ID = MS.SONG_ID        '+
+              '   INNER JOIN MOMENTS MO            '+
+              '   ON MO.MOMENT_ID = MS.MOMENT_ID   '+
+              'WHERE                               '+
+              '   MS.MOMENT_ID <= 3 AND            '+//get songs until Gloria
+              '   M.MASS_ID = :pID                 '+
+              'ORDER BY MS.SONG_ORDER;             ');
       ParamByName('pID').AsInteger := Mass_ID;
       Active := True;
     end;
@@ -262,23 +354,42 @@ begin
     with Query_Song2 do
     begin
       Active := False;
-      SQL.Text := 'SELECT                              '+
-                  '   COALESCE(S.LYRICS, '''')         '+
-                  '   AS LYRICS,                       '+
-                  '   MS.SONG_ORDER,                   '+
-                  '   COALESCE(MO.NAME, '''')          '+
-                  '   AS MOMENT                        '+
-                  'FROM MASS M                         '+
-                  '   INNER JOIN MASS_SONG MS          '+
-                  '   ON M.MASS_ID = MS.MASS_ID        '+
-                  '   INNER JOIN SONG S                '+
-                  '   ON S.SONG_ID = MS.SONG_ID        '+
-                  '   INNER JOIN MOMENTS MO            '+
-                  '   ON MO.MOMENT_ID = MS.MOMENT_ID   '+
-                  'WHERE                               '+
-                  '   (MS.MOMENT_ID = 5) AND           '+//get the aclaim
-                  '   M.MASS_ID = :pID                 '+
-                  'ORDER BY MS.SONG_ORDER;             ';
+      if Upper_Case then
+      SQL.Add('SELECT                              '+
+              '   UPPER(COALESCE(S.LYRICS, ''''))  '+
+              '   AS LYRICS,                       '+
+              '   MS.SONG_ORDER,                   '+
+              '   UPPER(COALESCE(MO.NAME, ''''))   '+
+              '   AS MOMENT                        '+
+              'FROM MASS M                         '+
+              '   INNER JOIN MASS_SONG MS          '+
+              '   ON M.MASS_ID = MS.MASS_ID        '+
+              '   INNER JOIN SONG S                '+
+              '   ON S.SONG_ID = MS.SONG_ID        '+
+              '   INNER JOIN MOMENTS MO            '+
+              '   ON MO.MOMENT_ID = MS.MOMENT_ID   '+
+              'WHERE                               '+
+              '   (MS.MOMENT_ID = 5) AND           '+//get the aclaim
+              '   M.MASS_ID = :pID                 '+
+              'ORDER BY MS.SONG_ORDER;             ')
+      else
+      SQL.Add('SELECT                              '+
+              '   COALESCE(S.LYRICS, '''')         '+
+              '   AS LYRICS,                       '+
+              '   MS.SONG_ORDER,                   '+
+              '   COALESCE(MO.NAME, '''')          '+
+              '   AS MOMENT                        '+
+              'FROM MASS M                         '+
+              '   INNER JOIN MASS_SONG MS          '+
+              '   ON M.MASS_ID = MS.MASS_ID        '+
+              '   INNER JOIN SONG S                '+
+              '   ON S.SONG_ID = MS.SONG_ID        '+
+              '   INNER JOIN MOMENTS MO            '+
+              '   ON MO.MOMENT_ID = MS.MOMENT_ID   '+
+              'WHERE                               '+
+              '   (MS.MOMENT_ID = 5) AND           '+//get the aclaim
+              '   M.MASS_ID = :pID                 '+
+              'ORDER BY MS.SONG_ORDER;             ');
       ParamByName('pID').AsInteger := Mass_ID;
       Active := True;
     end;
@@ -287,23 +398,42 @@ begin
     with Query_Song3 do
     begin
       Active := False;
-      SQL.Text := 'SELECT                              '+
-                  '   COALESCE(S.LYRICS, '''')         '+
-                  '   AS LYRICS,                       '+
-                  '   MS.SONG_ORDER,                   '+
-                  '   COALESCE(MO.NAME, '''')          '+
-                  '   AS MOMENT                        '+
-                  'FROM MASS M                         '+
-                  '   INNER JOIN MASS_SONG MS          '+
-                  '   ON M.MASS_ID = MS.MASS_ID        '+
-                  '   INNER JOIN SONG S                '+
-                  '   ON S.SONG_ID = MS.SONG_ID        '+
-                  '   INNER JOIN MOMENTS MO            '+
-                  '   ON MO.MOMENT_ID = MS.MOMENT_ID   '+
-                  'WHERE                               '+
-                  '   (MS.MOMENT_ID > 5 AND MS.MOMENT_ID <= 7) AND '+//get from offertory to saint
-                  '   M.MASS_ID = :pID                 '+
-                  'ORDER BY MS.SONG_ORDER;             ';
+      if Upper_Case then
+      SQL.Add('SELECT                              '+
+              '   UPPER(COALESCE(S.LYRICS, ''''))  '+
+              '   AS LYRICS,                       '+
+              '   MS.SONG_ORDER,                   '+
+              '   UPPER(COALESCE(MO.NAME, ''''))   '+
+              '   AS MOMENT                        '+
+              'FROM MASS M                         '+
+              '   INNER JOIN MASS_SONG MS          '+
+              '   ON M.MASS_ID = MS.MASS_ID        '+
+              '   INNER JOIN SONG S                '+
+              '   ON S.SONG_ID = MS.SONG_ID        '+
+              '   INNER JOIN MOMENTS MO            '+
+              '   ON MO.MOMENT_ID = MS.MOMENT_ID   '+
+              'WHERE                               '+
+              '   (MS.MOMENT_ID > 5 AND MS.MOMENT_ID <= 7) AND '+//get from offertory to saint
+              '   M.MASS_ID = :pID                 '+
+              'ORDER BY MS.SONG_ORDER;             ')
+      else
+      SQL.Add('SELECT                              '+
+              '   COALESCE(S.LYRICS, '''')         '+
+              '   AS LYRICS,                       '+
+              '   MS.SONG_ORDER,                   '+
+              '   COALESCE(MO.NAME, '''')          '+
+              '   AS MOMENT                        '+
+              'FROM MASS M                         '+
+              '   INNER JOIN MASS_SONG MS          '+
+              '   ON M.MASS_ID = MS.MASS_ID        '+
+              '   INNER JOIN SONG S                '+
+              '   ON S.SONG_ID = MS.SONG_ID        '+
+              '   INNER JOIN MOMENTS MO            '+
+              '   ON MO.MOMENT_ID = MS.MOMENT_ID   '+
+              'WHERE                               '+
+              '   (MS.MOMENT_ID > 5 AND MS.MOMENT_ID <= 7) AND '+//get from offertory to saint
+              '   M.MASS_ID = :pID                 '+
+              'ORDER BY MS.SONG_ORDER;             ');
       ParamByName('pID').AsInteger := Mass_ID;
       Active := True;
     end;
@@ -312,59 +442,83 @@ begin
     with Query_Song4 do
     begin
       Active := False;
-      SQL.Text := 'SELECT                              '+
-                  '   COALESCE(S.LYRICS, '''')         '+
-                  '   AS LYRICS,                       '+
-                  '   MS.SONG_ORDER,                   '+
-                  '   COALESCE(MO.NAME, '''')          '+
-                  '   AS MOMENT                        '+
-                  'FROM MASS M                         '+
-                  '   INNER JOIN MASS_SONG MS          '+
-                  '   ON M.MASS_ID = MS.MASS_ID        '+
-                  '   INNER JOIN SONG S                '+
-                  '   ON S.SONG_ID = MS.SONG_ID        '+
-                  '   INNER JOIN MOMENTS MO            '+
-                  '   ON MO.MOMENT_ID = MS.MOMENT_ID   '+
-                  'WHERE                               '+
-                  '   (MS.MOMENT_ID >= 9) AND          '+//get communion to ahead
-                  '   M.MASS_ID = :pID                 '+
-                  'ORDER BY MS.SONG_ORDER;             ';
+      if Upper_Case then
+      SQL.Add('SELECT                              '+
+              '   UPPER(COALESCE(S.LYRICS, ''''))  '+
+              '   AS LYRICS,                       '+
+              '   MS.SONG_ORDER,                   '+
+              '   UPPER(COALESCE(MO.NAME, ''''))   '+
+              '   AS MOMENT                        '+
+              'FROM MASS M                         '+
+              '   INNER JOIN MASS_SONG MS          '+
+              '   ON M.MASS_ID = MS.MASS_ID        '+
+              '   INNER JOIN SONG S                '+
+              '   ON S.SONG_ID = MS.SONG_ID        '+
+              '   INNER JOIN MOMENTS MO            '+
+              '   ON MO.MOMENT_ID = MS.MOMENT_ID   '+
+              'WHERE                               '+
+              '   (MS.MOMENT_ID >= 9) AND          '+//get communion to ahead
+              '   M.MASS_ID = :pID                 '+
+              'ORDER BY MS.SONG_ORDER;             ')
+      else
+      SQL.Add('SELECT                              '+
+              '   COALESCE(S.LYRICS, '''')         '+
+              '   AS LYRICS,                       '+
+              '   MS.SONG_ORDER,                   '+
+              '   COALESCE(MO.NAME, '''')          '+
+              '   AS MOMENT                        '+
+              'FROM MASS M                         '+
+              '   INNER JOIN MASS_SONG MS          '+
+              '   ON M.MASS_ID = MS.MASS_ID        '+
+              '   INNER JOIN SONG S                '+
+              '   ON S.SONG_ID = MS.SONG_ID        '+
+              '   INNER JOIN MOMENTS MO            '+
+              '   ON MO.MOMENT_ID = MS.MOMENT_ID   '+
+              'WHERE                               '+
+              '   (MS.MOMENT_ID >= 9) AND          '+//get communion to ahead
+              '   M.MASS_ID = :pID                 '+
+              'ORDER BY MS.SONG_ORDER;             ');
       ParamByName('pID').AsInteger := Mass_ID;
       Active := True;
     end;
 
-    FConn.CreateQuery;
-    with FConn.Query do
+    FConn.CreateQuery(Query_Pray);
+    with Query_Pray do
     begin
-      SQL.Text := 'SELECT '+
-                  '   M.TITLE, '+
-                  '   COALESCE(P.NAME, '''') '+
-                  '   AS PARISH_NAME, '+
-                  '   M.MASS_DATE, '+
-                  '   M.FIRST_READING, '+
-                  '   COALESCE(M.SECOND_READING, '''') '+
-                  '   AS SECOND_READING, '+
-                  '   M.GOSPEL, '+
-                  '   M.PSALM_TITLE, '+
-                  '   M.PSALM_LYRICS, '+
-                  '   COALESCE(M.ASSEMBLY_PRAYER, '''') '+
-                  '   AS ASSEMBLY_PRAYER, '+
-                  '   EP.TEXT AS EPRAYER '+
-                  'FROM MASS M '+
-                  'LEFT JOIN PARISH P '+
-                  'ON P.PARISH_ID = M.PARISH_ID '+
-                  'LEFT JOIN EUCHARISTIC_PRAYER EP '+
-                  'ON M.EPRAYER_ID = EP.EPRAYER_ID '+
-                  'WHERE M.MASS_ID = :pID;';
+      Active := False;
+      if Upper_Case then
+      SQL.Add('SELECT                           '+
+              '   UPPER(COALESCE(P.NAME, '''')) '+
+              '   AS NAME,                      '+
+              '   UPPER(COALESCE(P.TEXT, '''')) '+
+              '   AS TEXT                       '+
+              'FROM MASS_PRAY MP                '+
+              '   INNER JOIN PRAY P             '+
+              '   ON MP.PRAY_ID = P.PRAY_ID     '+
+              'WHERE                            '+
+              '   MP.MASS_ID = :pID;            ')
+      else
+      SQL.Add('SELECT                        '+
+              '   COALESCE(P.NAME, '''')     '+
+              '   AS NAME,                   '+
+              '   COALESCE(P.TEXT, '''')     '+
+              '   AS TEXT                    '+
+              'FROM MASS_PRAY MP             '+
+              '   INNER JOIN PRAY P          '+
+              '   ON MP.PRAY_ID = P.PRAY_ID  '+
+              'WHERE                         '+
+              '   MP.MASS_ID = :pID;         ');
       ParamByName('pID').AsInteger := Mass_ID;
       Active := True;
     end;
 
-    DSSlideCreator.frxDBDS_Mass.DataSet := FConn.Query;
-    DSSlideCreator.frxDBDS_Song1.DataSet := Query_Song1;
-    DSSlideCreator.frxDBDS_Song2.DataSet := Query_Song2;
-    DSSlideCreator.frxDBDS_Song3.DataSet := Query_Song3;
-    DSSlideCreator.frxDBDS_Song4.DataSet := Query_Song4;
+    DSSlideCreator.frxDBDS_Mass.DataSet      := FConn.Query;
+    DSSlideCreator.frxDBDS_EPrayer.DataSet   := FConn.Query;
+    DSSlideCreator.frxDBDS_Song1.DataSet     := Query_Song1;
+    DSSlideCreator.frxDBDS_Song2.DataSet     := Query_Song2;
+    DSSlideCreator.frxDBDS_Song3.DataSet     := Query_Song3;
+    DSSlideCreator.frxDBDS_Song4.DataSet     := Query_Song4;
+    DSSlideCreator.frxDBDS_Init_Pray.DataSet := Query_Pray;
 
 
     DSSlideCreator.frxPPTXExport.FileName := FileName;
@@ -381,7 +535,6 @@ begin
       Variables['PSalm_Title']  := QuotedStr(FConn.Query.FieldByName('PSALM_TITLE').AsString);
       Variables['PSalm_Lyrics']  := QuotedStr(FConn.Query.FieldByName('PSALM_LYRICS').AsString);
       Variables['Assembly_Prayer']  := QuotedStr(FConn.Query.FieldByName('ASSEMBLY_PRAYER').AsString);
-      Variables['EPrayer']  := QuotedStr(FConn.Query.FieldByName('EPRAYER').AsString);
 
 //      if ( FileExists(ExtractFilePath(ParamStr(0)) + '\images\harsoft.png') and (FindComponent('logoImg')<> nil ) ) then  //imagem do relatorio
 //            TfrxPictureView(FindComponent('logoImg')).Picture.LoadFromFile(ExtractFilePath(ParamStr(0)) + '\images\harsoft.png');
@@ -401,6 +554,8 @@ begin
       FreeAndNil(Query_Song3);
     if Assigned(Query_Song4) then
       FreeAndNil(Query_Song4);
+    if Assigned(Query_Pray) then
+      FreeAndNil(Query_Pray);
   end;
 end;
 
@@ -440,6 +595,29 @@ begin
                           ' EPRAYER_ID, NAME '+
                           'FROM EUCHARISTIC_PRAYER;';
   TFDJSONDataSetsWriter.ListAdd(Result, FConn.Query);
+end;
+
+/// <summary> Verify if the parish use UpperCase characters in slide
+/// </summary>
+function TMass.getUpperCaseParish(Mass_ID: Integer): Boolean;
+begin
+  FConn.CreateQuery;
+  with FConn.Query do
+  begin
+    SQL.Add('SELECT '+
+            '   COALESCE(P.UPPER_CASE, ''Y'') '+
+            '   AS UPPER_CASE '+
+            'FROM MASS M '+
+            'LEFT JOIN PARISH P '+
+            'ON P.PARISH_ID = M.PARISH_ID '+
+            'WHERE M.MASS_ID = :pID;');
+    ParamByName('pID').AsInteger := Mass_ID;
+    Active := True;
+    if UpperCase(FieldByName('UPPER_CASE').AsString) = 'Y' then
+      Result := True
+    else
+      Result := False;
+  end;
 end;
 
 end.

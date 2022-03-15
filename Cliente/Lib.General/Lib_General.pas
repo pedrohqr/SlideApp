@@ -2,6 +2,9 @@ unit Lib_General;
 
 interface
 
+uses
+  FMX.ListView.Types;
+
   function Path_Ini : String;
   function PathSlide: String;
   procedure Vibrate(const Time : Integer);
@@ -9,6 +12,8 @@ interface
   procedure StoragePermission;
   procedure ShareWhatsApp(FileName: String);
   procedure OpenPPTX(const AFileName: string);
+  function GetTextHeight(const D: TListItemText; const Width: single;
+                          const Text: string): Integer;
 
 implementation
 
@@ -28,7 +33,7 @@ uses
   Androidapi.JNI.Net,
   System.Permissions,
   {$ENDIF}
-  System.SysUtils, System.IOUtils, FMX.Dialogs;
+  System.SysUtils, System.IOUtils, FMX.Dialogs, FMX.TextLayout, System.Types;
 
 /// <summary> Returns the path of ini file in Android and Windows.
 /// </summary>
@@ -182,6 +187,39 @@ begin
     ShowMessage(e.Message)
   end;
 {$ENDIF}
+end;
+
+/// <summary> Calculate height for text drawable D
+/// </summary>
+function GetTextHeight(const D: TListItemText; const Width: single;
+                        const Text: string): Integer;
+var
+  Layout: TTextLayout;
+begin
+  // Create a TTextLayout to measure text dimensions
+  Layout := TTextLayoutManager.DefaultTextLayout.Create;
+  try
+    Layout.BeginUpdate;
+    try
+      // Initialize layout parameters with those of the drawable
+      Layout.Font.Assign(D.Font);
+      Layout.VerticalAlign := D.TextVertAlign;
+      Layout.HorizontalAlign := D.TextAlign;
+      Layout.WordWrap := D.WordWrap;
+      Layout.Trimming := D.Trimming;
+      Layout.MaxSize := TPointF.Create(Width, TTextLayout.MaxLayoutSize.Y);
+      Layout.Text := Text;
+    finally
+      Layout.EndUpdate;
+    end;
+    // Get layout height
+    Result := Round(Layout.Height);
+    // Add one em to the height
+//    Layout.Text := 'm';
+//    Result := Result + Round(Layout.Height);
+  finally
+    Layout.Free;
+  end;
 end;
 
 end.

@@ -46,7 +46,7 @@ implementation
 {$R *.fmx}
 
 uses DS_Functions, Data.FireDACJSONReflect, FireDAC.Comp.Client, uClientModule,
-  uHome, Lib_General;
+  uHome, Lib_General, Data.DB;
 
 /// <summary> Insert the ListViewItem in the LV
 /// </summary>
@@ -128,6 +128,7 @@ begin
 
         TThread.Synchronize(nil, procedure
         begin
+          lbl_info.Visible := False;
           while not MT.Eof do
           with MT do
           begin
@@ -136,6 +137,12 @@ begin
                                FieldByName('ARTIST_NAME').AsString,
                                FieldByName('AUDIO_LINK').AsString);
             Next;
+          end;
+
+          if (MT.IsEmpty) and (LV.Items.Count = 0) then
+          begin
+            lbl_info.Text := 'Música não encontrada...';
+            lbl_info.Visible := True;
           end;
           Ani.Enabled := False;
           Ani.Visible := False;

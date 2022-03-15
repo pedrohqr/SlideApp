@@ -12,11 +12,14 @@ uses
   Frm_Management in 'Frm_Management.pas' {FManagement},
   uMass in 'Classes\uMass.pas',
   uSong in 'Classes\uSong.pas',
-  DM_SlideCreator in 'Classes\DM_SlideCreator.pas' {DSSlideCreator: TDSServerModule};
+  DM_SlideCreator in 'Classes\DM_SlideCreator.pas' {DSSlideCreator: TDSServerModule},
+  ServerWebModule in 'ServerWebModule.pas' {ServerWM: TWebModule};
 
 {$R *.res}
 
 begin
+  if WebRequestHandler <> nil then
+    WebRequestHandler.WebModuleClass := WebModuleClass;
   Application.Initialize;
   Application.MainFormOnTaskbar := True;
   Application.CreateForm(TFMain, FMain);
