@@ -13,7 +13,8 @@ uses
   uMass in 'Classes\uMass.pas',
   uSong in 'Classes\uSong.pas',
   DM_SlideCreator in 'Classes\DM_SlideCreator.pas' {DSSlideCreator: TDSServerModule},
-  ServerWebModule in 'ServerWebModule.pas' {ServerWM: TWebModule};
+  ServerWebModule in 'ServerWebModule.pas' {ServerWM: TWebModule},
+  LibGeneral in 'Lib.General\LibGeneral.pas';
 
 {$R *.res}
 
@@ -26,6 +27,8 @@ begin
   Application.CreateForm(TServerContainer1, ServerContainer1);
   Application.CreateForm(TDSSlideCreator, DSSlideCreator);
   Application.Run;
+  {$IFDEF DEBUG}
   ReportMemoryLeaksOnShutdown := True;
+  {$ENDIF}
 end.
 

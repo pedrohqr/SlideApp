@@ -1,0 +1,275 @@
+unit SQLite_User;
+
+interface
+
+uses
+  uSQLiteFunctions, System.Classes, System.Generics.Collections, uMass,
+  FireDAC.Comp.Client;
+
+type
+  TUser = class(TConnectionDB)
+    private
+      FID : Integer;
+      FName : String;
+      FUsername : String;
+      FPassword : String;
+      FIP : String;
+      FPort : String;
+      FID_Parish_Active : Integer;
+      FParishes : TObjectList<TParish>;
+
+      function getIP: String;
+      function getName: String;
+      function getPassword: String;
+      function getPort: String;
+      function getUsername: String;
+      procedure setIP(const Value: String);
+      procedure setName(const Value: String);
+      procedure setPassword(const Value: String);
+      procedure setPort(const Value: String);
+      procedure setUsername(const Value: String);
+      function getID: Integer;
+      procedure setID(const Value: Integer);
+      function getParish_ID_Active: Integer;
+      procedure setParish_ID_Active(const Value: Integer);
+      function getParishes: TObjectList<TParish>;
+      procedure setParishes(const Value: TObjectList<TParish>);
+
+    public
+      constructor Create(AOwner : TComponent; AConnected : Boolean = True); override;
+      destructor Destroy; override;
+
+      property ID : Integer read getID write setID;
+      property Name : String read getName write setName;
+      property Username : String read getUsername write setUsername;
+      property Password : String read getPassword write setPassword;
+      property IP : String read getIP write setIP;
+      property Port : String read getPort write setPort;
+      property Parish_ID_Active : Integer read getParish_ID_Active write setParish_ID_Active;
+      property Parishes : TObjectList<TParish> read getParishes write setParishes;
+
+      class function IsAuthenticated : Boolean; overload;
+      class procedure InsertUser(AUser_ID : Integer;
+                                 AName,
+                                 AUsername,
+                                 APassword,
+                                 AIP,
+                                 APort : String;
+                                 AAuthenticated : Boolean);
+  end;
+
+implementation
+
+uses
+  System.SysUtils, FireDAC.Stan.Param;
+
+{ TUser }
+
+constructor TUser.Create(AOwner: TComponent; AConnected: Boolean);
+begin
+  inherited Create(AOwner, AConnected);
+  FParishes := TObjectList<TParish>.Create;
+  if AConnected then
+  begin
+    CreateQuery;
+    Query.SQL.Add('SELECT '+
+                  '   U.USER_ID, '+
+                  '   U.NAME, '+
+                  '   U.USERNAME, '+
+                  '   U.PASSWORD, '+
+                  '   U.IP, '+
+                  '   U.PORT, '+
+                  '   P.PARISH_ID, '+
+                  '   P.NAME AS PARISH_NAME, '+
+                  '   PU.ACTIVE_INDEX '+
+                  'FROM USER U '+
+                  'INNER JOIN PARISH_USER PU '+
+                  'ON U.USER_ID = PU.USER_ID '+
+                  'INNER JOIN PARISH P '+
+                  'ON P.PARISH_ID = PU.PARISH_ID;');
+    Query.Open;
+    if Query.RecordCount > 0 then
+    begin
+      FID := Query.FieldByName('USER_ID').AsInteger;
+      FName := Query.FieldByName('NAME').AsString;
+      FUsername := Query.FieldByName('USERNAME').AsString;
+      FPassword := Query.FieldByName('PASSWORD').AsString;
+      FIP := Query.FieldByName('IP').AsString;
+      FPort := Query.FieldByName('PORT').AsString;
+
+      while not Query.Eof do
+      begin
+        if Query.FieldByName('ACTIVE_INDEX').AsInteger = 1 then
+          FID_Parish_Active := Query.FieldByName('PARISH_ID').AsInteger;
+        Parishes.Add(TParish.Create(Query.FieldByName('PARISH_ID').AsInteger,
+                                    Query.FieldByName('PARISH_NAME').AsString));
+        Query.Next;
+      end;
+    end;
+  end;
+end;
+
+destructor TUser.Destroy;
+begin
+  if Assigned(FParishes) then
+    FreeAndNil(FParishes);
+  inherited;
+end;
+
+function TUser.getID: Integer;
+begin
+  Result := FID;
+end;
+
+function TUser.getIP: String;
+begin
+  Result := FIP;
+end;
+
+function TUser.getName: String;
+begin
+  Result := FName;
+end;
+
+function TUser.getParishes: TObjectList<TParish>;
+begin
+  Result := FParishes;
+end;
+
+function TUser.getParish_ID_Active: Integer;
+begin
+  Result := FID_Parish_Active;
+end;
+
+function TUser.getPassword: String;
+begin
+  Result := FPassword;
+end;
+
+function TUser.getPort: String;
+begin
+  Result := FPort;
+end;
+
+function TUser.getUsername: String;
+begin
+  Result := FUsername;
+end;
+
+class procedure TUser.InsertUser(AUser_ID : Integer;
+                                 AName,
+                                 AUsername,
+                                 APassword,
+                                 AIP,
+                                 APort : String;
+                                 AAuthenticated : Boolean);
+var
+  Conn : TConnectionDB;
+begin
+  Conn := TConnectionDB.Create(nil);
+  try
+    with Conn do
+    begin
+      DeleteTable('USER');
+      CreateQuery;
+      with Query do
+      begin
+        SQL.Add('INSERT INTO USER(USER_ID, '+
+                '                 NAME, '+
+                '                 USERNAME, '+
+                '                 PASSWORD, '+
+                '                 AUTHENTICATED, '+
+                '                 IP, '+
+                '                 PORT) '+
+                '          VALUES(:V_USER_ID,'+
+                '                 :V_NAME, '+
+                '                 :V_USERNAME, '+
+                '                 :V_PASSWORD, '+
+                '                 :V_AUTHENTICATED, '+
+                '                 :V_IP, '+
+                '                 :V_PORT);');
+        ParamByName('V_USER_ID').AsInteger := AUser_ID;
+        ParamByName('V_NAME').AsString := AName;
+        ParamByName('V_USERNAME').AsString := AUsername;
+        ParamByName('V_PASSWORD').AsString := APassword;
+        ParamByName('V_IP').AsString := AIP;
+        ParamByName('V_PORT').AsString := APort;
+        ParamByName('V_AUTHENTICATED').AsInteger := AAuthenticated.ToInteger;
+        ExecSQL;
+      end;
+    end;
+  finally
+    if Assigned(Conn) then
+      FreeAndNil(Conn);
+  end;
+end;
+
+/// <summary> Verify if the actual user sign in automatically.
+/// </summary>
+class function TUser.IsAuthenticated: Boolean;
+var
+  Conn : TConnectionDB;
+begin
+  Conn := TConnectionDB.Create(nil);
+  try
+    try
+      Result := False;
+      Conn.Connect;
+      Conn.CreateQuery;
+      Conn.Query.SQL.Add('SELECT COALESCE(AUTHENTICATED, 0) AS AUTH FROM USER;');
+      Conn.Query.Open;
+      if Conn.Query.RecordCount > 0 then
+      case Conn.Query.FieldByName('AUTH').AsInteger of
+        1 : Result := True;
+        0 : Result := False;
+      end;
+    except
+      Result := False;
+    end;
+  finally
+    if Assigned(Conn) then
+      FreeAndNil(Conn);
+  end;
+end;
+
+procedure TUser.setID(const Value: Integer);
+begin
+  FID := Value;
+end;
+
+procedure TUser.setIP(const Value: String);
+begin
+  FIP := Value;
+end;
+
+procedure TUser.setName(const Value: String);
+begin
+  FName := Value;
+end;
+
+procedure TUser.setParishes(const Value: TObjectList<TParish>);
+begin
+  FParishes := Value;
+end;
+
+procedure TUser.setParish_ID_Active(const Value: Integer);
+begin
+  FID_Parish_Active := Value;
+end;
+
+procedure TUser.setPassword(const Value: String);
+begin
+  FPassword := Value;
+end;
+
+procedure TUser.setPort(const Value: String);
+begin
+  FPort := Value;
+end;
+
+procedure TUser.setUsername(const Value: String);
+begin
+  FUsername := Value;
+end;
+
+end.

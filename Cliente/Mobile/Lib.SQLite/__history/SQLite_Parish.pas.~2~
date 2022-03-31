@@ -1,0 +1,24 @@
+unit SQLite_Parish;
+
+interface
+
+uses uSQLiteFunctions, System.Classes;
+
+  type
+    TParish = class(TConnectionDB)
+      private
+      public
+        constructor Create(AOwner : TComponent; AConnected : Boolean = True); override;
+    end;
+
+
+implementation
+
+{ TParish }
+
+constructor TParish.Create(AOwner: TComponent; AConnected: Boolean);
+begin
+  inherited;
+end;
+
+end.

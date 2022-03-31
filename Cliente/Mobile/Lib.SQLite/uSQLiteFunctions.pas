@@ -1,0 +1,160 @@
+unit uSQLiteFunctions;
+
+//##############################
+//Author : Pedro Henrique de Queiroz Ramos
+//Date : 22/03/2022
+//This unit make connection with the DataBase Local(SQLite)
+//##############################
+
+interface
+
+uses FireDAC.Comp.Client, FireDAC.Comp.UI, FireDAC.Phys.SQLite, System.IniFiles,
+     FireDAC.Stan.StorageBin, System.Classes, FireDAC.Stan.StorageJSON;
+
+type
+  TConnectionDB = class(TComponent)
+    private
+      FConnected : Boolean;
+      FConn : TFDConnection;
+      FGUI : TFDGUIxWaitCursor;
+      FStan : TFDStanStorageJSONLink;
+      FDriver : TFDPhysSQLiteDriverLink;
+    public
+      Query : TFDQuery;
+
+      constructor Create(AOwner : TComponent; AConnected : Boolean = True); virtual;
+      destructor Destroy; override;
+
+      procedure Connect;
+      procedure ClearAllFieldsQuery;
+      procedure CreateQuery; Overload;
+      procedure CreateQuery(var AQuery : TFDQuery); Overload;
+
+      class procedure DeleteTable(ATable : String; AParam : String = ''; AValue : String = '');
+  end;
+
+implementation
+
+{ TConectionDB }
+
+uses System.IOUtils, uScript_DBL, System.SysUtils;
+
+/// <summary> Build connection of FireDAC components.
+/// </summary>
+procedure TConnectionDB.Connect;
+begin
+  if not FConnected then
+  begin
+    if not Assigned(FConn) then
+      Fconn := TFDConnection.Create(Self);
+
+    if not Assigned(FDriver) then
+      FDriver := TFDPhysSQLiteDriverLink.Create(Self);
+
+    if not Assigned(FGUI) then
+      FGUI := TFDGUIxWaitCursor.Create(Self);
+
+    if not Assigned(FStan) then
+      FStan := TFDStanStorageJSONLink.Create(Self);
+
+    with FConn do
+    begin
+      Connected := False;
+
+      Params.Clear;
+      Params.DriverID := 'SQLite';
+
+      Params.Add('OpenMode=CreateUTF8');
+      {$IF DEFINED(iOS) or DEFINED(ANDROID)}
+        Params.Values['Database'] := TPath.Combine(TPath.GetDocumentsPath, 'DBL_SlideApp.s3db');
+      {$ELSE}
+        Params.Values['Database'] := Path_DB;
+      {$ENDIF}
+      Connected := True;
+    end;
+    FConnected := True;
+  end;
+end;
+
+/// <summary> Clear all fields of the Query.
+/// </summary>
+procedure TConnectionDB.ClearAllFieldsQuery;
+begin
+  if Assigned(Query) then
+  begin
+    Query.Close;
+    Query.SQL.Clear;
+    Query.Params.Clear;
+  end;
+end;
+
+constructor TConnectionDB.Create(AOwner : TComponent; AConnected : Boolean);
+begin
+  inherited Create(AOwner);
+
+  if AConnected then
+  begin
+    Connect;
+    FConnected := True;
+  end;
+end;
+
+/// <summary> Create a new TFDQuery using var Query
+/// </summary>
+procedure TConnectionDB.CreateQuery;
+begin
+  if Assigned(Self.Query) then
+    FreeAndNil(Self.Query);
+  Self.Query := TFDQuery.Create(nil);
+  Self.Query.Connection := Self.FConn;
+end;
+
+/// <summary> Create a new TFDQuery assigning to TConnection
+/// </summary>
+procedure TConnectionDB.CreateQuery(var AQuery : TFDQuery);
+begin
+  if Assigned(AQuery) then
+    FreeAndNil(AQuery);
+  AQuery := TFDQuery.Create(Self);
+  AQuery.Connection := FConn;
+end;
+
+class procedure TConnectionDB.DeleteTable(ATable, AParam, AValue: String);
+var
+  Conn : TConnectionDB;
+begin
+  Conn := TConnectionDB.Create(nil);
+  try
+    Conn.CreateQuery;
+    Conn.Query.SQL.Add('DELETE FROM '+ATable+' ');
+    if not (Trim(AParam).IsEmpty) and not (Trim(AValue).IsEmpty) then
+    Conn.Query.SQL.Add(' WHERE '+AParam+' = '+AValue);
+
+    Conn.Query.ExecSQL;
+  finally
+    if Assigned(Conn) then
+      FreeAndNil(Conn);
+  end;
+end;
+
+destructor TConnectionDB.Destroy;
+begin
+  if Assigned(FStan) then
+    FreeAndNil(FStan);
+
+  if Assigned(Query) then
+    FreeAndNil(Query);
+
+  if Assigned(FConn) then
+    FreeAndNil(FConn);
+
+  if Assigned(FGUI) then
+    FreeAndNil(FGUI);
+
+  if Assigned(FDriver) then
+    FreeAndNil(FDriver);
+
+  inherited;
+end;
+
+end.

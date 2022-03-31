@@ -24,6 +24,9 @@ type
     frxDBDS_Song4: TfrxDBDataset;
     frxDBDS_EPrayer: TfrxDBDataset;
     frxDBDS_Init_Pray: TfrxDBDataset;
+    frxPDFExport: TfrxPDFExport;
+    frxReportPDF: TfrxReport;
+    frxDBDS_PDF: TfrxDBDataset;
   private
     { Private declarations }
   public

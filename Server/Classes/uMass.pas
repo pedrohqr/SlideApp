@@ -13,7 +13,8 @@ type
   TMass = class(TComponent)
     private
       FConn : TConnection;
-      function Create_Slide(Mass_ID: Integer): String;
+      function Create_SlidePDF(Mass_ID: Integer): String;
+      function Create_SlidePPTX(Mass_ID: Integer): String;
       function getUpperCaseParish(Mass_ID: Integer): Boolean;
     public
       constructor Create(AOwner : TComponent); override;
@@ -24,7 +25,8 @@ type
       function Get_Mass(const pag : SmallInt; User_ID, Parish_ID : Integer;
                       Filter, Text : String; Asc : Boolean): TFDJSONDataSets;
       function Get_Songs(pag : SmallInt; Text : String): TFDJSONDataSets;
-      function DownloadSlide(Mass_ID : Integer): TJSONArray;
+      function DownloadSlidePPTX(Mass_ID : Integer): TJSONArray;
+      function DownloadSlidePDF(Mass_ID : Integer): TJSONArray;
       procedure Register_Mass(var DS : TFDJSONDataSets);
   end;
   {$METHODINFO OFF}
@@ -219,7 +221,7 @@ begin
          Next;
        end;
 
-       Create_Slide(Mass_ID);
+       Create_SlidePPTX(Mass_ID);
 
        Next;
      end;
@@ -239,7 +241,7 @@ begin
   FConn := TConnection.Create(AOwner);
 end;
 
-function TMass.Create_Slide(Mass_ID: Integer): String;
+function TMass.Create_SlidePPTX(Mass_ID: Integer): String;
 var
   FileName : String;
   Upper_Case : Boolean;
@@ -521,6 +523,8 @@ begin
     DSSlideCreator.frxDBDS_Init_Pray.DataSet := Query_Pray;
 
 
+//    DSSlideCreator.frxPDFExport.FileName := 'Missa_'+Mass_ID.ToString+'.pdf';
+//    DSSlideCreator.frxPDFExport.DefaultPath := ExtractFilePath(ParamStr(0)) + 'reports\';
     DSSlideCreator.frxPPTXExport.FileName := FileName;
     DSSlideCreator.frxPPTXExport.DefaultPath := ExtractFilePath(ParamStr(0)) + 'reports\';
 
@@ -534,6 +538,7 @@ begin
       Variables['Second_Reading']  := QuotedStr(FConn.Query.FieldByName('SECOND_READING').AsString);
       Variables['PSalm_Title']  := QuotedStr(FConn.Query.FieldByName('PSALM_TITLE').AsString);
       Variables['PSalm_Lyrics']  := QuotedStr(FConn.Query.FieldByName('PSALM_LYRICS').AsString);
+      Variables['Gospel'] := QuotedStr(FConn.Query.FieldByName('GOSPEL').AsString);
       Variables['Assembly_Prayer']  := QuotedStr(FConn.Query.FieldByName('ASSEMBLY_PRAYER').AsString);
 
 //      if ( FileExists(ExtractFilePath(ParamStr(0)) + '\images\harsoft.png') and (FindComponent('logoImg')<> nil ) ) then  //imagem do relatorio
@@ -543,6 +548,9 @@ begin
       DSSlideCreator.frxPPTXExport.ShowDialog := False;
       DSSlideCreator.frxPPTXExport.OpenAfterExport := False;
       DSSlideCreator.frxReportPPTX.Export(DSSlideCreator.frxPPTXExport);
+//      DSSlideCreator.frxPDFExport.ShowDialog := False;
+//      DSSlideCreator.frxPDFExport.OpenAfterExport := False;
+
       Result := TPath.Combine(DSSlideCreator.frxPPTXExport.DefaultPath, FileName);
     end;
   finally
@@ -559,6 +567,71 @@ begin
   end;
 end;
 
+function TMass.Create_SlidePDF(Mass_ID: Integer): String;
+var
+  FileName : String;
+  Upper_Case : Boolean;
+begin
+  FileName := 'Missa_'+Mass_ID.ToString+'.pdf';
+  Upper_Case := getUpperCaseParish(Mass_ID);
+
+  FConn.CreateQuery;
+  with FConn.Query do
+  begin
+    if Upper_Case then
+    SQL.Add('SELECT '+
+            '   UPPER(COALESCE(P.NAME, '''')) '+
+            '   AS PARISH_NAME, '+
+            '   M.MASS_DATE, '+
+            '   UPPER(M.PSALM_TITLE) AS PSALM_TITLE, '+
+            '   UPPER(M.PSALM_LYRICS) AS PSALM_LYRICS, '+
+            '   UPPER(S.NAME) AS SONG_TITLE, '+
+            '   UPPER(S.LYRICS) AS SONG_LYRICS '+
+            'FROM MASS M '+
+            'INNER JOIN MASS_SONG MS '+
+            'ON M.MASS_ID = MS.MASS_ID '+
+            'INNER JOIN SONG S '+
+            'ON MS.SONG_ID = S.SONG_ID '+
+            'LEFT JOIN PARISH P '+
+            'ON P.PARISH_ID = M.PARISH_ID '+
+            'WHERE M.MASS_ID = :pID '+
+            'ORDER BY MS.SONG_ORDER;')
+    else
+    SQL.Add('SELECT '+
+            '   COALESCE(P.NAME, '''') '+
+            '   AS PARISH_NAME, '+
+            '   M.MASS_DATE, '+
+            '   M.PSALM_TITLE AS PSALM_TITLE, '+
+            '   M.PSALM_LYRICS AS PSALM_LYRICS, '+
+            '   S.NAME AS SONG_TITLE, '+
+            '   S.LYRICS AS SONG_LYRICS '+
+            'FROM MASS M '+
+            'INNER JOIN MASS_SONG MS '+
+            'ON M.MASS_ID = MS.MASS_ID '+
+            'INNER JOIN SONG S '+
+            'ON MS.SONG_ID = S.SONG_ID '+
+            'LEFT JOIN PARISH P '+
+            'ON P.PARISH_ID = M.PARISH_ID '+
+            'WHERE M.MASS_ID = :pID '+
+            'ORDER BY MS.SONG_ORDER;');
+    ParamByName('pID').AsInteger := Mass_ID;
+    Active := True;
+    with DSSlideCreator do
+    begin
+      frxDBDS_PDF.DataSet := FConn.Query;
+      frxPDFExport.FileName := FileName;
+      frxPDFExport.DefaultPath := ExtractFilePath(ParamStr(0)) + 'reports\';
+      frxReportPDF.PrintOptions.ShowDialog := False;
+      frxPDFExport.ShowDialog := False;
+      frxPDFExport.OpenAfterExport := False;
+      frxReportPDF.PrepareReport;
+      frxReportPDF.Export(frxPDFExport);
+    end;
+
+    Result := TPath.Combine(DSSlideCreator.frxPPTXExport.DefaultPath, FileName);
+  end;
+end;
+
 destructor TMass.Destroy;
 begin
   if Assigned(FConn) then
@@ -568,7 +641,26 @@ end;
 
 /// <summary> Return the File in JSON format
 /// </summary>
-function TMass.DownloadSlide(Mass_ID: Integer): TJSONArray;
+function TMass.DownloadSlidePDF(Mass_ID: Integer): TJSONArray;
+var
+  FStream : TFileStream;
+  FilePath : String;
+begin
+  FilePath := ExtractFilePath(ParamStr(0)) + 'reports\Missa_'+Mass_ID.ToString+'.pdf';
+  try
+    if not FileExists(FilePath) then
+      Create_SlidePDF(Mass_ID);
+    FStream := TFileStream.Create(FilePath, fmOpenRead);
+    Result := TDBXJSONTools.StreamToJSON(FStream, 0, FStream.Size);
+  finally
+    if Assigned(FStream) then
+      FreeAndNil(FStream);
+  end;
+end;
+
+/// <summary> Return the File in JSON format
+/// </summary>
+function TMass.DownloadSlidePPTX(Mass_ID: Integer): TJSONArray;
 var
   FStream : TFileStream;
   FilePath : String;
@@ -576,7 +668,7 @@ begin
   FilePath := ExtractFilePath(ParamStr(0)) + 'reports\Missa_'+Mass_ID.ToString+'.pptx';
   try
     if not FileExists(FilePath) then
-      Create_Slide(Mass_ID);
+      Create_SlidePPTX(Mass_ID);
     FStream := TFileStream.Create(FilePath, fmOpenRead);
     Result := TDBXJSONTools.StreamToJSON(FStream, 0, FStream.Size);
   finally

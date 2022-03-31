@@ -1,0 +1,59 @@
+unit uClientModule;
+
+interface
+
+uses
+  System.SysUtils, System.Classes, Data.DBXDataSnap,
+  Data.DBXCommon, IPPeerClient, Data.DB, Data.SqlExpr, DS_Functions,
+  FireDAC.Stan.StorageJSON, FireDAC.Stan.StorageBin;
+
+type
+  TDM_DataSnap = class(TDataModule)
+    DSConn: TSQLConnection;
+    FDStanStorageJSONLink1: TFDStanStorageJSONLink;
+    FDStanStorageBinLink1: TFDStanStorageBinLink;
+  private
+    FInstanceOwner: Boolean;
+    FLoginClient: TLoginClient;
+    function GetLoginClient: TLoginClient;
+    { Private declarations }
+  public
+    constructor Create(AOwner: TComponent); override;
+    destructor Destroy; override;
+    property InstanceOwner: Boolean read FInstanceOwner write FInstanceOwner;
+    property LoginClient: TLoginClient read GetLoginClient write FLoginClient;
+
+end;
+
+var
+  DM_DataSnap: TDM_DataSnap;
+
+implementation
+
+{%CLASSGROUP 'FMX.Controls.TControl'}
+
+{$R *.dfm}
+
+constructor TDM_DataSnap.Create(AOwner: TComponent);
+begin
+  inherited;
+  FInstanceOwner := True;
+end;
+
+destructor TDM_DataSnap.Destroy;
+begin
+  FLoginClient.Free;
+  inherited;
+end;
+
+function TDM_DataSnap.GetLoginClient: TLoginClient;
+begin
+  if FLoginClient = nil then
+  begin
+    DSConn.Open;
+    FLoginClient:= TLoginClient.Create(DSConn.DBXConnection, FInstanceOwner);
+  end;
+  Result := FLoginClient;
+end;
+
+end.

@@ -1,0 +1,111 @@
+unit uScript_DBL;
+
+interface
+  function Create_DataBase: String;
+  function Path_DB: String;
+implementation
+
+uses
+  System.SysUtils, System.IOUtils, FireDAC.ConsoleUI.Wait, FireDAC.Phys.SQLite,
+  FireDAC.Comp.Client, FireDAC.Phys.SQLiteWrapper,
+  FireDAC.Stan.Async, FireDAC.Stan.Def, FireDAC.Phys.SQLiteWrapper.Stat, FireDAC.DApt,
+  FireDAC.Comp.UI, FireDAC.Stan.Param, System.JSON, Data.FireDACJSONReflect,
+  Data.DB, uSQLiteFunctions;
+
+const
+  Comando_SQL =
+
+  'PRAGMA foreign_keys = off; '+
+  'BEGIN TRANSACTION;         '+
+
+  'DROP TABLE IF EXISTS CONFIG;'+
+  'CREATE TABLE CONFIG (VERSION_BD INTEGER);'+
+  'INSERT INTO CONFIG(VERSION_BD) VALUES(1);'+
+
+  'DROP TABLE IF EXISTS USER;'+
+  'CREATE TABLE USER (USER_ID INTEGER PRIMARY KEY, '+
+  '                   NAME VARCHAR (200) NOT NULL, '+
+  '                   USERNAME VARCHAR (50) NOT NULL UNIQUE, '+
+  '                   PASSWORD VARCHAR (50) NOT NULL, '+
+  '                   AUTHENTICATED INTEGER DEFAULT (0) NOT NULL, '+
+  '                   IP VARCHAR (100), '+
+  '                   PORT VARCHAR (10));'+
+
+  'COMMIT TRANSACTION;'+
+  'PRAGMA foreign_keys = on;';
+
+
+/// <summary> Return the path of DataBase Local
+/// </summary>
+function Path_DB: String;
+var
+  path: String;
+begin
+  {$IFDEF MSWINDOWS}
+    path := ExtractFilePath(ParamStr(0)) + 'DataBaseLocal';
+  {$ENDIF}
+  {$IFDEF ANDROID}
+    path := System.IOUtils.TPath.Combine(System.IOUtils.TPath.GetHomePath, 'DataBaseLocal');
+  {$ENDIF}
+  if not TDirectory.Exists(path) then
+    System.SysUtils.ForceDirectories(path);
+
+  Result := System.IOUtils.TPath.Combine(path, 'DBL_SlideApp.s3db');
+end;
+
+/// <summary> Create the DataBase if not exists.
+/// </summary>
+/// <return> Return EmptyStr if succefull, else return a string error.
+/// </return>
+function Create_DataBase: String;
+var
+  FDConn: TFDConnection;
+  GUI : TFDGUIxWaitCursor;
+  Driver : TFDPhysSQLiteDriverLink;
+  Query : TFDQuery;
+begin
+  try
+    if FileExists(Path_DB) then
+    //VERIFY THE VERSION OF DATABASE
+//      if not (TSQLite.getVersaoBanco < DB_VERSION) then
+        exit;
+
+    GUI := TFDGUIxWaitCursor.Create(nil);
+    FDconn := TFDConnection.Create(nil);
+    Driver := TFDPhysSQLiteDriverLink.Create(nil);
+
+
+    with FDConn do
+    begin
+      Connected := False;
+
+      Params.Clear;
+      Params.DriverID := 'SQLite';
+
+      Params.Add('OpenMode=CreateUTF8');
+
+      Params.Values['Database'] := Path_DB;
+      Params.Values['Page_Size'] := '4096';
+
+      Open;
+    end;
+
+    Query := TFDQuery.Create(nil);
+    Query.Connection := FDConn;
+
+    Query.SQL.Add(Comando_SQL);
+
+    Query.ExecSQL;
+
+    FDConn.Close;
+
+    FreeAndNil(Query);
+    FreeAndNil(FDConn);
+    FreeAndNil(Driver);
+    FreeAndNil(GUI);
+  except on e : Exception do
+    Result := e.Message;
+  end;
+end;
+
+end.

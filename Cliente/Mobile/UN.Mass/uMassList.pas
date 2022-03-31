@@ -34,6 +34,8 @@ type
     Ani: TAniIndicator;
     ImageList1: TImageList;
     PB: TProgressBar;
+    AniDownload: TAniIndicator;
+    lay: TLayout;
     procedure FormCreate(Sender: TObject);
     procedure btn_asc_descClick(Sender: TObject);
     procedure cbb_FilterChange(Sender: TObject);
@@ -96,9 +98,9 @@ begin
   Page := 1;
   LV.Items.Clear;
   if ALL_USERS then
-  LoadMass(Page, Trim(Edt_Search.Text), 0, Frm_Main.ID_Parish_Active)
+  LoadMass(Page, Trim(Edt_Search.Text), 0, Frm_Main.Parish_ID_Active)
   else
-  LoadMass(Page, Trim(Edt_Search.Text), Frm_Main.ID_User, Frm_Main.ID_Parish_Active);
+  LoadMass(Page, Trim(Edt_Search.Text), Frm_Main.User_ID, Frm_Main.Parish_ID_Active);
 end;
 
 procedure TFrm_Mass.btn_filterClick(Sender: TObject);
@@ -136,9 +138,9 @@ begin
   Page := 1;
   LV.Items.Clear;
   if ALL_USERS then
-  LoadMass(Page, Trim(Edt_Search.Text), 0, Frm_Main.ID_Parish_Active)
+  LoadMass(Page, Trim(Edt_Search.Text), 0, Frm_Main.Parish_ID_Active)
   else
-  LoadMass(Page, Trim(Edt_Search.Text), Frm_Main.ID_User, Frm_Main.ID_Parish_Active);
+  LoadMass(Page, Trim(Edt_Search.Text), Frm_Main.User_ID, Frm_Main.Parish_ID_Active);
 end;
 
 procedure TFrm_Mass.cbb_FilterChange(Sender: TObject);
@@ -157,9 +159,9 @@ begin
   Page := 1;
   LV.Items.Clear;
   if ALL_USERS then
-  LoadMass(Page, Trim(Edt_Search.Text), 0, Frm_Main.ID_Parish_Active)
+  LoadMass(Page, Trim(Edt_Search.Text), 0, Frm_Main.Parish_ID_Active)
   else
-  LoadMass(Page, Trim(Edt_Search.Text), Frm_Main.ID_User, Frm_Main.ID_Parish_Active);
+  LoadMass(Page, Trim(Edt_Search.Text), Frm_Main.User_ID, Frm_Main.Parish_ID_Active);
 end;
 
 procedure TFrm_Mass.ClearEditButton1Click(Sender: TObject);
@@ -172,86 +174,116 @@ begin
   Page := 1;
   LV.Items.Clear;
   if ALL_USERS then
-  LoadMass(Page, '', 0, Frm_Main.ID_Parish_Active)
+  LoadMass(Page, '', 0, Frm_Main.Parish_ID_Active)
   else
-  LoadMass(Page, '', Frm_Main.ID_User, Frm_Main.ID_Parish_Active);
+  LoadMass(Page, '', Frm_Main.User_ID, Frm_Main.Parish_ID_Active);
 end;
 
 procedure TFrm_Mass.DownloadMass(Mass_ID, ItemIndex: Integer);
 begin
-  PB.Value := 0;
-  PB.Visible := True;
-
-  TThread.CreateAnonymousThread(procedure
-  begin
-    try
-      repeat
-        Sleep(100);
-        TThread.Synchronize(nil, procedure
-        begin
-          PB.Value := PB.Value + 1;
-        end);
-      until (PB.Value = 50);
-    except on e : exception do
-      TThread.Synchronize(nil, procedure
-      begin
-        ShowMessage(e.Message);
-      end);
-    end;
-  end).Start;
-
-  TThread.CreateAnonymousThread(procedure
-  var
-    Mass : TMassClient;
-    FStream : TFileStream;
-    InStream : TStream;
-    FBuffer : Array[0..1023] of Byte;
-    ReadByte : SmallInt;
-  begin
-    try
+  try
+    PB.Value := 0;
+    PB.Visible := True;
+    AniDownload.Visible := True;
+    AniDownload.Enabled := True;
+    //Enable custom animation
+    TThread.CreateAnonymousThread(procedure
+    begin
       try
-        if not DM_DataSnap.DSConn.Connected then
-          DM_DataSnap.DSConn.Connected := True;
-        Mass := TMassClient.Create(DM_DataSnap.DSConn.DBXConnection);
-        FStream := TFileStream.Create(PathSlide + '/Missa_'+Mass_ID.ToString+'.pptx', fmCreate);
-        InStream := TDBXJSONTools.JSONToStream(Mass.DownloadSlide(Mass_ID));
-
         repeat
-          ReadByte := InStream.Read(FBuffer,1024);
-          FStream.Write(FBuffer,ReadByte);
-
+          Sleep(500);
           TThread.Synchronize(nil, procedure
           begin
             PB.Value := PB.Value + 1;
           end);
-        until(ReadByte=0);
-
-        TThread.Synchronize(nil, procedure
-        begin
-          Edit_Item(ItemIndex);
-          ShowMessage('Download concluído!');
-        end);
+        until (PB.Value = 50);
       except on e : exception do
         TThread.Synchronize(nil, procedure
         begin
-          ShowMessage('Não foi possível baixar este arquivo: ' + e.Message);
+          ShowMessage(e.Message);
         end);
       end;
-    finally
-      if Assigned(Mass) then
-        FreeAndNil(Mass);
-      if Assigned(FStream) then
-        FreeAndNil(FStream);
-      if Assigned(InStream) then
-        FreeAndNil(InStream);
-      TThread.Synchronize(nil, procedure
-      begin
-        PB.Value := PB.Max;
-        PB.Visible := False;
-      end);
-    end;
-  end).Start;
+    end).Start;
 
+    //download pptx file
+    TThread.CreateAnonymousThread(procedure
+    var
+      Mass : TMassClient;
+      FStream : TFileStream;
+      InStream : TStream;
+      FBuffer : Array[0..1023] of Byte;
+      ReadByte : SmallInt;
+    begin
+      try
+        try
+          if not DM_DataSnap.DSConn.Connected then
+            DM_DataSnap.DSConn.Connected := True;
+          Mass := TMassClient.Create(DM_DataSnap.DSConn.DBXConnection);
+
+          //Download PPTX File
+          FStream := TFileStream.Create(PathSlide + '/Missa_'+Mass_ID.ToString+'.pptx', fmCreate);
+          InStream := TDBXJSONTools.JSONToStream(Mass.DownloadSlidePPTX(Mass_ID));
+
+          repeat
+            ReadByte := InStream.Read(FBuffer,1024);
+            FStream.Write(FBuffer,ReadByte);
+
+            TThread.Synchronize(nil, procedure
+            begin
+              PB.Value := PB.Value + 1;
+            end);
+          until(ReadByte=0);
+          //###################
+
+          //Download PDF File
+          FStream := TFileStream.Create(PathSlide + '/Missa_'+Mass_ID.ToString+'.pdf', fmCreate);
+          InStream := TDBXJSONTools.JSONToStream(Mass.DownloadSlidePDF(Mass_ID));
+
+          repeat
+            ReadByte := InStream.Read(FBuffer,1024);
+            FStream.Write(FBuffer,ReadByte);
+
+            TThread.Synchronize(nil, procedure
+            begin
+              PB.Value := PB.Value + 1;
+            end);
+          until(ReadByte=0);
+          //####################
+
+          TThread.Synchronize(nil, procedure
+          begin
+            Edit_Item(ItemIndex);
+            AniDownload.Visible := False;
+            AniDownload.Enabled := False;
+            ShowMessage('Download concluído!');
+          end);
+        except on e : exception do
+          TThread.Synchronize(nil, procedure
+          begin
+            AniDownload.Visible := False;
+            AniDownload.Enabled := False;
+            ShowMessage('Não foi possível baixar este arquivo: ' + e.Message);
+          end);
+        end;
+      finally
+        if Assigned(Mass) then
+          FreeAndNil(Mass);
+        if Assigned(FStream) then
+          FreeAndNil(FStream);
+        if Assigned(InStream) then
+          FreeAndNil(InStream);
+
+        TThread.Synchronize(nil, procedure
+        begin
+          PB.Value := PB.Max;
+          PB.Visible := False;
+        end);
+      end;
+    end).Start;
+  finally
+    if DM_DataSnap.DSConn.Connected then
+      DM_DataSnap.DSConn.Connected := False;
+  end;
 end;
 
 /// <summary> Change the LVItem to 'downloaded'
@@ -262,7 +294,8 @@ begin
   with LV.Items[AIndex] do
   begin
     Data['img_status'] := ImageList1.Bitmap(TSizeF.Create(30, 30), 1);
-    Data['img_share']  := ImageList1.Bitmap(TSizeF.Create(30, 30), 2);
+    Data['img_pdf']  := ImageList1.Bitmap(TSizeF.Create(30, 30), 3);
+    Data['img_pptx']  := ImageList1.Bitmap(TSizeF.Create(30, 30), 4);
   end;
   LV.EndUpdate;
 end;
@@ -277,9 +310,9 @@ begin
 
   LV.Items.Clear;
   if ALL_USERS then
-  LoadMass(Page, Trim(Edt_Search.Text), 0, Frm_Main.ID_Parish_Active)
+  LoadMass(Page, Trim(Edt_Search.Text), 0, Frm_Main.Parish_ID_Active)
   else
-  LoadMass(Page, Trim(Edt_Search.Text), Frm_Main.ID_User, Frm_Main.ID_Parish_Active);
+  LoadMass(Page, Trim(Edt_Search.Text), Frm_Main.User_ID, Frm_Main.Parish_ID_Active);
 end;
 
 procedure TFrm_Mass.FormKeyUp(Sender: TObject; var Key: Word; var KeyChar: Char;
@@ -314,10 +347,12 @@ begin
     Data['mass_date'] := Mass_Date;
     Data['gen_mass']  := Gen_Mass;
 
-    if FileExists(TPath.Combine(PathSlide, 'Missa_'+Mass_ID.ToString+'.pptx')) then
+    if (FileExists(TPath.Combine(PathSlide, 'Missa_'+Mass_ID.ToString+'.pptx'))) and
+       (FileExists(TPath.Combine(PathSlide, 'Missa_'+Mass_ID.ToString+'.pdf'))) then
     begin
       Data['img_status'] := ImageList1.Bitmap(TSizeF.Create(30, 30), 1);
-      Data['img_share']  := ImageList1.Bitmap(TSizeF.Create(30, 30), 2);
+      Data['img_pptx']  := ImageList1.Bitmap(TSizeF.Create(30, 30), 4);
+      Data['img_pdf']  := ImageList1.Bitmap(TSizeF.Create(30, 30), 3);
     end
     else
       Data['img_status'] := ImageList1.Bitmap(TSizeF.Create(30, 30), 0);
@@ -400,7 +435,7 @@ begin
   inherited;
   if Assigned(ItemObject) then
   begin
-    if (ItemObject.Name = 'img_status') and (not LV.Items[ItemIndex].HasData['img_share']) then
+    if (ItemObject.Name = 'img_status') and (not LV.Items[ItemIndex].HasData['img_pptx']) then
     begin
       Vibrate(50);
       var Text : String;
@@ -419,7 +454,8 @@ begin
       end);
     end
     else
-    if (ItemObject.Name = 'img_share') and (LV.Items[ItemIndex].HasData['img_share']) then
+    if (ItemObject.Name = 'img_pptx') and (LV.Items[ItemIndex].HasData['img_pptx']) then
+    begin
       if FileExists(PathSlide + '/Missa_'+LV.Items[ItemIndex].Tag.ToString+'.pptx') then
       begin
 //        ShowMessage(TPath.Combine(TPath.GetHomePath, 'Missa_'+LV.Items[ItemIndex].Tag.ToString+'.pptx'));
@@ -427,6 +463,19 @@ begin
       end
       else
         ShowMessage('Erro: Arquivo não encontrado');
+    end
+    else
+    if (ItemObject.Name = 'img_pdf') and (LV.Items[ItemIndex].HasData['img_pdf']) then
+    begin
+      if FileExists(PathSlide + '/Missa_'+LV.Items[ItemIndex].Tag.ToString+'.pdf') then
+      begin
+//        ShowMessage(TPath.Combine(TPath.GetHomePath, 'Missa_'+LV.Items[ItemIndex].Tag.ToString+'.pptx'));
+        OpenPDF(PathSlide + '/Missa_'+LV.Items[ItemIndex].Tag.ToString+'.pdf')
+      end
+      else
+        ShowMessage('Erro: Arquivo não encontrado');
+    end;
+
   end;
 end;
 
@@ -438,7 +487,7 @@ var
   AvailableWidth, aux, Height_LV: Single;
 begin
   AvailableWidth := TListView(Sender).Width - TListView(Sender).ItemSpaces.Left
-    - TListView(Sender).ItemSpaces.Right - 60;//60 is sum of two width images
+    - TListView(Sender).ItemSpaces.Right;
 
   Mass_Title := TListItemText(AItem.View.FindDrawable('title'));
   Text := Mass_Title.Text;
@@ -448,13 +497,14 @@ begin
   Height_LV := TListItemText(AItem.View.FindDrawable('lbl_user')).Height +
                TListItemText(AItem.View.FindDrawable('user')).Height +
                TListItemText(AItem.View.FindDrawable('lbl_mass_date')).Height +
-               TListItemText(AItem.View.FindDrawable('mass_date')).Height;
+               TListItemText(AItem.View.FindDrawable('mass_date')).Height+
+               TListItemText(AItem.View.FindDrawable('img_status')).Height;
   AItem.Height := Round(aux) + Round(Height_LV);
-  Mass_Title.Height := aux;
-  Mass_Title.Width := AvailableWidth;
+  TListItemText(AItem.View.FindDrawable('title')).Height := aux;
+//  Mass_Title.Width := AvailableWidth;
 
-  TListItemText(AItem.View.FindDrawable('lbl_user')).PlaceOffset.Y := Mass_Title.Height;
-  aux := Mass_Title.Height + TListItemText(AItem.View.FindDrawable('lbl_user')).Height;
+  TListItemText(AItem.View.FindDrawable('lbl_user')).PlaceOffset.Y := Mass_Title.Height+Mass_Title.PlaceOffset.Y;
+  aux := TListItemText(AItem.View.FindDrawable('lbl_user')).PlaceOffset.Y + TListItemText(AItem.View.FindDrawable('lbl_user')).Height;
   TListItemText(AItem.View.FindDrawable('user')).PlaceOffset.Y := aux;
   aux := aux + TListItemText(AItem.View.FindDrawable('user')).Height;
   TListItemText(AItem.View.FindDrawable('lbl_mass_date')).PlaceOffset.Y := aux;
@@ -474,9 +524,9 @@ begin
   Page := 1;
   LV.Items.Clear;
   if ALL_USERS then
-  LoadMass(Page, Trim(Edt_Search.Text), 0, Frm_Main.ID_Parish_Active)
+  LoadMass(Page, Trim(Edt_Search.Text), 0, Frm_Main.Parish_ID_Active)
   else
-  LoadMass(Page, Trim(Edt_Search.Text), Frm_Main.ID_User, Frm_Main.ID_Parish_Active);
+  LoadMass(Page, Trim(Edt_Search.Text), Frm_Main.User_ID, Frm_Main.Parish_ID_Active);
 end;
 
 end.

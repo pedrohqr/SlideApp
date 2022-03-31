@@ -7,8 +7,6 @@ uses
 
 type
   TServerWM = class(TWebModule)
-    procedure WebModule1DefaultHandlerAction(Sender: TObject;
-      Request: TWebRequest; Response: TWebResponse; var Handled: Boolean);
   private
     { Private declarations }
   public
@@ -23,15 +21,5 @@ implementation
 {%CLASSGROUP 'System.Classes.TPersistent'}
 
 {$R *.dfm}
-
-procedure TServerWM.WebModule1DefaultHandlerAction(Sender: TObject;
-  Request: TWebRequest; Response: TWebResponse; var Handled: Boolean);
-begin
-  Response.Content :=
-    '<html>' +
-    '<head><title>SlideApp</title></head>' +
-    '<body>Cadastro de usuario</body>' +
-    '</html>';
-end;
 
 end.

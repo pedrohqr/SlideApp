@@ -1,0 +1,1151 @@
+inherited Frm_New_Mass: TFrm_New_Mass
+  Caption = 'FormBase1'
+  ClientHeight = 466
+  ClientWidth = 328
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
+  OnKeyUp = FormKeyUp
+  DesignerMasterStyle = 3
+  inherited LayoutClient: TLayout
+    Size.Width = 328.000000000000000000
+    Size.Height = 466.000000000000000000
+    object Rectangle1: TRectangle
+      Align = Top
+      Fill.Color = claWhite
+      Margins.Left = 10.000000000000000000
+      Margins.Top = 10.000000000000000000
+      Margins.Right = 10.000000000000000000
+      Position.X = 10.000000000000000000
+      Position.Y = 10.000000000000000000
+      Size.Width = 308.000000000000000000
+      Size.Height = 50.000000000000000000
+      Size.PlatformDefault = False
+      Stroke.Kind = None
+      XRadius = 15.000000000000000000
+      YRadius = 15.000000000000000000
+      object Label1: TLabel
+        Align = Client
+        AutoSize = True
+        StyledSettings = []
+        Size.Width = 308.000000000000000000
+        Size.Height = 50.000000000000000000
+        Size.PlatformDefault = False
+        TextSettings.Font.Family = 'Sylfaen'
+        TextSettings.Font.Size = 20.000000000000000000
+        TextSettings.Font.StyleExt = {00070000000000000004000000}
+        TextSettings.FontColor = claGray
+        TextSettings.HorzAlign = Center
+        Text = 'MISSA'
+        TabOrder = 0
+      end
+    end
+    object TabControl1: TTabControl
+      Align = Client
+      Margins.Left = 10.000000000000000000
+      Margins.Top = 10.000000000000000000
+      Margins.Right = 10.000000000000000000
+      Margins.Bottom = 20.000000000000000000
+      Size.Width = 308.000000000000000000
+      Size.Height = 376.000000000000000000
+      Size.PlatformDefault = False
+      TabHeight = 49.000000000000000000
+      TabIndex = 0
+      TabOrder = 1
+      TabPosition = None
+      Sizes = (
+        308s
+        376s
+        308s
+        376s
+        308s
+        376s
+        308s
+        376s)
+      object TabItem1: TTabItem
+        CustomIcon = <
+          item
+          end>
+        IsSelected = True
+        Size.Width = 8.000000000000000000
+        Size.Height = 8.000000000000000000
+        Size.PlatformDefault = False
+        StyleLookup = ''
+        TabOrder = 0
+        Text = 'TabItem1'
+        ExplicitSize.cx = 8.000000000000000000
+        ExplicitSize.cy = 8.000000000000000000
+        object Lay_Tab1: TLayout
+          Align = Client
+          Margins.Left = 10.000000000000000000
+          Margins.Right = 10.000000000000000000
+          Size.Width = 288.000000000000000000
+          Size.Height = 294.000000000000000000
+          Size.PlatformDefault = False
+          TabOrder = 2
+          object LV_MM: TListView
+            Touch.GestureManager = GestureManager1
+            Touch.InteractiveGestures = [DoubleTap]
+            ItemAppearanceClassName = 'TDynamicAppearance'
+            ItemEditAppearanceClassName = 'TDynamicAppearance'
+            HeaderAppearanceClassName = 'TListHeaderObjects'
+            FooterAppearanceClassName = 'TListHeaderObjects'
+            Align = Client
+            Size.Width = 288.000000000000000000
+            Size.Height = 244.000000000000000000
+            Size.PlatformDefault = False
+            TabOrder = 0
+            ItemAppearance.ItemHeight = 75
+            ItemAppearanceObjects.ItemObjects.ObjectsCollection = <
+              item
+                AppearanceObjectName = 'moment'
+                AppearanceClassName = 'TTextObjectAppearance'
+                Appearance.Font.Size = 16.000000000000000000
+                Appearance.Font.StyleExt = {00060000000000000004000000}
+                Appearance.TextAlign = Leading
+                Appearance.Trimming = Word
+                Appearance.Width = 290.000000000000000000
+                Appearance.Height = 25.000000000000000000
+              end
+              item
+                AppearanceObjectName = 'song'
+                AppearanceClassName = 'TTextObjectAppearance'
+                Appearance.Font.Size = 16.000000000000000000
+                Appearance.TextAlign = Leading
+                Appearance.Width = 290.000000000000000000
+                Appearance.Height = 25.000000000000000000
+                Appearance.PlaceOffset.Y = 25.000000000000000000
+              end
+              item
+                AppearanceObjectName = 'artist'
+                AppearanceClassName = 'TTextObjectAppearance'
+                Appearance.Font.Size = 16.000000000000000000
+                Appearance.TextAlign = Leading
+                Appearance.Width = 290.000000000000000000
+                Appearance.Height = 25.000000000000000000
+                Appearance.PlaceOffset.Y = 50.000000000000000000
+              end>
+            ItemAppearanceObjects.ItemEditObjects.ObjectsCollection = <
+              item
+                AppearanceObjectName = 'Text1'
+                AppearanceClassName = 'TTextObjectAppearance'
+              end>
+            OnDeletingItem = LV_MMDeletingItem
+            OnDeleteItem = LV_MMDeleteItem
+            DeleteButtonText = 'Excluir'
+            object lbl_info_LV_Mass: TLabel
+              Align = Client
+              Size.Width = 311.000000000000000000
+              Size.Height = 353.000000000000000000
+              Size.PlatformDefault = False
+              TextSettings.HorzAlign = Center
+              TextSettings.Trimming = Word
+              Text = 'Nenhuma m'#250'sica adicionada'
+              Visible = False
+              TabOrder = 0
+            end
+          end
+          object Lay_Tools: TLayout
+            Align = Top
+            Size.Width = 288.000000000000000000
+            Size.Height = 50.000000000000000000
+            Size.PlatformDefault = False
+            TabOrder = 1
+            object btn_add_music: TButton
+              Align = Right
+              Images = ImageList1
+              ImageIndex = 1
+              Position.X = 240.000000000000000000
+              Position.Y = 1.000000000000000000
+              Size.Width = 48.000000000000000000
+              Size.Height = 48.000000000000000000
+              Size.PlatformDefault = False
+              StyleLookup = 'addtoolbutton'
+              TabOrder = 0
+              Text = 'btn_add_music'
+              OnClick = btn_add_musicClick
+            end
+            object btn_Mass_Date: TButton
+              Align = Right
+              Images = ImageList1
+              ImageIndex = 2
+              Position.X = 192.000000000000000000
+              Position.Y = 1.000000000000000000
+              Size.Width = 48.000000000000000000
+              Size.Height = 48.000000000000000000
+              Size.PlatformDefault = False
+              StyleLookup = 'bookmarkstoolbutton'
+              TabOrder = 1
+              OnClick = btn_Mass_DateClick
+            end
+            object btn_EPrayers: TButton
+              Align = Right
+              Images = ImageList1
+              ImageIndex = 3
+              Position.X = 153.000000000000000000
+              Position.Y = 1.000000000000000000
+              Size.Width = 39.000000000000000000
+              Size.Height = 48.000000000000000000
+              Size.PlatformDefault = False
+              StyleLookup = 'speedbuttonstyle'
+              TabOrder = 2
+              TextSettings.WordWrap = True
+              OnClick = btn_EPrayersClick
+            end
+            object btn_Readings: TButton
+              Align = Right
+              Images = ImageList1
+              ImageIndex = 0
+              Position.X = 107.000000000000000000
+              Position.Y = 1.000000000000000000
+              Size.Width = 46.000000000000000000
+              Size.Height = 48.000000000000000000
+              Size.PlatformDefault = False
+              StyleLookup = 'speedbuttonstyle'
+              TabOrder = 3
+              TextSettings.WordWrap = True
+              OnClick = btn_ReadingsClick
+            end
+          end
+          object Calendar: TCalendar
+            Align = Horizontal
+            Date = 44649.000000000000000000
+            Position.Y = 50.000000000000000000
+            Size.Width = 288.000000000000000000
+            Size.Height = 0.000000000000000000
+            Size.PlatformDefault = False
+            TabOrder = 2
+            TodayDefault = True
+            OnDateSelected = CalendarDateSelected
+          end
+        end
+        object Rectangle6: TRectangle
+          Align = Top
+          Fill.Color = claWhite
+          Margins.Left = 10.000000000000000000
+          Margins.Top = 5.000000000000000000
+          Margins.Right = 10.000000000000000000
+          Position.X = 10.000000000000000000
+          Position.Y = 5.000000000000000000
+          Size.Width = 288.000000000000000000
+          Size.Height = 32.000000000000000000
+          Size.PlatformDefault = False
+          Stroke.Kind = None
+          XRadius = 10.000000000000000000
+          YRadius = 10.000000000000000000
+          object Edt_Title: TEdit
+            Touch.InteractiveGestures = [LongTap, DoubleTap]
+            Align = Client
+            TabOrder = 0
+            MaxLength = 200
+            TextSettings.HorzAlign = Center
+            Size.Width = 288.000000000000000000
+            Size.Height = 32.000000000000000000
+            Size.PlatformDefault = False
+            TextPrompt = '(T'#237'tulo da Missa)'
+          end
+        end
+        object btn_Done_Mass: TRectangle
+          Align = Bottom
+          Fill.Color = xFFF8F596
+          Margins.Left = 10.000000000000000000
+          Margins.Top = 5.000000000000000000
+          Margins.Right = 10.000000000000000000
+          Margins.Bottom = 5.000000000000000000
+          Position.X = 10.000000000000000000
+          Position.Y = 336.000000000000000000
+          Size.Width = 288.000000000000000000
+          Size.Height = 35.000000000000000000
+          Size.PlatformDefault = False
+          Stroke.Kind = None
+          XRadius = 10.000000000000000000
+          YRadius = 10.000000000000000000
+          OnClick = btn_Done_MassClick
+          object lbl_done_mass: TLabel
+            Align = Client
+            Size.Width = 288.000000000000000000
+            Size.Height = 35.000000000000000000
+            Size.PlatformDefault = False
+            TextSettings.HorzAlign = Center
+            Text = 'Finalizar e Enviar'
+            TabOrder = 0
+          end
+        end
+      end
+      object TabItem2: TTabItem
+        CustomIcon = <
+          item
+          end>
+        IsSelected = False
+        Size.Width = 8.000000000000000000
+        Size.Height = 8.000000000000000000
+        Size.PlatformDefault = False
+        StyleLookup = ''
+        TabOrder = 0
+        Text = 'TabItem2'
+        ExplicitSize.cx = 8.000000000000000000
+        ExplicitSize.cy = 8.000000000000000000
+        object Lay_Tab2: TLayout
+          Align = Client
+          Size.Width = 308.000000000000000000
+          Size.Height = 376.000000000000000000
+          Size.PlatformDefault = False
+          TabOrder = 0
+          object Rectangle2: TRectangle
+            Align = Top
+            Fill.Color = claWhite
+            Margins.Left = 10.000000000000000000
+            Margins.Top = 10.000000000000000000
+            Margins.Right = 10.000000000000000000
+            Position.X = 10.000000000000000000
+            Position.Y = 10.000000000000000000
+            Size.Width = 288.000000000000000000
+            Size.Height = 66.000000000000000000
+            Size.PlatformDefault = False
+            Stroke.Kind = None
+            XRadius = 15.000000000000000000
+            YRadius = 15.000000000000000000
+            object Label2: TLabel
+              Align = Top
+              StyledSettings = []
+              Size.Width = 288.000000000000000000
+              Size.Height = 32.000000000000000000
+              Size.PlatformDefault = False
+              TextSettings.Font.Family = 'Sylfaen'
+              TextSettings.Font.Size = 20.000000000000000000
+              TextSettings.Font.StyleExt = {00070000000000000004000000}
+              TextSettings.FontColor = claGray
+              TextSettings.HorzAlign = Center
+              Text = 'SELECIONE O MOMENTO'
+              TabOrder = 1
+            end
+            object cbb_Moments: TComboBox
+              Align = Client
+              Margins.Left = 5.000000000000000000
+              Margins.Right = 5.000000000000000000
+              Size.Width = 278.000000000000000000
+              Size.Height = 34.000000000000000000
+              Size.PlatformDefault = False
+              StyleLookup = 'ComboBox'
+              TabOrder = 0
+            end
+          end
+          object Rectangle4: TRectangle
+            Align = Top
+            Fill.Color = claWhite
+            Margins.Left = 10.000000000000000000
+            Margins.Top = 10.000000000000000000
+            Margins.Right = 10.000000000000000000
+            Position.X = 10.000000000000000000
+            Position.Y = 86.000000000000000000
+            Size.Width = 288.000000000000000000
+            Size.Height = 32.000000000000000000
+            Size.PlatformDefault = False
+            Stroke.Kind = None
+            XRadius = 15.000000000000000000
+            YRadius = 15.000000000000000000
+            object Label3: TLabel
+              Align = Client
+              StyledSettings = []
+              Size.Width = 288.000000000000000000
+              Size.Height = 32.000000000000000000
+              Size.PlatformDefault = False
+              TextSettings.Font.Family = 'Sylfaen'
+              TextSettings.Font.Size = 20.000000000000000000
+              TextSettings.Font.StyleExt = {00070000000000000004000000}
+              TextSettings.FontColor = claGray
+              TextSettings.HorzAlign = Center
+              Text = 'SELECIONE A M'#218'SICA'
+              TabOrder = 0
+            end
+          end
+          object LV_Search: TListView
+            ItemAppearanceClassName = 'TDynamicAppearance'
+            ItemEditAppearanceClassName = 'TDynamicAppearance'
+            HeaderAppearanceClassName = 'TListHeaderObjects'
+            FooterAppearanceClassName = 'TListHeaderObjects'
+            Align = Client
+            Margins.Left = 10.000000000000000000
+            Margins.Top = 10.000000000000000000
+            Margins.Right = 10.000000000000000000
+            Margins.Bottom = 20.000000000000000000
+            Size.Width = 288.000000000000000000
+            Size.Height = 156.000000000000000000
+            Size.PlatformDefault = False
+            TabOrder = 0
+            ItemAppearance.ItemHeight = 70
+            ItemAppearanceObjects.ItemObjects.ObjectsCollection = <
+              item
+                AppearanceObjectName = 'song'
+                AppearanceClassName = 'TTextObjectAppearance'
+                Appearance.Font.Size = 18.000000000000000000
+                Appearance.Font.StyleExt = {00060000000000000004000000}
+                Appearance.TextAlign = Leading
+                Appearance.Trimming = Character
+                Appearance.Height = 25.000000000000000000
+              end
+              item
+                AppearanceObjectName = 'artist'
+                AppearanceClassName = 'TTextObjectAppearance'
+                Appearance.Font.Size = 14.000000000000000000
+                Appearance.TextAlign = Leading
+                Appearance.Trimming = Character
+                Appearance.Height = 20.000000000000000000
+                Appearance.PlaceOffset.Y = 25.000000000000000000
+              end
+              item
+                AppearanceObjectName = 'link'
+                AppearanceClassName = 'TTextObjectAppearance'
+                Appearance.Font.Size = 14.000000000000000000
+                Appearance.Font.StyleExt = {04040000000000000004000000}
+                Appearance.TextAlign = Leading
+                Appearance.TextColor = claMediumblue
+                Appearance.Trimming = Character
+                Appearance.Height = 25.000000000000000000
+                Appearance.PlaceOffset.Y = 45.000000000000000000
+              end>
+            ItemAppearanceObjects.ItemEditObjects.ObjectsCollection = <
+              item
+                AppearanceObjectName = 'Text1'
+                AppearanceClassName = 'TTextObjectAppearance'
+              end>
+            CanSwipeDelete = False
+            OnScrollViewChange = LV_SearchScrollViewChange
+            OnItemClickEx = LV_SearchItemClickEx
+            object lbl_info_lv_search: TLabel
+              Align = Top
+              Size.Width = 311.000000000000000000
+              Size.Height = 57.000000000000000000
+              Size.PlatformDefault = False
+              TextSettings.HorzAlign = Center
+              Text = 'Sem resultados...'
+              Visible = False
+              TabOrder = 0
+            end
+            object Ani: TAniIndicator
+              Align = Center
+              Visible = False
+            end
+          end
+          object Rectangle5: TRectangle
+            Align = Top
+            Fill.Color = claWhite
+            Margins.Left = 10.000000000000000000
+            Margins.Top = 5.000000000000000000
+            Margins.Right = 10.000000000000000000
+            Position.X = 10.000000000000000000
+            Position.Y = 123.000000000000000000
+            Size.Width = 288.000000000000000000
+            Size.Height = 32.000000000000000000
+            Size.PlatformDefault = False
+            Stroke.Kind = None
+            XRadius = 10.000000000000000000
+            YRadius = 10.000000000000000000
+            object Edt_Search_Music: TEdit
+              Touch.InteractiveGestures = [LongTap, DoubleTap]
+              Align = Client
+              TabOrder = 0
+              Size.Width = 288.000000000000000000
+              Size.Height = 32.000000000000000000
+              Size.PlatformDefault = False
+              OnKeyUp = Edt_Search_MusicKeyUp
+              object SearchEditButton1: TSearchEditButton
+                CanFocus = False
+                Cursor = crArrow
+                Position.X = 32.000000000000000000
+                Size.Width = 32.000000000000000000
+                Size.Height = 32.000000000000000000
+                Size.PlatformDefault = False
+                TabOrder = 0
+                OnClick = SearchEditButton1Click
+              end
+              object ClearEditButton1: TClearEditButton
+                CanFocus = False
+                Cursor = crArrow
+                Size.Width = 32.000000000000000000
+                Size.Height = 30.000000000000000000
+                Size.PlatformDefault = False
+                TabOrder = 1
+                OnClick = ClearEditButton1Click
+              end
+            end
+          end
+          object btn_add: TRectangle
+            Align = Bottom
+            Fill.Color = xFFF8F596
+            Position.Y = 341.000000000000000000
+            Size.Width = 308.000000000000000000
+            Size.Height = 35.000000000000000000
+            Size.PlatformDefault = False
+            Stroke.Kind = None
+            XRadius = 10.000000000000000000
+            YRadius = 10.000000000000000000
+            OnClick = btn_addClick
+            object Label4: TLabel
+              Align = Client
+              Size.Width = 308.000000000000000000
+              Size.Height = 35.000000000000000000
+              Size.PlatformDefault = False
+              TextSettings.HorzAlign = Center
+              Text = 'Adicionar '#224' missa'
+              TabOrder = 0
+            end
+          end
+        end
+      end
+      object TabItem3: TTabItem
+        CustomIcon = <
+          item
+          end>
+        IsSelected = False
+        Size.Width = 8.000000000000000000
+        Size.Height = 8.000000000000000000
+        Size.PlatformDefault = False
+        StyleLookup = ''
+        TabOrder = 0
+        Text = 'TabItem3'
+        ExplicitSize.cx = 8.000000000000000000
+        ExplicitSize.cy = 8.000000000000000000
+        object Rectangle7: TRectangle
+          Align = Top
+          Fill.Color = claWhite
+          Margins.Left = 10.000000000000000000
+          Margins.Top = 10.000000000000000000
+          Margins.Right = 10.000000000000000000
+          Position.X = 10.000000000000000000
+          Position.Y = 10.000000000000000000
+          Size.Width = 288.000000000000000000
+          Size.Height = 183.000000000000000000
+          Size.PlatformDefault = False
+          Stroke.Kind = None
+          XRadius = 15.000000000000000000
+          YRadius = 15.000000000000000000
+          object Label5: TLabel
+            Align = Top
+            StyledSettings = []
+            Size.Width = 288.000000000000000000
+            Size.Height = 35.000000000000000000
+            Size.PlatformDefault = False
+            TextSettings.Font.Family = 'Sylfaen'
+            TextSettings.Font.Size = 20.000000000000000000
+            TextSettings.Font.StyleExt = {00070000000000000004000000}
+            TextSettings.FontColor = claGray
+            TextSettings.HorzAlign = Center
+            Text = 'LEITURAS'
+            TabOrder = 0
+          end
+          object LB_Readings: TListBox
+            Align = Client
+            Margins.Left = 10.000000000000000000
+            Margins.Right = 10.000000000000000000
+            Margins.Bottom = 3.000000000000000000
+            Size.Width = 268.000000000000000000
+            Size.Height = 145.000000000000000000
+            Size.PlatformDefault = False
+            TabOrder = 1
+            DisableFocusEffect = True
+            DefaultItemStyles.ItemStyle = ''
+            DefaultItemStyles.GroupHeaderStyle = ''
+            DefaultItemStyles.GroupFooterStyle = ''
+            Viewport.Width = 268.000000000000000000
+            Viewport.Height = 145.000000000000000000
+            object LBI_FReading: TListBoxItem
+              ItemData.Detail = 'Clique aqui para adicionar'
+              StyleLookup = 'listboxitembottomdetail'
+              TabOrder = 0
+              Text = 'Primeira Leitura'
+              OnClick = LBI_FReadingClick
+            end
+            object LBI_SReading: TListBoxItem
+              ItemData.Detail = 'Clique aqui para adicionar'
+              Position.Y = 44.000000000000000000
+              StyleLookup = 'listboxitembottomdetail'
+              TabOrder = 1
+              Text = 'Segunda Leitura'
+              OnClick = LBI_SReadingClick
+            end
+            object LBI_Gospel: TListBoxItem
+              ItemData.Detail = 'Clique aqui para adicionar'
+              Position.Y = 88.000000000000000000
+              StyleLookup = 'listboxitembottomdetail'
+              TabOrder = 2
+              Text = 'Evangelho'
+              OnClick = LBI_GospelClick
+            end
+          end
+        end
+        object Rectangle10: TRectangle
+          Align = Top
+          Fill.Color = claWhite
+          Margins.Left = 10.000000000000000000
+          Margins.Top = 10.000000000000000000
+          Margins.Right = 10.000000000000000000
+          Position.X = 10.000000000000000000
+          Position.Y = 203.000000000000000000
+          Size.Width = 288.000000000000000000
+          Size.Height = 110.000000000000000000
+          Size.PlatformDefault = False
+          Stroke.Kind = None
+          XRadius = 15.000000000000000000
+          YRadius = 15.000000000000000000
+          object Label7: TLabel
+            Align = Top
+            StyledSettings = []
+            Size.Width = 288.000000000000000000
+            Size.Height = 35.000000000000000000
+            Size.PlatformDefault = False
+            TextSettings.Font.Family = 'Sylfaen'
+            TextSettings.Font.Size = 20.000000000000000000
+            TextSettings.Font.StyleExt = {00070000000000000004000000}
+            TextSettings.FontColor = claGray
+            TextSettings.HorzAlign = Center
+            Text = 'SALMO RESPONSORIAL'
+            TabOrder = 0
+          end
+          object Edt_PSalm_Title: TEdit
+            Touch.InteractiveGestures = [LongTap, DoubleTap]
+            Align = Top
+            TabOrder = 1
+            TextSettings.HorzAlign = Center
+            Position.Y = 35.000000000000000000
+            Size.Width = 288.000000000000000000
+            Size.Height = 32.000000000000000000
+            Size.PlatformDefault = False
+            TextPrompt = '(T'#237'tulo)'
+          end
+          object Edt_PSalm_Lyrics: TEdit
+            Touch.InteractiveGestures = [LongTap, DoubleTap]
+            Align = Top
+            TabOrder = 2
+            TextSettings.HorzAlign = Center
+            Position.Y = 67.000000000000000000
+            Size.Width = 288.000000000000000000
+            Size.Height = 32.000000000000000000
+            Size.PlatformDefault = False
+            TextPrompt = '(Refr'#227'o)'
+          end
+        end
+      end
+      object TabItem4: TTabItem
+        CustomIcon = <
+          item
+          end>
+        IsSelected = False
+        Size.Width = 8.000000000000000000
+        Size.Height = 8.000000000000000000
+        Size.PlatformDefault = False
+        StyleLookup = ''
+        TabOrder = 0
+        Text = 'TabItem4'
+        ExplicitSize.cx = 8.000000000000000000
+        ExplicitSize.cy = 8.000000000000000000
+        object Rectangle8: TRectangle
+          Align = Top
+          Fill.Color = claWhite
+          Margins.Left = 10.000000000000000000
+          Margins.Top = 10.000000000000000000
+          Margins.Right = 10.000000000000000000
+          Position.X = 10.000000000000000000
+          Position.Y = 10.000000000000000000
+          Size.Width = 288.000000000000000000
+          Size.Height = 79.000000000000000000
+          Size.PlatformDefault = False
+          Stroke.Kind = None
+          XRadius = 15.000000000000000000
+          YRadius = 15.000000000000000000
+          object Label6: TLabel
+            Align = Top
+            StyledSettings = []
+            Size.Width = 288.000000000000000000
+            Size.Height = 33.000000000000000000
+            Size.PlatformDefault = False
+            TextSettings.Font.Family = 'Sylfaen'
+            TextSettings.Font.Size = 20.000000000000000000
+            TextSettings.Font.StyleExt = {00070000000000000004000000}
+            TextSettings.FontColor = claGray
+            TextSettings.HorzAlign = Center
+            Text = 'ORA'#199#195'O EUCAR'#205'STICA'
+            TabOrder = 1
+          end
+          object cbb_EPrayers: TComboBox
+            Align = Client
+            Margins.Left = 5.000000000000000000
+            Margins.Right = 5.000000000000000000
+            Size.Width = 278.000000000000000000
+            Size.Height = 46.000000000000000000
+            Size.PlatformDefault = False
+            TabOrder = 0
+          end
+        end
+        object Rectangle11: TRectangle
+          Align = Top
+          Fill.Color = claWhite
+          Margins.Left = 10.000000000000000000
+          Margins.Top = 10.000000000000000000
+          Margins.Right = 10.000000000000000000
+          Position.X = 10.000000000000000000
+          Position.Y = 99.000000000000000000
+          Size.Width = 288.000000000000000000
+          Size.Height = 78.000000000000000000
+          Size.PlatformDefault = False
+          Stroke.Kind = None
+          XRadius = 15.000000000000000000
+          YRadius = 15.000000000000000000
+          object Label8: TLabel
+            Align = Top
+            StyledSettings = []
+            Size.Width = 288.000000000000000000
+            Size.Height = 32.000000000000000000
+            Size.PlatformDefault = False
+            TextSettings.Font.Family = 'Sylfaen'
+            TextSettings.Font.Size = 20.000000000000000000
+            TextSettings.Font.StyleExt = {00070000000000000004000000}
+            TextSettings.FontColor = claGray
+            TextSettings.HorzAlign = Center
+            Text = 'PRECES'
+            TabOrder = 0
+          end
+          object Edt_Prayers: TEdit
+            Touch.InteractiveGestures = [LongTap, DoubleTap]
+            Align = Client
+            TabOrder = 1
+            Margins.Left = 5.000000000000000000
+            Margins.Right = 5.000000000000000000
+            Size.Width = 278.000000000000000000
+            Size.Height = 46.000000000000000000
+            Size.PlatformDefault = False
+          end
+        end
+        object cb_CampFrat: TCheckBox
+          Align = Top
+          Margins.Left = 10.000000000000000000
+          Margins.Top = 5.000000000000000000
+          Margins.Right = 10.000000000000000000
+          Position.X = 10.000000000000000000
+          Position.Y = 182.000000000000000000
+          Size.Width = 288.000000000000000000
+          Size.Height = 49.000000000000000000
+          Size.PlatformDefault = False
+          TabOrder = 2
+          Text = 'Incluir Orca'#231#227'o da Campanha da Fraternidade'
+          TextSettings.WordWrap = True
+        end
+      end
+    end
+  end
+  object GestureManager1: TGestureManager
+    Sensitivity = 80.000000000000000000
+    Left = 288
+    Top = 16
+  end
+  object ImageList1: TImageList
+    Source = <
+      item
+        MultiResBitmap = <
+          item
+            Scale = 8.000000000000000000
+            Width = 128
+            Height = 128
+            PNG = {
+              89504E470D0A1A0A0000000D4948445200000080000000800806000000C33E61
+              CB000000017352474200AECE1CE90000000467414D410000B18F0BFC61050000
+              05BE49444154785EEDDD5F88546518C7F1E73967665B6DA05A2453092A8D40D2
+              B5A475A95D4605C3AEA272BBE8C6A084BCB0EEBB08A2BAEBA6BA5CAF84089A20
+              FA0312E1CAD818A808B36E1879A12DD2BA856D4A675DDD9DF3BEBD471FC65293
+              9DF3CE8C73E6F97D6EF639EFB2323BE73B67668E3B334C2DF2C460718D0D831D
+              C6F2F6806935717C3F51D823DF061FF1DCAC0D7AF7E77266F7F172F9BCACA6D2
+              F4009E1C1E5E11DBDC7B0BD1ECAB3D854228CBD01AA56A65EC65995309E46B53
+              AC1FDABC6961217F9C895FC3CE6F832BF49C4CA9352D8064E7D7283818E66885
+              2C41ABDD450599526B4A00C961DFD6822FDD1DFC1259828C684A00C6E6DFC72D
+              3F9BBC03481EEDCF47D14ED9848CF10EC03DD51BC103BEECF20F8078BB8C9041
+              DE01B0B10FCB0819E4FF203034CB65820CF20F00A77733AD090140962100E510
+              807208403904A01C02500E01288700944300CA2100E510807208403904A01C02
+              50CEFB85211B86B65A193B96A1F93F997247998248966ECB922930D94D44619F
+              2C75AC6A65CC6B1F767D00D6D221CAC5CF8F97CB17646951D60D0DDD1752EE2B
+              77901C96A58EE41B40D7DF05B85BF29B8DEEFCC444A5F29709C2B764B36B757D
+              008FAE5CF6938C0D7B6C79DF0919BB56D707502A9562191BE6F3B359816701CA
+              2100E510807208403904A01C02502EBB6702AD9D20B67B5DC3E764E596AA95B1
+              928CA9B8DF6F44C6FF6156B8CBB0CB0D8F5FDB6E2F9DA782DDCEBF276706CAE5
+              F26559B9A38AC562EFC5383CE6C6B647A0F25430338D76CACE4F5CBD2C96DCD1
+              287B321980259E96B173304DC994297810A81C02500E01288700944300CA2100
+              E510807208403904A05C260330863BEE72335126DF2E379301309BF532760C43
+              D471976931321A00EFE91FDE3A209B775CF261197C85F6C866A664F6EF01A288
+              6A85A574C4257CDBFF84A97A7EA68EFBFD3E97F1968CA555976669A050A09C2C
+              B595CEBF076880EF15D4EDBF1F9E05288700944300CA2100E510807208403904
+              A01C02500E01288700944300CA2100E510807208403904A01C02500E01288700
+              944300CA2100E510807208403904A01C02500E01288700944300CA757D002323
+              23A95FB7EFF3B359D1F5019CFAED8F753236EC97DF6732F99AFF46747D001CF0
+              C7C98740CAE6A2AD1D7CB62FA8D94F64B36B75FDCBC3AF89672CF191863E3AF6
+              723048BDD47038ED86F707500EEF0F005E10807208403904A01C02500E012887
+              00944300CA2100E510807208403904A01C02500E01288700944300CA2100E510
+              807208403904A01C02500E01288700B22C9E9B952935049065DCFBBD4CA92180
+              8C9A8FA238CE05EFC8666AAD7D65D0025DB079FAD012976A337DBF9E3C599A97
+              EFC022AD2D160BF371385320CACBD255EE4ADF375E19DB299BA9B5EE08508B4F
+              C779DEE82EE407272A074E61E7A7935F089EBE71E7278CA1BD327A694900C9E1
+              89C2E0C589CA81D3B20469053C24D375EEC83AF1E3F061D9F2D292007A0A4BBF
+              AE1E3E382E9BE081AD7D50C63A9337C788DE35B2E9A52501581B1C90117C595A
+              26531D53704E466F4D0820BEF9BE9DE9A24CE02BB077CBF42FE6920CDEBC0370
+              C7A16919AFB3F62199C0933B9ACEC8789DE57B65F2E67F0430E11999EA2CF30E
+              F7C5FB2926B82B91ED7919EBDCF5BB46466FDE0130D37E19EBDC3FDABF6168CB
+              1BB2093E2CFF2C539D3BFEF7AFDFB6ED16770D8DF30E20B4F68BAB4FFB6E1011
+              7FE422D8ED461C093C98900FC958979C17082ED55E924D2F4DD939FDCF6C1965
+              E6D765F33FAC894F100725B2C1190E2C4E0635C8EDA0F06FA27D379D0CB2F1D1
+              EAE1F260325D5B48A729013C552C3E3017D3F11C852B6509DAC2BE52AD1CFC4C
+              3652F17F10E81C2B97A7430E5F7037EF395982B6E0B76548AD290124C67F183B
+              9A67DA5CA3784A96A0C5DC0D6EB58CA9352D804412C1929036BA7BA5D128A29A
+              2C438BF418FB9D8CA935FDCD90A72627A3E9B367BE59B5E6914FDD038C292693
+              33C96359B24B5C6F5DFFE6CB6D311F5D21CE7F1BE6CDAE7393931E670589FE01
+              AB627D4A2578AB710000000049454E44AE426082}
+            FileName = 'C:\Users\pedro\Desktop\SlideApp\Images\readings_psalm.png'
+          end>
+        Name = 'readings_psalm'
+      end
+      item
+        MultiResBitmap = <
+          item
+            Scale = 8.000000000000000000
+            Width = 128
+            Height = 128
+            PNG = {
+              89504E470D0A1A0A0000000D4948445200000080000000800806000000C33E61
+              CB000000017352474200AECE1CE90000000467414D410000B18F0BFC61050000
+              0EB349444154785EED9D7B9014C51DC77FDD33BB7BDC2E6F7C82C107C249B8C3
+              085151148FA4348A06E17814C8FB8F988A51C157348A88A63489112962484995
+              7A80A2E119CA8A898A200A1AC31D12A0F00E5083A280F2BABB5D6E7767A67FE9
+              9E6B9EE231B33BB33B7BF4A7EAD8FEFD7699BB99FECEEFF7EB9E9E595028140A
+              8542A15028140A8542A1502814A70144BEB678CA36DC1BB5D2D88150881242A2
+              6059EDF9DE47ED371112A069071031810C125A98ECDF78E93309FBBD164E8B13
+              40E9C607DB1323750532BC84EF5D0F60D81D4C5A42C2708EFC8823300DBB4067
+              3540C9562E905A42C927188A7CB4A9ECF707E4475A04052F00716663DAEAC7CF
+              EC9F2290FE89045C1E8B4248BEED2DF138C368B48600598384AC0843E8ADEABE
+              7FA893EF1624052980AEABA615B56DD330182D1C9B6884EB7DEBF053104F8051
+              5C0CFFE229657E7D43EBD777944F4FCAB70A8682124069D5E46B0823E34C6A0D
+              D7416B2BDD812065C0C1888E8B80D0791BFBCE5823DD8127F802E071BD6CFDE4
+              9BC1C2DF02A5574A6FA041800DFCD03EB9A9CF8CC5FC087333B8045700388D96
+              ADAF1B04164CE385581FE92D282CC0CD1A92A7DBC7DB2C585D3EDD94EE401148
+              01F45E37A59C013EC7736B4FE92A68841078EAFAF5E6CB9F5D2D5D81215002E8
+              F9D17D676B9AF547128731102B80F4E41A5CC40C76E7E67EB3F64847DE09C641
+              16E1BEAAEE0E93B0278256DC798D2816C3217C64539F99B3F9D1CF7B7D907701
+              F4A9BAA79301388F376F6CF29C36AC60863526DFD120AF0228ADBEFB5A8B590B
+              7412EA2C5DA71B3B1170F4A6BE33DF9776CEA1F235B7F0A15DE9BA298F584857
+              9EC69D2FE89280C4CAB2AA290F8963227D3925E7BF74C0AA69FAFED6F5CFF35F
+              3C49BA141C447C394C0E4DAAEE3BC790AE9C905301F4A9FA45B101AD16F1C073
+              9374298E67452AA90FADEDFF7483B47D2767021057E9209D7A9DFFC2ABA54B71
+              121858FF89803EA8BAEF8CBDD2E52B391140C9477774D4B5F06A5E70FC50BA14
+              CD20268E304D066CB9EAD9FDD2E51BBE178122EC87B4F072D5F9CED180F4A261
+              EB9FE252B774F986AF02E09D1F3220BA58857DF750D02EC734FB9B3886D2E50B
+              FE09800F6B0C2C9EC35BA7DB048F67100A830C8CBE24664AA5CB737CDB7069D5
+              9487819009D254640A81DBCAAAEB1E9096E7F85204DA337C629247A43345D6C4
+              216E46213AD08F1943CF0570E9FA3BCF485BF871D066F8AE8BF58447CF1E21AD
+              E6797CF7427837BE455A81616708C88FBC1E1E7A9B0278AE324D7DFE693EBDEB
+              175DEC8B661ED7039E6E4C5CD2A5146E90A6C27B6E2CADAEFFA56C7B826702E8
+              F5E15D67A54CF2B83415FEF1D465EB26BBBAC7A1393C1300D5C88C4808DA4953
+              E113BC686B6312F29434B3C6130188AA1F0ED151D20C246830D93A356E3E9B17
+              E230AEF7BABBAF935656642D80E10B876BC0C85F83BE860F990B01B8F86C5EE0
+              C71A19CEF2A220CC7A0335179C3BA2A5ACDE2D2834ADB4B4BAA1425A19939D00
+              100861F890B4143986A0F570B62B89B2124069D5E49F0B254A53916B08ED5D56
+              7DCF20696544560220407E239B8A3CC12C7C4436332263019455DDD39F2BA09F
+              341579826A7045EF759333BEDC9E790460385EB61479869701E364D335190940
+              DC9F9FB26098341579C624D6C82B3F98D24A9AAEC84800E2E10C6AD62F3888DB
+              E91221CCA818CC4800E2C91CB2A908088440467DE25A003DD6DCDF5A3C96459A
+              8AA0104FFFACE7E65FC5A4E518D7020845CC6BF2F54C1E4533C422613D19723D
+              1A702D0002502E9B8AC0415CF78D7B013018289B8A80C18783AEFBC695007A7F
+              7C773B5383DED254040C0BE032FB163C17B8120033A09F5AE91B5C44DF88A7A4
+              4AD311EE52002125B2A5082888D843361DE15200E06AE38ADC83CC5D1FB91200
+              01541120F0101F2300A8081078D0DD49EA7835899865D29311CF9F5C21EED8C9
+              0525FAB930A2537F6935CFC2BD6BA0C6FC5A5AFEE2F91D4871C0502C11ABEE3B
+              E790F4348B630194FEFBCE2E44D7BF94A667ACECF6986C9D9E0CDCEEFDFEEB88
+              E7AEFFF1CC5DD26C16C7298085686BD954041C9339EF2BC702D05D6C54915F50
+              27DE0B0009BABED2A4C80F9499DE0B0018AA05208502A38EA7839D4780B4D546
+              361501C7349D476BE7452061966C2A020EB54CC75F4EE13C0524037EBF9CE208
+              96E5BCAF9C47004B058082C1C5D3869DD70029E63C5A28F28B9974DC578E6702
+              2F5E3E7154ABCEED1648D333AE4E76952D7FE9D9F67C18759EB31553AF7EB90A
+              B6D4FD4F5AFEB2B668876C79477AE7FE5135B7CE7D4D9ACDE25800254BC75D1F
+              EEDCFE4DD0BC0D04A92F72F34DAC03CFBC149EE835515ACD3375F34BB0F29B0D
+              D2F297C80F5C2DE03925683230BEAABBBEA6A2F26DE96A16E72980D038E31B57
+              041B2100FEAFE38B766E4EE7063454211874D0B480305F04804A000580E82382
+              3E0880206B680A2FDE428B4339F92121E76B59C5674FB60D3F7EBC464400ADD8
+              722C00C745A05874DE75F9F8FA365D3AC49CFFA7E0706DA83B3CD675B4B49AE7
+              B11D0BE03D63ABB40A07F12584C6D65D0D35A35F733C6DEF3C0510C0B0496A21
+              1DC8AFC0557090F70D16856AA4E90837452010CA6A59520920A8D87D83B4569A
+              8E7025002E0125800083A26F088FD22E702700C60590369A928D225820024BD9
+              27A77F02D0435A35F081004BE6F4BB0D150E680AFF0816B0F5D2E5085702D832
+              F885ED0CD80E96484B8F222858F1B408CC5F6C1F3AEF53E97284CB1A80A71824
+              EF5A8D062053792030307E5A26B90090AD901EC7B816002564959D6F0EA92810
+              14AC434D751921DA2AE9728C6B011804568A57950682C3E1BE40C3F25F009F0E
+              A91477076D1415A7987850E41796E6659FA8FE196CD83672DE57D2ED18D70268
+              025F16FF9A7529DB52E40F56D768BF2285F976C3259909806AAFF07F2DD698E6
+              0A5451205F203FFB4541CEB1281AAFDA4E97642480DA5B5FFC9AD781EF8836AB
+              5751205F98F54D673FE7ED9A8A571CDD0C7A2219A6000E2176C811A301B54E20
+              F788B39F359DFD22FF6714FE05190BE090D1B0042DB647CC0698FB1DDD8AAEF0
+              10E3003FE6FCE03380DD092BBE4CBA5D93B100768E5CDC08943E2BDAA20AB5D4
+              B03067D8B37E4DF3FE40119EB1FB2243324F011CDD2AFE4B3A05FB44DBE48A54
+              B383398031B064E56FF2D80B1A7DDE3632242B016C19313B1E0EE373B6C13BFF
+              F01FA6F00FF3601278EAB5DB1A6A3379419ED5637BB212804033F5593C17D58B
+              B6D590E285894A057E218A3E2B2E475D293898A2F0E7262373B216C096912FEC
+              4702D3A509C63E9E0AD4FD039E831682B92F212D4E181FDD3164EE4169658C27
+              EB3B07AC9AA6EF3EF07915D793FD1C6112D1217C666B8FB6EE0D62B86AEC3DE6
+              003643A853146871585AC1C0D8D37078C10758CCDAD4B9E38597AD2E9F9EF52C
+              5CD6114020FE1064E40EF18832618B0AD554F5806798071B8F743E409CE9146E
+              F7A2F3059E0840B075D8DCB51885B9D204AB3EA986861E208EA138964789BE58
+              3374FE87D2C81ACF0420A0C4BA8F9FFF3BA50916CF59965A379031A2E83B36EF
+              F3F0FA8566E89E7E59A7A702E0CADC471086C7216ECF518A7C60F1A2F068F852
+              38455CE63DB66649C6D1E443EDD1A2E8962E4FF0A54C2B593AE121DEF94F4A53
+              8406089FD5DAD5ED595E23AA684C395BCC4A2221205AFE2A58716D25CD8B3E31
+              B7720484FB6B2B2AFF242DCFF0672F1148F7A5E39613426F911E2E020AA13378
+              75CD47088AEF479CF9E6370D27CCAAB2376A87CCBB59DC9D251D9EE1690A3882
+              F8434345932C0B8EDE60C718187CC7E4F56BC5491039DFD8537FE2947A8D6684
+              C6FAD1F9025FE3DC45CB269CA79BE65AD0F4F3A4CBFE855A872868B1608DB3F3
+              8D9548355D553DA69B0DCBFA3AA4D3AB6B87CCF5ED7935BE27BA9225937A59C8
+              DEE319E0B867A1E86D8A406B97D1D7DDB638C438FFF8A19EC0AA63A80FD856F1
+              D27FA5C3177252E9942C197F254BA6DF21AD22C5D26543C33AE89DA240747F32
+              51D0B1A777F7C64F364A6A64046ED836A4F27D69FB464E0420E8BE6CFC4F1A1B
+              53CB8A8B8A8E7B9031E12304AD234F09AD4EAF2F23B5F3BD18E39F78091DA19E
+              7B866CADA8B497DFFB4DCE0420285936BE0F22798337CF6CF21C456B1D01AD6D
+              2B5B102D1A5E0C8B4BBA47AEEA1D8358614529BDA9A6A2D2D5FD7DD990F3A3DD
+              7DF9980BC0D4DE22847493AEA3F0CE0FF1BA80C622D2D1B2B0A77579BE3F7C3D
+              FF38103EA708377C32AC729BF4E484BC9C6E254B6E3B07415F06849CF44B0EC5
+              5C81DEA138AF13475E2216708A1553DF3723CA907D10D14343370F7E618F74E5
+              8CBC545F6209F3D91DCEEF0F88D3C5D52DE93E823850E9DDF5607C1B074C15EE
+              8A6331A367EE3B0406DF9793763EDF3D9EEF6785ACC6F27C74BE20EF09B7C7B2
+              09B79868568A735EBABE032DE2EF8AFAA0406611C5CD32567DAAD91B68C55A4A
+              3D8CE3B755CCFD8774E58540545C3D178EFD81A16B953C1C35FB305F911A6834
+              6C2FD6085CB128166B1E32EC1B354F79F10BE11D93C244799F655E09D45114D1
+              8007C5D9FCCFEA225D278710A07CD8A80931F0E820ECBC206E934F8A757ABCE3
+              93FC6C3FC5642D97C52E8AECC16D43E7CDE747FE149FCE0D013B8D00CADE1C13
+              4D25B4A9C938DC5B1423A78EF97C0FECC85014B25384985CF26BAFEC1EE3E15D
+              9CE18CD726C83BDFC952787129371223B359913175FB4DAFD80B688342E00470
+              181E0D4AF9119FCA2BA50A8098E36255A40612D1F80842B7671889CEDBF6ABBB
+              7A572C6C6DFAE11DCD8B39FB5574BA830E3F8A2870A38B086ABFABA97871B374
+              068AC00AE030DD968EBB88227D2095C0498E22C2F7C1F794D88FBA1721838B44
+              D41087F79EF7A9DDB1E2878775E4F93CBB002D3A3EB6846FF3D1ADC3E6BA7A70
+              63AE09BC000E73F1E2891702617751424671F33B338901E11BFEB3003573D6D6
+              C12F7FDEE40A36052380232C1CAE5D4C63E594E238036168884054BE931F1246
+              0A5BE96FF388322FF66DF8EFD5B7CF29A8050F85278063E8BA6C7CBB22068378
+              A61E488196F3BDB940BEE533D6673C8FACE46391956933F4C66723E6D4C9370A
+              8E8216C08988EB0CC4D2CB79FEBE8A01BBC44CD31EE10874946F678498B0E1DB
+              A8E1DBE4B99CAC05CA56F9B94023D7B428019C8C92A5633B32464B2825DD1862
+              7B42488C57783144D29ED7144DDFB089344E081EE087238E88715E671C4002DB
+              085AB562A5B3FD198542A15028140A85A26500F07F482AAAEDAE2F5721000000
+              0049454E44AE426082}
+            FileName = 'C:\Users\pedro\Desktop\SlideApp\Images\add.png'
+          end>
+        Name = 'add'
+      end
+      item
+        MultiResBitmap = <
+          item
+            Scale = 8.000000000000000000
+            Width = 128
+            Height = 128
+            PNG = {
+              89504E470D0A1A0A0000000D4948445200000080000000800806000000C33E61
+              CB000000017352474200AECE1CE90000000467414D410000B18F0BFC61050000
+              084349444154785EEDDD7B6C1C471D07F0DFECDE5D52DF5EEC8A50A579B82D28
+              4A51A0441091DAD82E515CAA4A3CFE40422912FD03F50F08121252A9F21F883F
+              212D8A504B08CA1F8044D30A449B06501327F123F1A560AA92A455A021A91DDB
+              711CDBF7F663EF7687D9BD5F4253DBF79ADDF59DE7F791AC9D99DBB333B3DFDB
+              9D1D6F12208410420821EA61B80DD4993343EB6DDD7C0A18FF9C53E7C0FEA917
+              224777EFDE39E5EEB0CAF50C0E6E6296F61470FE69A7CE195CB499F5F2973B3A
+              C6DD1D021478004E0D0C7E130A0BBF81D0DA75D8840A29CEC3CF74773DFA476C
+              58954EF7C7F78903FE8228AE29B6146501E6A38CFFB0BBA3FD10360522D0009C
+              EE3BF704D7B4BF88A25E6C59C4E2004F7677B69DC4FAAAD2D31FDFCB18BC8CD5
+              45B2D92C378CE8DE3D9DEDAF6293EF34DCFA8E73CE0A5C3B288ACB1D7C87CEA0
+              70D0D917EBABC68F39D718B37F86D525198621BACF7EEEEC8B4DBE0BEC079D1A
+              38FF195D876D582D21F4A9DEC1C1ED5859353AFBE33BC4706FC1EAF242D0DAD1
+              37F859ACF92EB8A471F61016CBE205FD93585C35B44A0E3ED299DE8A45DF0577
+              09D0EC0816CBAA66DF4651AFFD0F2C00A43E5100144701501C054071BEDD6F4F
+              1C3AB0874F4FFD08462676E57223316BE3767DF4ABDFC2574BDBFCFAEF61DDE5
+              0B585B1DD20F3F02A35FFF36D64ADBFCC61F401F7FD78A465B33AC75531C3E76
+              EFF31BBEFBEC297CD9539E9F0112870FEF18DFBFEF3FFCAFC77A207EF60918BB
+              D2124D9A3AD816EE41CA1263E58E99183B1EEF7BD219CB1BFBBF7FF9E6915F79
+              BE3EE069006E1E79F1E9E981A343ECD285AD60DBD84AA4396379E95FDBD2C75E
+              797BF2A55F7C075B3DE15900267F79E019FBF89F7E1B4D88E4125F185641B34E
+              BE71C4CB10781200E7B49FEA39FE6BC89BD8427C23C6387DEED861AF2E079E04
+              60EEEA3BAF3AE9C42AF1593495D7EDF72FBD825529D207CD99EDB3F72E6DC52A
+              09CA7B17B7DD7AF1F9DD58AB997400F8D4F473954CF872661E4BE555B36FA3F0
+              BCFF62CCADC4F4B358AB997400EC89D15D585C567AC18494F8AA94B36FA68AFD
+              EB9D5FFDE7D7C7DBB15833E900CC25C70C2C2EC9E61C266767B156B99BB37360
+              89F7363A3FFB3F3F972C39F695900E4034CB4BDEF625E717C0B23930F1552967
+              5F4B9CE2D20B0BD8D2B8FCECFFDA742A84C59A4907000AA5AF57D97CF1759ECB
+              B8DB4AF05CDADD66160AEEB691DDEE3F6453C56D057826E16ECBF6BFCCD85742
+              3E006598567182C846AF012CCCBBE552D8FC1CB0EB1FB865D36EFC00DCEE3F5C
+              17FDCF658BE512583623C66AD82D07D17FDF0360DF3EF5894F82D6F766B15C4A
+              EFDFEE24BB829B8BBA77A7FF9605DA89D78AE512D89B621FB1AF2388FEFB1E00
+              5DFBFF2F1CD9A9E3C0DEF93BD616D3DE3E0FDA19110014FAD07B1BD55DFD8FF7
+              021BE8C1DA625AFF09606FF5612D98FE4BFF841B5FE92839BB19CFE420637EE8
+              968631E03BBE00F6AEC700363F202E786282244E79EC7C1FB00BFF70EBB7AD8B
+              44E0FE58146B8D6951FF1D0F3F02766737C09687C0E92D1BB906ECEC4960972F
+              165F4795F4FFFEE367A58EA1EF01C89A7918CB94BFF62D65A3E87C4C0C4223F3
+              BBFFB201F0FD126044C2B03654FD2F08EF11EF69F483EFA8F7FEFB1E00C74623
+              0ABA38F557CAB96E6E8849AF71D48D7AEE7F200108EB3A6C698E41582BFFE322
+              BA06ADB118442AD8B751D473FF031BE53562101E6C5907EB9BEE8190E8E44739
+              6DCE6B0F363743A4865366BDABD7FEFB3E095C8E29EE75F378A3EB7C32226280
+              54E255FFEB7E12B81CA7C3D170D8FD52EDE03BEAA5FF2B1600521F28008AA300
+              284E7A12F8FEBEA76B9A04126F6C7DE97752C7503A00BD6DDB29002BE84BF177
+              1BF32E80D4070A80E228008AA300284E7A1238954CD1247005AD6F69A64920A9
+              1D0540711400C55100144701501C0540711400C55100144701505C602B81F97C
+              017215FE4309D1A6260887EFFEABEFAABF7F39B22B81810520994AC3F0C828D6
+              4A7BA07533B434DFFD7F4AA9FEFEE5D05230914201501C0540711400C5510014
+              4701501C0540711400C5510014474BC14BA0A5E02AD053C12B8B968289140A80
+              E228008AA349E012681258057A1E60317A1E80340C0A80E228008AA300288E02
+              A0380A80E228008AA300288E02A0385A0A5E022D0557819E075859B4144CA450
+              00144701501C4D02974093C02AD0F3008BD1F300A4615000144701501C054071
+              1400C55100144701501C0540711400C549AF044E26925C63E5BF0D2D057BBF14
+              6C730EF7DDDBB2B24BC1E3B7A678241CC61A099269E661E37DEB577629386F9A
+              58224133F3792CD54E3A00E94C164B24685E8CBD740092A90C70712D22C172C6
+              3C954A63AD76D201989999E133C924D648501289943BF658AD997400A2863135
+              71F31614C42C9704235FC8C38DC94930A26B26B1A966D201001BC69C837F6DE4
+              3A70DBC646E217CE6DF86078B4F88163E1316CAE997C0034DEEF6C6667E7E0CA
+              B5613A13F8C819DB2B5787DDB1767170C75E867C0098F61A96DC3FD8BFFF7B15
+              A613099A187AC819CB9999A43BB6770EBE6033781D8B35935E08729C18889FD3
+              01DAB1EA8A4422D0D21C83582C26CA6108854250C98A2129AEF0150A0577A127
+              236EF59CE709CD8FACB7D860BFD5DDD1DEC61893FAA47972444E0EC43BC4A9A4
+              5714450E48002CB0EDAE3D8F7D7110EB3593BF04088F77B69D1559DA8F55E233
+              9BC3735E1C7C87270170ECE97CF480D8FC349BCDD2C5DF27CED80A3F79BCABED
+              056C92E6F945F9745FFC1B22010745B4366113F1800585510DF41F7477B6FF19
+              9B3CE1CBACECD8D05053D35CFE7BE25CB537379BFBBC611834FBAB81F38937A2
+              C6900D7074AE297CE86B3B7756F6FBE42AF87E60FAFBFB3F5E80F02780B30D5C
+              B323D84C4A60B66602E31321C85FEDEAEABA85CD841042082184104208218410
+              521380FF015D941D7AEFC570670000000049454E44AE426082}
+            FileName = 'C:\Users\pedro\Desktop\SlideApp\Images\calendar.png'
+          end>
+        Name = 'calendar'
+      end
+      item
+        MultiResBitmap = <
+          item
+            Scale = 8.000000000000000000
+            Width = 128
+            Height = 128
+            PNG = {
+              89504E470D0A1A0A0000000D4948445200000080000000800806000000C33E61
+              CB000000017352474200AECE1CE90000000467414D410000B18F0BFC61050000
+              0BDD49444154785EED9D7B6C14C71DC7E7EEF0E37C0706E3C3D8BE0777B6F103
+              6C0C366FE304440A14429AA28A461551437944A9A24651086D4913898020F983
+              AAA5A54449DAA6AAD4A8AD2A256DA4D0A0AA6D689B94909002560484D8679734
+              C13C1CF971D8BEBBFE7EB373CBEDDE119FE3BDBD9DDDF948ABF9CDF8BC373BF3
+              9D99DFCCEECD128140201008040281402010080402814020100804A6C6C642D3
+              E2F7FB43369BAD1DCC59188FC5629720E8E8EEEE7E17A39806D8BD5E6F0B7CAE
+              DE6EB7873001EC8FE0B37F0F87C31FD14F9814D30A20180C3641051E0273151C
+              29D7198FC7BBA1925F0613FFF67538BC98AE220EC7F16834FA684F4FCF5929C9
+              5C985200D0EAB78F8C8CFC343F3F3F8F254D88C1C1C161A7D3F910F4062FB224
+              D3E060A16980CADF012DFB3907C092264C5E5E9E03CE79777171714F5F5FDF7B
+              2CD91498AA07F0F97CADD05A4FB8DDEE02964499573B95CCAB9B0ADD3E21E18F
+              07C9C93357C96024CAFE2AE1724E220B1B4B886F66118D9FFEE03A3973BE8FDA
+              09FAFBFB232E976B39F404E83F98023309C01608044E42D822450929CC7790EF
+              EDAC27CBE797B21489C870946C78F04D169378ED683B29C8B7B398C4895357C8
+              C1E73FA09F4F00BEC3BF41004BD09452F84679C51C0395BF1902B9F26D20ED74
+              958FA030D4A82B1F696BF190DDDBEAE8B912C050B00886994D2CCA3DA61100F0
+              300B292B1797A5ADFCF1B2A2D543EE583883C56414DFC533A61000B4FE7A0896
+              4931A9F5DF7F4F80C526CE37BF324BDD0BB4C377D6B128D798A507B8978594E6
+              BA69C45B2639735AE005C710CFA9E2AB2CE41AB308602D0B292B17A774D913E6
+              CE451E66498033B886995CC3BD006A6B6B2743B0548A492C9C5BC22CED58D434
+              9D59122323234B3D1E8F9B45B9857B010C0D0D2D84609214037FA0C2453C258A
+              65004DF04C2B20BEF25BC30AAE32161515B5B228B7702F0070C8704E2ED35035
+              8559DA531F529E3B168B2D6626B7702F00A804452BAC0DE288901DD4E2B2DBED
+              D8FB700DF702804A68642665F6ACEC09A03AA01CF2C111547C378F702D00988B
+              174210946270313059F7278DD35A330BFC0BFC8E0430FC54B13C700BEF3D002E
+              00C9EBBA333D85A4B0207B3738F1DC9EE90A07D3013DD06C667309D702802E78
+              0E3329B32A5DCCCA1EEAEF001F449107DEE0BD0750147EA0227BDD7F021C0692
+              518B9037B816008CC1BAF7006944260490431A5848C145A06C9346644200B980
+              79DFF4495F04BDF3C4D33CD9046719AA9940A8BABA5AFBA5479DE0560050F0B5
+              10C82E7F596961DA873AB486CE04944BCD8E482452C36CEEE05600E07CE11450
+              C6AF830398C057EE6496044C05B97D3680671F4051E87E1DBAFF04FEF2143F40
+              21469EE0590039EB01D2389B4200394029802C2E01AB517F572C16134380CE38
+              FAFBFB158E971E3380046A01381C0E7448B92C4B2E331D0C06ABDC6EB77C1366
+              DA947C32C5ADC9AFC032A278721E3D9228F2F97CF24D299EE05200300398CF4C
+              4AC8A7FF935941D582104C4B1579E2055308A0DAAFBF00D27CA710808E2C6021
+              45FDA0861E5407521E3C51E4891778ED019A9949A949AD8CAC53A3121DCC0484
+              00F4A0B2B2D20BE3ADFC90BEB3D0412A66E8FF500EFE5824F9E1139809CCF07A
+              BD952CCA0DDC09C06EB72BBB7F7000936FCEE885C36E23216F8A23C85D2FC09D
+              00D4DE769AB15837D4438F10800E40212B1E03AFF2A52CCBEA86DAF954E78D07
+              781300DE7A6D6336A54EF5630D3DA90B2ABF9BE52D7B4FA56601AE04E0F7FB9B
+              0B0B0BA7B2285D8DD3E329A0DB814F0725AF0862DE028140138B72016F3DC04A
+              165270EF9F1CF87F32F8DD8D35C52C2673070BB9803701AC6621A50904906B50
+              84C9C462B1BB98C905DC08007F063E303070278B525AE7A46CDAA03B0B547918
+              1C1C5CC5D3CFC6B9110014ECBAE4EDDF2A6738E9624CAE411F04F39200EF5216
+              15157D89450D0F3702B0DBED773393B27CC1C43780D28A25CDCACD23E2F1F846
+              661A1E2E04805D2A8CADF7B02865A9063B8069C532555E6C36DB265E86012E04
+              E0743A37430F202FBBE16E1DD9DC0862BCCC85994029E42909B7CBE5E2622F41
+              2E04002D6A2B33296B5694D3B578A38079B96B59198B49408FF500330D8DE105
+              E0F7FB71F74F790F40BCF1B3B66D268B1987B56DE58A3509102DEE25A8B86D6D
+              440C2F0028C827994969AE9F4A66961A6F4F86CA32A77A4DC006BD8022EF4624
+              E37E145AE206A88CE7C0AC905234E33278CD3BC3E1F09F585C86B520DC995BCE
+              E7B38FCD230B1A263EFF5FBDF5AFCC9238FE73C512C317E29DB3D7C9770FBDCF
+              62943894D9FCCECE4E4522928BF24C47C63D0064F628045A6716A960E756832D
+              08DFF821573E3A5B5A547EB6689D3B8DD42B9D531B5486E21A12E4A03CD3329E
+              21209B4FBBA49C1B5AC8B7C1F357ACFD6FD9A8DDFEBFD962CB46F907CB095641
+              4FF620B393D1B53C6F87217D80CACACA1A50F10116A52C9E379DB4CCD17E0750
+              AD59D45892B25329F464CF80A0E9CBA88C46C63E00A858F18284B5CF4E6CB1EB
+              F5C75F659644575717CD8BCFE7AB80967F024CF98716F8368F179E5EA8E90EA0
+              D9F001125CB97E936C7BE22419181A6529947370B4C175DEC0885EE5391686EA
+              0182C1601954FE3134A5148987EEABCECAF6AFD90217AA766EAE623119DC49E4
+              782814D27E27EB096018014017B91ABACA5360CE955224BEDC5E4ED61870DE3F
+              16EB5694A7DBB5BC251A8D9E826BC557D91902C30800C6FC372050382FEDAD1E
+              F29DFBF9DC860F1785766DAD23CD7529CF2CE063EDC7999D730CE90422E8F47D
+              7F6783A1967CC74B7E9E9DEC7BA4914E0F5518E6A20C2700ACF0FBD6FBC9DE87
+              E792490E7E2B3F01BEA06AFF234D64F33A7F4E7EBF30168612002EA2FC68CF7C
+              F2AD4D21AE5BBE1ABC96ED5F0B911FEF59A05E28CA398611C0A1DDF3C9612820
+              F5A3D666A22E34995E235EAB51308C009A6A539EAE352D46BA56C33A81027D10
+              02B0384200164708C0E20801581C21008B2304607184002C8E1080C51102B038
+              4200164708C0E20801581C21008B2304607184002C8E1080C51102B038420016
+              4708C0E20801581C21008B2304607184002C8E250570E2D41566DD225D9A15B0
+              9C00FEF95E2F79FA68078BDD621FA4FDEB742F8B59074B09E0ADF7AF92BD47CE
+              916854B13B0B6514D2F61EE9206FC367AC846504F0DADF2E93A77E7296567412
+              188949262123A331F2E4E1B3E495BFFC97A5981FD30B201A8B9323BFB9487EF8
+              D27975CBC78AC73D88B7319B829F3FFCEB0BE4E8CB17A96D764C2D808FAF0C91
+              470F9E267F78A387A5C844E3F1F88EAEAEAE5FC2F10BB0711FBFA8F42789DFFF
+              B9873CF6CC69F2BFDE084B3127A6140076F358E93B9E7A879CBBD8C75265FA63
+              B1D8BDE170F8451627603F6FB3D9D68F8E8E7EC69228672EF4D1EDDE7EF54A27
+              191E913B09536118019C397F83C427D8E3E2BE7CBF7DBD9B7C63D75BB4DB1F8A
+              281A356ED818B6DBEDCBBBBBBBFFC892643A3B3B8FE5E5E5B583A9E82E22C351
+              2A802DBBDF26BF3BD64D0655E71C2F31B848BC56A390F13E2CD9DED810995152
+              40DFBE817B0237CE2E26D3A78EBD37E0D51B37C97FCEF7C13CBE974EE33EA7A5
+              BEEA7038B65FBA74E953164F0BEE5508427901CC0D528A92827C3B59DA5C4ADA
+              5A3CA4B1664AC6793C73E13372162AFE1FEFF6D28D24D5E46AA3484309400DBE
+              8503B786C74D224BA1A01D6CD3A86B50A09F5EBB09637C847C72F5F3C768E8D6
+              3F8196BD1B5AF84B2C29136C70BD0F44A3D103F85670969696B2E985A4DC5348
+              C55BC2C480CE662FE4F10AE4117D88DE3415AE4608407BFAE1F81954E07E68F5
+              298E4026C035E3267F7BE0402731ABEF00CA95008CE404628569C187703C01AD
+              370085F0F817AD7C04FEFF061CBBF05C3053F80124E1B9B540AB6B9D308611C0
+              F0F0701914F206380E42F4447F7FFFD8FD26009FC331E04DF8BF03E0C92F810A
+              AB86637F4F4FCF35E9131307CF0533857D786E882EC5EF8210F398D11C31398F
+              10AEC76BA57F3000861902A0701579696868C88782C36D55FDE094F9214C7E4F
+              4C1CBCF9301468D8E5727DD8D1D131CCD27505F33830305095C82324C9D70079
+              8BC0F0D305E9DD6EB7BB479D47BDCBF37618560066877B01688DD505A0359996
+              A7A997820563331E0164F31699756EBFDDC210E599B100C0A9C1B9F06529A629
+              F89AB3742F553235A23C05028140201008040281402010080402815E10F27FCD
+              355A775C797B250000000049454E44AE426082}
+            FileName = 'C:\Users\pedro\Desktop\SlideApp\Images\ep.png'
+          end>
+        Name = 'ep'
+      end>
+    Destination = <
+      item
+        Layers = <
+          item
+            Name = 'readings_psalm'
+          end>
+      end
+      item
+        Layers = <
+          item
+            Name = 'add'
+          end>
+      end
+      item
+        Layers = <
+          item
+            Name = 'calendar'
+          end>
+      end
+      item
+        Layers = <
+          item
+            Name = 'ep'
+          end>
+      end>
+    Left = 208
+    Top = 32
+  end
+end

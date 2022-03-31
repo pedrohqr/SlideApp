@@ -9,11 +9,19 @@ uses
   function PathSlide: String;
   procedure Vibrate(const Time : Integer);
   procedure OpenYouTubeVideo(ALink : String);
-  procedure StoragePermission;
+  procedure StoragePermission(ACreateDB : Boolean = False);
+  procedure ReadPhoneStatePermission;
   procedure ShareWhatsApp(FileName: String);
   procedure OpenPPTX(const AFileName: string);
+  procedure OpenPDF(const AFileName: string);
   function GetTextHeight(const D: TListItemText; const Width: single;
                           const Text: string): Integer;
+  function Encrypt(Text : String; Key : Integer):String;
+  function Decrypt(Text : String; Key : Integer):String;
+  function DeviceID : String;
+  {$IFDEF MSWINDOWS}
+  function SerialVolWin(FDrive:AnsiString='') :String;
+  {$ENDIF}
 
 implementation
 
@@ -32,8 +40,23 @@ uses
   Androidapi.JNI.JavaTypes,
   Androidapi.JNI.Net,
   System.Permissions,
+  Androidapi.Jni.Support,
+  Androidapi.JNI.Telephony,
+  Androidapi.JNI.Provider,
+  FMX.Helpers.Android,
   {$ENDIF}
-  System.SysUtils, System.IOUtils, FMX.Dialogs, FMX.TextLayout, System.Types;
+  {$IFDEF IOS}
+  iOSAPi.UIkit,
+  {$ENDIF}
+  System.SysUtils, System.IOUtils, FMX.Dialogs, FMX.TextLayout, System.Types,
+  uScript_DBL, System.IniFiles;
+
+  //var
+//  Device: UIDevice;
+//
+//
+//Device := TUIDevice.Wrap(TUIDevice.OCClass.currentDevice);
+//ID := string(Device.identifierForVendor.UUIDString.UTF8String);
 
 /// <summary> Returns the path of ini file in Android and Windows.
 /// </summary>
@@ -42,10 +65,11 @@ var
   path: String;
 begin
   {$IFDEF ANDROID}
-    path := System.IOUtils.TPath.GetHomePath;
+    path := System.IOUtils.TPath.GetDocumentsPath;
   {$ENDIF}
   {$IFDEF MSWINDOWS}
-    path := ExtractFilePath(ParamStr(0));
+//    path := ExtractFilePath(ParamStr(0));
+  Path := ExtractFilePath(TPath.GetDocumentsPath)+'SlideApp';
   {$ENDIF}
 
   if not TDirectory.Exists(path) then
@@ -100,17 +124,23 @@ end;
 
 /// <summary> Request to the user permission to save the file
 /// </summary>
-procedure StoragePermission;
+procedure StoragePermission(ACreateDB : Boolean = False);
 begin
   {$IFDEF ANDROID}
-  PermissionsService.RequestPermissions([JStringToString(TJManifest_permission.JavaClass.READ_EXTERNAL_STORAGE)],
+  PermissionsService.RequestPermissions(
+  [JStringToString(TJManifest_permission.JavaClass.READ_EXTERNAL_STORAGE),
+  JStringToString(TJManifest_permission.JavaClass.WRITE_EXTERNAL_STORAGE)],
   procedure(const APermissions: TArray<string>; const AGrantResults: TArray<TPermissionStatus>)
   begin
-    if (Length(AGrantResults) = 1) and (AGrantResults[0] = TPermissionStatus.Granted) then
-    begin
-
-    end
-  end)
+    if (Length(AGrantResults) = 2) and (AGrantResults[0] = TPermissionStatus.Granted) and
+    (AGrantResults[1] = TPermissionStatus.Granted) then
+      if ACreateDB then
+        Create_DataBase;
+  end);
+  {$ENDIF}
+  {$IFDEF MSWINDOWS}
+    if ACreateDB then
+      Create_DataBase;
   {$ENDIF}
 end;
 
@@ -189,6 +219,27 @@ begin
 {$ENDIF}
 end;
 
+/// <summary> Open PDF File to view
+/// </summary>
+procedure OpenPDF(const AFileName: string);
+{$IFDEF ANDROID}
+var
+  LIntent: JIntent;
+  LUri: Jnet_Uri;
+{$ENDIF}
+begin
+{$IFDEF ANDROID}
+  LUri := TAndroidHelper.JFileToJURI(TJFile.JavaClass.init(StringToJString(AFileName)));
+  LIntent := TJIntent.JavaClass.init(TJIntent.JavaClass.ACTION_VIEW);
+  LIntent.setDataAndType(LUri, StringToJString('application/pdf'));
+  LIntent.setFlags(TJIntent.JavaClass.FLAG_GRANT_READ_URI_PERMISSION);
+  TAndroidHelper.Activity.startActivity(LIntent);
+{$ENDIF}
+{$IFDEF MSWINDOWS}
+  ShellExecute(1, 'OPEN', PChar(AFileName), '', '', 1);
+{$ENDIF}
+end;
+
 /// <summary> Calculate height for text drawable D
 /// </summary>
 function GetTextHeight(const D: TListItemText; const Width: single;
@@ -220,6 +271,138 @@ begin
   finally
     Layout.Free;
   end;
+end;
+
+/// <summary> Encrypt the password
+/// </summary>
+function Encrypt(Text : String; Key : Integer):String;
+var
+  Cont : integer;
+  Return : string;
+  //retorn ASCII characters
+  function AsciiToInt(Caracter: Char): Integer;
+  var
+    i: Integer;
+  begin
+    i := 32;
+    while i < 255 do begin
+      if Chr(i) = Caracter then
+        Break;
+      i := i + 1;
+    end;
+    Result := i;
+  end;
+begin
+  if (Trim(Text)=EmptyStr) or (Key=0) then begin
+    Result := Text;
+  end else begin
+    Return := '';
+    for Cont:=1 to Length(Text) do begin
+      Return := Return + chr(asciitoint(Text[Cont])+Key);
+    end;
+    Result := Return;
+  end;
+end;
+
+/// <summary> Decrypt the password
+/// </summary>
+function Decrypt(Text : String; Key : Integer):String;
+var
+  Cont : integer;
+  Return : string;
+  //retorn ASCII characters
+  function AsciiToInt(Caracter: Char): Integer;
+  var
+    i: Integer;
+  begin
+    i := 32;
+    while i < 255 do begin
+      if Chr(i) = Caracter then
+        Break;
+      i := i + 1;
+    end;
+    Result := i;
+  end;
+begin
+  if (Trim(Text)=EmptyStr) or (Key = 0) then begin
+    Result := Text;
+  end else begin
+    Return := '';
+    for cont:=1 to length(Text) do begin
+      Return := Return+chr(asciitoint(Text[Cont])-Key);
+    end;
+    Result := Return;
+  end;
+end;
+
+{$IFDEF MSWINDOWS}
+function SerialVolWin(FDrive:AnsiString) :String;
+var
+  Serial : DWord;
+  DirLen, Flags : DWord;
+  DLabel : AnsiString;//Array[0..11] of Char;
+begin
+  try
+    Result:= '';
+    Serial := 0;
+    SetLength(DLabel,12);
+    //if Trim(FDrive)='' then FDrive:= 'C:\';
+    //GetVolumeInformationA(PansiChar(FDrive),
+    GetVolumeInformationA(Nil,
+                          PansiChar(dLabel),
+                          12,
+                          @Serial,
+                          DirLen,
+                          Flags,
+                          nil,
+                          0);
+    //Result:= IntToHex(Serial, 8);
+    Result:= IntToStr(Serial);
+  except
+    Result:= '00000000';
+  end;
+end;
+{$ENDIF}
+
+/// <summary> Return a device identificator (Android/iOS)
+/// </summary>
+function DeviceID : String;
+{$IFDEF ANDROID}
+//var
+//  Obj : JObject;
+//  TM  : JTelephonyManager;
+{$ENDIF}
+begin
+{$IFDEF ANDROID}
+//  Obj := SharedActivityContext.getSystemService(TJContext.JavaClass.TELEPHONY_SERVICE);
+//  if Obj <> nil then
+//  begin
+//    TM := TJTelephonyManager.Wrap( (obj as ILocalObject).GetObjectID );
+//    if TM <> nil then
+//    Result := JStringToString(tm.getDeviceId);
+//  end
+//  else
+//  if Result.IsEmpty then
+    Result := JStringToString(TJSettings_Secure.JavaClass.getString(SharedActivity.getContentResolver,
+    TJSettings_Secure.JavaClass.ANDROID_ID));
+{$ENDIF}
+{$IFDEF MSWINDOWS}
+    Result := SerialVolWin;
+{$ENDIF}
+end;
+
+/// <summary> Request permission to read DeviceID
+/// </summary>
+procedure ReadPhoneStatePermission;
+{$IFDEF ANDROID}
+var
+  lPermissionPhoneState : String;
+{$ENDIF}
+begin
+{$IFDEF ANDROID}
+  lPermissionPhoneState := JStringToString(TJManifest_permission.JavaClass.READ_PHONE_STATE);
+  PermissionsService.RequestPermissions([lPermissionPhoneState], nil, nil);
+{$ENDIF}
 end;
 
 end.

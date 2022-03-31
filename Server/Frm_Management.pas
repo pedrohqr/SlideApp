@@ -6,7 +6,7 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ToolWin, Vcl.ComCtrls, Vcl.Menus,
   Vcl.StdCtrls, REST.Types, Data.Bind.Components, Data.Bind.ObjectScope,
-  REST.Client, Vcl.WinXCtrls, Vcl.Grids, LibDB;
+  REST.Client, Vcl.WinXCtrls, Vcl.Grids, LibDB, frxClass, frxDBSet;
 
 type
   TFManagement = class(TForm)
@@ -27,10 +27,20 @@ type
     lbl_id_song: TLabel;
     Edt_Audio_Link: TEdit;
     lbl_audio_link: TLabel;
+    Edt_SongID: TEdit;
+    Label1: TLabel;
+    btn_SearchSongID: TButton;
+    btn_ShowSlide: TButton;
+    frxReport: TfrxReport;
+    frxDBDataset: TfrxDBDataset;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure Btn_SearchClick(Sender: TObject);
     procedure btn_register_songClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
+    procedure btn_SearchSongIDClick(Sender: TObject);
+    procedure Edt_SongIDKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure btn_ShowSlideClick(Sender: TObject);
   private
     FConn : TConnection;
     function FormatLineBreak(Text: String): String;
@@ -47,7 +57,8 @@ implementation
 
 {$R *.dfm}
 
-uses Frm_Main, System.JSON, System.Generics.Collections, FireDAC.Stan.Param;
+uses Frm_Main, System.JSON, System.Generics.Collections, FireDAC.Stan.Param,
+  FireDAC.Comp.Client, Data.DB;
 
 /// <summary> Format the '\n' to lineBrak of Delphi
 /// </summary>
@@ -161,6 +172,78 @@ begin
       end);
     end;
   end).Start;
+end;
+
+procedure TFManagement.btn_SearchSongIDClick(Sender: TObject);
+var
+  I : Integer;
+begin
+  if (not Trim(Edt_SongID.Text).IsEmpty) and (TryStrToInt(Edt_SongID.Text, I)) then
+  with FConn do
+  begin
+    CreateQuery;
+    Query.SQL.Add('SELECT '+
+                  '   S.LYRICS, '+
+                  '   S.NAME, '+
+                  '   P.NAME AS ARTIST, '+
+                  '   COALESCE(S.AUDIO_LINK, '''') AS AUDIO_LINK, '+
+                  '   COALESCE(S.CODE, '''') AS SONG_CODE, '+
+                  '   COALESCE(P.CODE, '''') AS ARTIST_CODE '+
+                  'FROM SONG S '+
+                  'INNER JOIN PERSON P '+
+                  'ON S.ARTIST_ID = P.PERSON_ID '+
+                  'WHERE SONG_ID = :pID;');
+    Query.ParamByName('pID').AsInteger := StrToInt(Edt_SongID.Text);
+    Query.Open;
+    if Query.RecordCount > 0 then
+    begin
+      Edt_Song.Text   := Query.FieldByName('NAME').AsString;
+      Edt_Artist.Text := Query.FieldByName('ARTIST').AsString;
+      Memo.Lines.Text := Query.FieldByName('LYRICS').AsString;
+      lbl_id_art.Caption := Query.FieldByName('ARTIST_CODE').AsString;
+      lbl_id_song.Caption := Query.FieldByName('SONG_CODE').AsString;
+      Edt_Audio_Link.Text := Query.FieldByName('AUDIO_LINK').AsString;
+    end;
+  end;
+end;
+
+procedure TFManagement.btn_ShowSlideClick(Sender: TObject);
+var
+  MT : TFDMemTable;
+begin
+  MT := TFDMemTable.Create(Self);
+  try
+    //create temp field to dataset of report
+    with MT.FieldDefs do
+    begin
+      with AddFieldDef do
+      begin
+        Name := 'LYRICS';
+        DataType := ftString;
+        Size := 10000;
+      end;
+    end;
+
+    MT.Open;
+    MT.Append;
+    MT.FieldByName('LYRICS').AsString := Memo.Lines.Text;
+    MT.Post;
+
+    frxDBDataset.DataSet := MT;
+    frxReport.PrepareReport;
+    frxReport.ShowPreparedReport;
+  finally
+    if Assigned(MT) then
+      FreeAndNil(MT);
+  end;
+  Memo.SetFocus;
+end;
+
+procedure TFManagement.Edt_SongIDKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  if key = VK_RETURN then
+  btn_SearchSongIDClick(Self);
 end;
 
 procedure TFManagement.FormClose(Sender: TObject; var Action: TCloseAction);

@@ -5,7 +5,8 @@ interface
 uses
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants, 
   FMX.Types, FMX.Graphics, FMX.Controls, FMX.Forms, FMX.Dialogs, FMX.StdCtrls,
-  uBase, FMX.Layouts, FMX.ListBox;
+  uBase, FMX.Layouts, FMX.ListBox, FMX.Controls.Presentation, System.ImageList,
+  FMX.ImgList;
 
 type
   TFrm_Home = class(TFormBase)
@@ -14,6 +15,7 @@ type
     lbi_Masses: TListBoxItem;
     lbi_Songs: TListBoxItem;
     cbb_parish: TComboBox;
+    btn_log_out: TButton;
     procedure lbi_New_MassClick(Sender: TObject);
     procedure FormKeyUp(Sender: TObject; var Key: Word; var KeyChar: Char;
       Shift: TShiftState);
@@ -21,6 +23,7 @@ type
     procedure FormCreate(Sender: TObject);
     procedure cbb_parishChange(Sender: TObject);
     procedure lbi_MassesClick(Sender: TObject);
+    procedure btn_log_outClick(Sender: TObject);
   private
     procedure LoadParish;
   public
@@ -39,13 +42,38 @@ uses
   Androidapi.Helpers,
   Androidapi.JNI.App,
 {$ENDIF}
-  FMX.DialogService, uNewMass, uMain, uSong, uMassList;
+  FMX.DialogService, uNewMass, uMain, uSong, uMassList, uLogin;
+
+procedure TFrm_Home.btn_log_outClick(Sender: TObject);
+begin
+  inherited;
+  TDialogService.MessageDialog('Deseja encerrar a sessão atual?', TMsgDlgType.mtInformation,
+    [TMsgDlgBtn.mbYes, TMsgDlgBtn.mbNo], TMsgDlgBtn.mbYes, 0,
+    procedure(const AResult: TModalResult)
+    begin
+      case AResult of
+        mrYES:
+        begin
+          with Frm_Main do
+          begin
+            User_ID := 0;
+            Parish_ID_Active := 0;
+            Parishes.Clear;
+            ini.WriteString('CLIENT', 'USERNAME', '');
+            ini.WriteString('CLIENT', 'PASSWORD', '');
+          end;
+
+          OpenForm(TFrm_Login);
+        end;
+      end;
+    end);
+end;
 
 procedure TFrm_Home.cbb_parishChange(Sender: TObject);
 begin
   inherited;
   if cbb_parish.ItemIndex <> -1 then
-    Frm_Main.ID_Parish_Active := Frm_Main.Parishes[cbb_parish.ItemIndex].ID;
+    Frm_Main.Parish_ID_Active := Frm_Main.Parishes[cbb_parish.ItemIndex].ID;
 end;
 
 procedure TFrm_Home.FormCreate(Sender: TObject);

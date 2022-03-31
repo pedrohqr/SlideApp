@@ -6,11 +6,12 @@ uses
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.Layouts,
   Data.DBXDataSnap, Data.DBXCommon, IPPeerClient, Data.DB, Data.SqlExpr,
-  FireDAC.Stan.StorageJSON;
+  FireDAC.Stan.StorageJSON, System.ImageList, FMX.ImgList;
 
 type
   TFormBase = class(TForm)
     LayoutClient: TLayout;
+    ImageList: TImageList;
   private
     { Private declarations }
   public

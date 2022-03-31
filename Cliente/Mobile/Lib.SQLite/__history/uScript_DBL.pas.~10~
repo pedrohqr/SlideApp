@@ -1,0 +1,144 @@
+unit uScript_DBL;
+
+interface
+  function Create_DataBase: String;
+  function Path_DB: String;
+implementation
+
+uses
+  System.SysUtils, System.IOUtils, FireDAC.FMXUI.Wait, FireDAC.Phys.SQLite,
+  FireDAC.Comp.Client, FireDAC.Phys.SQLiteWrapper,
+  FireDAC.Stan.Async, FireDAC.Stan.Def, FireDAC.Phys.SQLiteWrapper.Stat, FireDAC.DApt,
+  FireDAC.Comp.UI, FireDAC.Stan.Param, System.JSON, Data.FireDACJSONReflect,
+  Data.DB, uSQLiteFunctions;
+
+const
+  Comando_SQL =
+
+  'PRAGMA foreign_keys = off; '+
+  'BEGIN TRANSACTION;         '+
+
+  'DROP TABLE IF EXISTS CONFIG;'+
+  'CREATE TABLE CONFIG (VERSION_BD INTEGER);'+
+  'INSERT INTO CONFIG(VERSION_BD) VALUES(1);'+
+
+  'DROP TABLE IF EXISTS USER;'+
+  'CREATE TABLE USER (USER_ID INTEGER PRIMARY KEY, '+
+  '                   NAME VARCHAR (200) NOT NULL, '+
+  '                   USERNAME VARCHAR (50) NOT NULL UNIQUE, '+
+  '                   PASSWORD VARCHAR (50) NOT NULL, '+
+  '                   AUTHENTICATED INTEGER DEFAULT (0) NOT NULL, '+
+  '                   IP VARCHAR (100), '+
+  '                   PORT VARCHAR (10));'+
+
+  'DROP TABLE IF EXISTS PARISH;'+
+  'CREATE TABLE PARISH (PARISH_ID INTEGER PRIMARY KEY, '+
+  '                     NAME VARCHAR (200) NOT NULL);'+
+
+  'DROP TABLE IF EXISTS PARISH_USER;'+
+  'CREATE TABLE PARISH_USER(PARISH_ID INTEGER REFERENCES PARISH (PARISH_ID) ON DELETE CASCADE ON UPDATE CASCADE, '+
+  '                         USER_ID INTEGER REFERENCES USER (USER_ID) ON DELETE CASCADE ON UPDATE CASCADE, '+
+  '                         ACTIVE_INDEX INTEGER NOT NULL DEFAULT (0));'+
+
+  'DROP TRIGGER IF EXISTS ACTIVE_PARISH; '+
+  'CREATE TRIGGER ACTIVE_PARISH          '+
+  '        BEFORE UPDATE OF ACTIVE_INDEX '+
+  '            ON PARISH_USER            '+
+  '      FOR EACH ROW                    '+
+  '      WHEN NEW.ACTIVE_INDEX = 1       '+
+  'BEGIN                                 '+
+  '    UPDATE PARISH_USER                '+
+  '    SET ACTIVE_PARISH = 0             '+
+  '    WHERE ACTIVE_PARISH = 1;          '+
+  'END;                                  '+
+
+  'DROP TRIGGER IF EXISTS ACTIVE_PARISH_INSERT;'+
+  'CREATE TRIGGER ACTIVE_PARISH_INSERT '+
+  'AFTER INSERT ON PARISH_USER '+
+  'FOR EACH ROW '+
+  'WHEN (SELECT '+
+  '      COUNT(*) '+
+  '      FROM PARISH_USER WHERE ACTIVE_INDEX=1) < 1 '+
+  'BEGIN '+
+  '   UPDATE PARISH_USER '+
+  '   SET IND_ATIVO = 1 '+
+  '   WHERE PARISH_ID = NEW.PARISH_ID; '+
+  'END;'+
+
+  'COMMIT TRANSACTION;'+
+  'PRAGMA foreign_keys = on;';
+
+
+/// <summary> Return the path of DataBase Local
+/// </summary>
+function Path_DB: String;
+var
+  path: String;
+begin
+  {$IFDEF MSWINDOWS}
+    path := ExtractFilePath(ParamStr(0)) + 'DataBaseLocal';
+  {$ENDIF}
+  {$IFDEF ANDROID}
+    path := System.IOUtils.TPath.Combine(System.IOUtils.TPath.GetHomePath, 'DataBaseLocal');
+  {$ENDIF}
+  if not TDirectory.Exists(path) then
+    System.SysUtils.ForceDirectories(path);
+
+  Result := System.IOUtils.TPath.Combine(path, 'DBL_SlideApp.s3db');
+end;
+
+/// <summary> Create the DataBase if not exists.
+/// </summary>
+/// <return> Return EmptyStr if succefull, else return a string error.
+/// </return>
+function Create_DataBase: String;
+var
+  FDConn: TFDConnection;
+  GUI : TFDGUIxWaitCursor;
+  Driver : TFDPhysSQLiteDriverLink;
+  Query : TFDQuery;
+begin
+  try
+    if FileExists(Path_DB) then
+    //VERIFY THE VERSION OF DATABASE
+//      if not (TSQLite.getVersaoBanco < DB_VERSION) then
+        exit;
+
+    FDconn := TFDConnection.Create(nil);
+    Driver := TFDPhysSQLiteDriverLink.Create(nil);
+    GUI := TFDGUIxWaitCursor.Create(nil);
+
+    with FDConn do
+    begin
+      Connected := False;
+
+      Params.Clear;
+      Params.DriverID := 'SQLite';
+
+      Params.Add('OpenMode=CreateUTF8');
+
+      Params.Values['Database'] := Path_DB;
+      Params.Values['Page_Size'] := '4096';
+
+      Open;
+    end;
+
+    Query := TFDQuery.Create(nil);
+    Query.Connection := FDConn;
+
+    Query.SQL.Add(Comando_SQL);
+
+    Query.ExecSQL;
+
+    FDConn.Close;
+
+    FreeAndNil(Query);
+    FreeAndNil(FDConn);
+    FreeAndNil(Driver);
+    FreeAndNil(GUI);
+  except on e : Exception do
+    Result := e.Message;
+  end;
+end;
+
+end.

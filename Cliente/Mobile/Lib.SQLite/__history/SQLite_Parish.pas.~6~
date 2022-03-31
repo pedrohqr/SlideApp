@@ -1,0 +1,45 @@
+unit SQLite_Parish;
+
+interface
+
+uses uSQLiteFunctions, System.Classes;
+
+  type
+    TParish = class(TConnectionDB)
+      private
+        FID : Integer;
+        FName : String;
+        function getID: Integer;
+        function getName: String;
+        procedure setID(const Value: Integer);
+        procedure setName(const Value: String);
+      public
+        property ID : Integer read getID write setID;
+        property Name : String read getName write setName;
+    end;
+
+implementation
+
+{ TParish }
+
+function TParish.getID: Integer;
+begin
+  Result := FID;
+end;
+
+function TParish.getName: String;
+begin
+  Result := FName;
+end;
+
+procedure TParish.setID(const Value: Integer);
+begin
+  FID := Value;
+end;
+
+procedure TParish.setName(const Value: String);
+begin
+  FName := Value;
+end;
+
+end.

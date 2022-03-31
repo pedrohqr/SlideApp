@@ -1,0 +1,79 @@
+unit uClientModule;
+
+interface
+
+uses
+  System.SysUtils, System.Classes, Data.DBXDataSnap,
+  Data.DBXCommon, IPPeerClient, Data.DB, Data.SqlExpr, DS_Functions,
+  FireDAC.Stan.StorageJSON, FireDAC.Stan.StorageBin, SQLite_User;
+
+type
+  TDM_DataSnap = class(TDataModule)
+    DSConn: TSQLConnection;
+    FDStanStorageJSONLink1: TFDStanStorageJSONLink;
+    FDStanStorageBinLink1: TFDStanStorageBinLink;
+    procedure DSConnBeforeConnect(Sender: TObject);
+  private
+    FUser : TUser;
+    FInstanceOwner: Boolean;
+    FLoginClient: TLoginClient;
+    function GetLoginClient: TLoginClient;
+    { Private declarations }
+  public
+    constructor Create(AOwner: TComponent); override;
+    destructor Destroy; override;
+    property InstanceOwner: Boolean read FInstanceOwner write FInstanceOwner;
+    property LoginClient: TLoginClient read GetLoginClient write FLoginClient;
+
+end;
+
+var
+  DM_DataSnap: TDM_DataSnap;
+
+implementation
+
+{$R *.dfm}
+
+constructor TDM_DataSnap.Create(AOwner: TComponent);
+begin
+  inherited;
+  FInstanceOwner := True;
+  FUser := TUser.Create(Self);
+end;
+
+destructor TDM_DataSnap.Destroy;
+begin
+  if Assigned(FUser) then
+    FreeAndNil(FUser);
+  FLoginClient.Free;
+  inherited;
+end;
+
+procedure TDM_DataSnap.DSConnBeforeConnect(Sender: TObject);
+begin
+  with DSConn.Params do
+  begin
+//    Values['ComunicationTimeout']      := '10000';
+    Values['ConnectTimeout']           := '10000';
+    Values['CommunicationProtocol']    := 'tcp/ip';
+    Values['BufferKBSize']             := '32';
+    Values['DatasnapContext']          := 'datasnap/';
+//    Values['DSAuthenticationPassword'] := 'root';
+//    Values['DSAuthenticationUser']     := 'ADM';
+    Values['DSProxyPort']              := '8888';
+    Values['HostName']                 := FUser.IP;
+    Values['Port']                     := FUser.Port;
+  end;
+end;
+
+function TDM_DataSnap.GetLoginClient: TLoginClient;
+begin
+  if FLoginClient = nil then
+  begin
+    DSConn.Open;
+    FLoginClient:= TLoginClient.Create(DSConn.DBXConnection, FInstanceOwner);
+  end;
+  Result := FLoginClient;
+end;
+
+end.

@@ -1,6 +1,6 @@
 //
 // Created by the DataSnap proxy generator.
-// 12/03/2022 15:04:25
+// 31/03/2022 00:16:44
 //
 
 unit DS_Functions;
@@ -15,13 +15,17 @@ type
     FAuth_LoginCommand: TDBXCommand;
     FRegister_UserCommand: TDBXCommand;
     FLoadParishCommand: TDBXCommand;
+    FRegister_Parish_UserCommand: TDBXCommand;
+    FgetParishIDByTokenCommand: TDBXCommand;
   public
     constructor Create(ADBXConnection: TDBXConnection); overload;
     constructor Create(ADBXConnection: TDBXConnection; AInstanceOwner: Boolean); overload;
     destructor Destroy; override;
-    function Auth_Login(Username: string; Password: string): Integer;
-    function Register_User(Name: string; Username: string; Password: string): string;
+    function Auth_Login(Username: string; Password: string; DeviceID: string): TFDJSONDataSets;
+    function Register_User(AName: string; AUsername: string; APassword: string; AToken: string): Integer;
     function LoadParish(ID_User: Integer): TFDJSONDataSets;
+    function Register_Parish_User(User_ID: Integer; Parish_ID: Integer; Token: string): string;
+    function getParishIDByToken(Token: string): Integer;
   end;
 
   TMassClient = class(TDSAdminClient)
@@ -30,7 +34,8 @@ type
     FGet_EucPrayerCommand: TDBXCommand;
     FGet_MassCommand: TDBXCommand;
     FGet_SongsCommand: TDBXCommand;
-    FDownloadSlideCommand: TDBXCommand;
+    FDownloadSlidePPTXCommand: TDBXCommand;
+    FDownloadSlidePDFCommand: TDBXCommand;
     FRegister_MassCommand: TDBXCommand;
   public
     constructor Create(ADBXConnection: TDBXConnection); overload;
@@ -40,7 +45,8 @@ type
     function Get_EucPrayer: TFDJSONDataSets;
     function Get_Mass(pag: SmallInt; User_ID: Integer; Parish_ID: Integer; Filter: string; Text: string; Asc: Boolean): TFDJSONDataSets;
     function Get_Songs(pag: SmallInt; Text: string): TFDJSONDataSets;
-    function DownloadSlide(Mass_ID: Integer): TJSONArray;
+    function DownloadSlidePPTX(Mass_ID: Integer): TJSONArray;
+    function DownloadSlidePDF(Mass_ID: Integer): TJSONArray;
     procedure Register_Mass(var DS: TFDJSONDataSets);
   end;
 
@@ -56,7 +62,7 @@ type
 
 implementation
 
-function TLoginClient.Auth_Login(Username: string; Password: string): Integer;
+function TLoginClient.Auth_Login(Username: string; Password: string; DeviceID: string): TFDJSONDataSets;
 begin
   if FAuth_LoginCommand = nil then
   begin
@@ -67,11 +73,24 @@ begin
   end;
   FAuth_LoginCommand.Parameters[0].Value.SetWideString(Username);
   FAuth_LoginCommand.Parameters[1].Value.SetWideString(Password);
+  FAuth_LoginCommand.Parameters[2].Value.SetWideString(DeviceID);
   FAuth_LoginCommand.ExecuteUpdate;
-  Result := FAuth_LoginCommand.Parameters[2].Value.GetInt32;
+  if not FAuth_LoginCommand.Parameters[3].Value.IsNull then
+  begin
+    FUnMarshal := TDBXClientCommand(FAuth_LoginCommand.Parameters[3].ConnectionHandler).GetJSONUnMarshaler;
+    try
+      Result := TFDJSONDataSets(FUnMarshal.UnMarshal(FAuth_LoginCommand.Parameters[3].Value.GetJSONValue(True)));
+      if FInstanceOwner then
+        FAuth_LoginCommand.FreeOnExecute(Result);
+    finally
+      FreeAndNil(FUnMarshal)
+    end
+  end
+  else
+    Result := nil;
 end;
 
-function TLoginClient.Register_User(Name: string; Username: string; Password: string): string;
+function TLoginClient.Register_User(AName: string; AUsername: string; APassword: string; AToken: string): Integer;
 begin
   if FRegister_UserCommand = nil then
   begin
@@ -80,11 +99,12 @@ begin
     FRegister_UserCommand.Text := 'TLogin.Register_User';
     FRegister_UserCommand.Prepare;
   end;
-  FRegister_UserCommand.Parameters[0].Value.SetWideString(Name);
-  FRegister_UserCommand.Parameters[1].Value.SetWideString(Username);
-  FRegister_UserCommand.Parameters[2].Value.SetWideString(Password);
+  FRegister_UserCommand.Parameters[0].Value.SetWideString(AName);
+  FRegister_UserCommand.Parameters[1].Value.SetWideString(AUsername);
+  FRegister_UserCommand.Parameters[2].Value.SetWideString(APassword);
+  FRegister_UserCommand.Parameters[3].Value.SetWideString(AToken);
   FRegister_UserCommand.ExecuteUpdate;
-  Result := FRegister_UserCommand.Parameters[3].Value.GetWideString;
+  Result := FRegister_UserCommand.Parameters[4].Value.GetInt32;
 end;
 
 function TLoginClient.LoadParish(ID_User: Integer): TFDJSONDataSets;
@@ -113,6 +133,36 @@ begin
     Result := nil;
 end;
 
+function TLoginClient.Register_Parish_User(User_ID: Integer; Parish_ID: Integer; Token: string): string;
+begin
+  if FRegister_Parish_UserCommand = nil then
+  begin
+    FRegister_Parish_UserCommand := FDBXConnection.CreateCommand;
+    FRegister_Parish_UserCommand.CommandType := TDBXCommandTypes.DSServerMethod;
+    FRegister_Parish_UserCommand.Text := 'TLogin.Register_Parish_User';
+    FRegister_Parish_UserCommand.Prepare;
+  end;
+  FRegister_Parish_UserCommand.Parameters[0].Value.SetInt32(User_ID);
+  FRegister_Parish_UserCommand.Parameters[1].Value.SetInt32(Parish_ID);
+  FRegister_Parish_UserCommand.Parameters[2].Value.SetWideString(Token);
+  FRegister_Parish_UserCommand.ExecuteUpdate;
+  Result := FRegister_Parish_UserCommand.Parameters[3].Value.GetWideString;
+end;
+
+function TLoginClient.getParishIDByToken(Token: string): Integer;
+begin
+  if FgetParishIDByTokenCommand = nil then
+  begin
+    FgetParishIDByTokenCommand := FDBXConnection.CreateCommand;
+    FgetParishIDByTokenCommand.CommandType := TDBXCommandTypes.DSServerMethod;
+    FgetParishIDByTokenCommand.Text := 'TLogin.getParishIDByToken';
+    FgetParishIDByTokenCommand.Prepare;
+  end;
+  FgetParishIDByTokenCommand.Parameters[0].Value.SetWideString(Token);
+  FgetParishIDByTokenCommand.ExecuteUpdate;
+  Result := FgetParishIDByTokenCommand.Parameters[1].Value.GetInt32;
+end;
+
 constructor TLoginClient.Create(ADBXConnection: TDBXConnection);
 begin
   inherited Create(ADBXConnection);
@@ -128,6 +178,8 @@ begin
   FAuth_LoginCommand.DisposeOf;
   FRegister_UserCommand.DisposeOf;
   FLoadParishCommand.DisposeOf;
+  FRegister_Parish_UserCommand.DisposeOf;
+  FgetParishIDByTokenCommand.DisposeOf;
   inherited;
 end;
 
@@ -239,18 +291,32 @@ begin
     Result := nil;
 end;
 
-function TMassClient.DownloadSlide(Mass_ID: Integer): TJSONArray;
+function TMassClient.DownloadSlidePPTX(Mass_ID: Integer): TJSONArray;
 begin
-  if FDownloadSlideCommand = nil then
+  if FDownloadSlidePPTXCommand = nil then
   begin
-    FDownloadSlideCommand := FDBXConnection.CreateCommand;
-    FDownloadSlideCommand.CommandType := TDBXCommandTypes.DSServerMethod;
-    FDownloadSlideCommand.Text := 'TMass.DownloadSlide';
-    FDownloadSlideCommand.Prepare;
+    FDownloadSlidePPTXCommand := FDBXConnection.CreateCommand;
+    FDownloadSlidePPTXCommand.CommandType := TDBXCommandTypes.DSServerMethod;
+    FDownloadSlidePPTXCommand.Text := 'TMass.DownloadSlidePPTX';
+    FDownloadSlidePPTXCommand.Prepare;
   end;
-  FDownloadSlideCommand.Parameters[0].Value.SetInt32(Mass_ID);
-  FDownloadSlideCommand.ExecuteUpdate;
-  Result := TJSONArray(FDownloadSlideCommand.Parameters[1].Value.GetJSONValue(FInstanceOwner));
+  FDownloadSlidePPTXCommand.Parameters[0].Value.SetInt32(Mass_ID);
+  FDownloadSlidePPTXCommand.ExecuteUpdate;
+  Result := TJSONArray(FDownloadSlidePPTXCommand.Parameters[1].Value.GetJSONValue(FInstanceOwner));
+end;
+
+function TMassClient.DownloadSlidePDF(Mass_ID: Integer): TJSONArray;
+begin
+  if FDownloadSlidePDFCommand = nil then
+  begin
+    FDownloadSlidePDFCommand := FDBXConnection.CreateCommand;
+    FDownloadSlidePDFCommand.CommandType := TDBXCommandTypes.DSServerMethod;
+    FDownloadSlidePDFCommand.Text := 'TMass.DownloadSlidePDF';
+    FDownloadSlidePDFCommand.Prepare;
+  end;
+  FDownloadSlidePDFCommand.Parameters[0].Value.SetInt32(Mass_ID);
+  FDownloadSlidePDFCommand.ExecuteUpdate;
+  Result := TJSONArray(FDownloadSlidePDFCommand.Parameters[1].Value.GetJSONValue(FInstanceOwner));
 end;
 
 procedure TMassClient.Register_Mass(var DS: TFDJSONDataSets);
@@ -307,7 +373,8 @@ begin
   FGet_EucPrayerCommand.DisposeOf;
   FGet_MassCommand.DisposeOf;
   FGet_SongsCommand.DisposeOf;
-  FDownloadSlideCommand.DisposeOf;
+  FDownloadSlidePPTXCommand.DisposeOf;
+  FDownloadSlidePDFCommand.DisposeOf;
   FRegister_MassCommand.DisposeOf;
   inherited;
 end;

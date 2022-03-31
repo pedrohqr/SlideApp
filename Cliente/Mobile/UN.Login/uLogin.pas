@@ -6,7 +6,8 @@ uses
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants, 
   FMX.Types, FMX.Graphics, FMX.Controls, FMX.Forms, FMX.Dialogs, FMX.StdCtrls,
   uBase, FMX.Controls.Presentation, FMX.Edit, FMX.Layouts, Data.DBXDataSnap,
-  Data.DBXCommon, IPPeerClient, Data.DB, Data.SqlExpr;
+  Data.DBXCommon, IPPeerClient, Data.DB, Data.SqlExpr, System.IniFiles,
+  System.ImageList, FMX.ImgList;
 
 type
   TFrm_Login = class(TFormBase)
@@ -17,10 +18,21 @@ type
     lbl_username: TLabel;
     lbl_password: TLabel;
     AniIndicator: TAniIndicator;
+    cbb_Auth: TCheckBox;
+    Edt_IP: TEdit;
+    Edt_Port: TEdit;
+    Label1: TLabel;
+    Label2: TLabel;
+    StyleBook1: TStyleBook;
+    btn_register: TSpeedButton;
+    btn_PW_Show: TSpeedButton;
     procedure btn_sign_inClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
+    procedure btn_registerClick(Sender: TObject);
+    procedure btn_PW_ShowClick(Sender: TObject);
   private
-    { Private declarations }
+    procedure VerifyAuth;
+    procedure CreateIni;
   public
     { Public declarations }
   end;
@@ -33,7 +45,23 @@ implementation
 {$R *.fmx}
 
 uses uHome, uMain, DS_Functions, uClientModule, FireDAC.Comp.Client,
-  Data.FireDACJSONReflect, uMass, Lib_General;
+  Data.FireDACJSONReflect, Lib_General,
+  System.Generics.Collections, uMass, uRegister;
+
+procedure TFrm_Login.btn_PW_ShowClick(Sender: TObject);
+begin
+  inherited;
+  case Edt_Password.Password of
+    True : Edt_Password.Password := False;
+    False : Edt_Password.Password := True;
+  end;
+end;
+
+procedure TFrm_Login.btn_registerClick(Sender: TObject);
+begin
+  inherited;
+  OpenForm(TFrm_Register);
+end;
 
 procedure TFrm_Login.btn_sign_inClick(Sender: TObject);
 begin
@@ -47,35 +75,52 @@ begin
   begin
     try
       try
-        if not DM_DataSnap.DSConn.Connected then
-          DM_DataSnap.DSConn.Connected := True;
-        Conn := TLoginClient.Create(DM_DataSnap.DSConn.DBXConnection);
-        Frm_Main.ID_User := Conn.Auth_Login(Trim(Edt_Username.Text), Trim(Edt_Password.Text));
-        if Frm_Main.ID_User <> 0 then
+        with DM_DataSnap.DSConn do
         begin
-          DS := Conn.LoadParish(Frm_Main.ID_User);
-          MT := TFDMemTable.Create(nil);
-          try
-            MT.AppendData(TFDJSONDataSetsReader.GetListValue(DS, 0));
-            while not MT.Eof do
-            begin
-              Frm_Main.Parishes.Add(TParish.Create(MT.FieldByName('PARISH_ID').AsInteger,
-                                                   MT.FieldByName('NAME').AsString)
-                                    );
-              Frm_Main.ID_Parish_Active := Frm_Main.Parishes[0].ID;
-              MT.Next;
-            end;
+          Params.Values['HostName'] := Edt_IP.Text;
+          Params.Values['Port'] := Edt_Port.Text;
+          if not Connected then
+            Connected := True;
+        end;
 
-          finally
-            if Assigned(MT) then
-              FreeAndNil(MT);
+        Conn := TLoginClient.Create(DM_DataSnap.DSConn.DBXConnection);
+
+        DS := Conn.Auth_Login(Trim(Edt_Username.Text), Trim(Edt_Password.Text), DeviceID);
+
+        MT := TFDMemTable.Create(Self);
+        MT.AppendData(TFDJSONDataSetsReader.GetListValue(DS, 0));
+
+        if not MT.IsEmpty then //aproved
+        begin
+
+          if (not MT.FieldByName('DEVICE_ID').IsNull) and (not MT.FieldByName('DEVICE_ID').AsString.IsEmpty) then
+          if MT.FieldByName('DEVICE_ID').AsString <> DeviceID then
+            raise Exception.Create('Não é possível utilizar o aplicativo em mais de um dispositivo!');
+
+          Frm_Main.User_ID := MT.FieldByName('USER_ID').AsInteger;
+          Frm_Main.Parishes := TObjectList<TParish>.Create;
+
+          if cbb_Auth.IsChecked then
+          begin
+            Frm_Main.Ini.WriteString('CLIENT', 'USERNAME', Edt_Username.Text);
+            Frm_Main.Ini.WriteString('CLIENT', 'PASSWORD', Encrypt(Edt_Password.Text, 7));
+            Frm_Main.Ini.WriteString('CLIENT', 'IP', Edt_IP.Text);
+            Frm_Main.Ini.WriteString('CLIENT', 'PORT', Edt_Port.Text);
+          end;
+
+          while not MT.Eof do
+          begin
+            Frm_Main.Parishes.Add(TParish.Create(MT.FieldByName('PARISH_ID').AsInteger,
+                                                 MT.FieldByName('PARISH_NAME').AsString));
+            Frm_Main.Parish_ID_Active := Frm_Main.Parishes[0].ID;
+            MT.Next;
           end;
         end;
 
         TThread.Synchronize(nil, procedure
         begin
           AniIndicator.Enabled := False;
-          if Frm_Main.ID_User <> 0 then
+          if Frm_Main.User_ID <> 0 then
           begin
             OpenForm(TFrm_Home);
           end
@@ -87,11 +132,14 @@ begin
         TThread.Synchronize(nil, procedure
         begin
           AniIndicator.Enabled := False;
+          AniIndicator.Visible := False;
           ShowMessage(e.Message);
         end);
       end;
 
     finally
+      if Assigned(MT) then
+        FreeAndNil(MT);
       if DM_DataSnap.DSConn.Connected then
         DM_DataSnap.DSConn.Connected := False;
       FreeAndNil(Conn);
@@ -100,10 +148,43 @@ begin
   end).Start;
 end;
 
+/// <summary> Verify if the user is athenticated
+/// </summary>
+procedure TFrm_Login.VerifyAuth;
+begin
+  if Assigned(Frm_Main.Ini) then
+  with Frm_Main do
+  begin
+    Edt_Username.Text := Ini.ReadString('CLIENT', 'USERNAME', '');
+    Edt_Password.Text := Decrypt(Ini.ReadString('CLIENT', 'PASSWORD', ''), 7);
+    Edt_IP.Text       := Ini.ReadString('CLIENT', 'IP', '');
+    Edt_Port.Text     := Ini.ReadString('CLIENT', 'PORT', '');
+
+    if (Edt_Username.Text <> '') and
+       (Edt_Password.Text <> '') and
+       (Edt_IP.Text <> '') and
+       (Edt_Port.Text <> '') then
+    btn_sign_inClick(Self);
+  end;
+end;
+
+procedure TFrm_Login.CreateIni;
+begin
+  try
+    if not Assigned(Frm_Main.Ini) then
+    Frm_Main.Ini := TIniFile.Create(Path_Ini);
+  except on e : exception do
+    ShowMessage(e.Message)
+  end;
+end;
+
 procedure TFrm_Login.FormCreate(Sender: TObject);
 begin
   inherited;
-  StoragePermission;
+  StoragePermission(False);
+  ReadPhoneStatePermission;
+  CreateIni;
+  VerifyAuth;
 end;
 
 end.

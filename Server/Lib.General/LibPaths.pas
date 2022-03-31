@@ -44,7 +44,7 @@ end;
 // <summary>
 function Path_DB : String;
 begin
-  Result := 'C:\Users\pedro\Desktop\SlideApp\Server\DataBase' + PathDelim + 'SERVER.FDB';
+  Result := 'C:\Users\pedro\Desktop\SlideApp\Server\DataBase\SERVER.FDB';
   if not FileExists(Result) then
     raise Exception.Create('SERVER: Banco de Dados "SERVER.FDB" não encontrado em: ' + Result);
 end;

@@ -1,0 +1,492 @@
+inherited Frm_Mass: TFrm_Mass
+  Caption = 'SlideApp | Missas'
+  ClientHeight = 501
+  ClientWidth = 383
+  OnCreate = FormCreate
+  OnKeyUp = FormKeyUp
+  DesignerMasterStyle = 3
+  inherited LayoutClient: TLayout
+    Size.Width = 383.000000000000000000
+    Size.Height = 501.000000000000000000
+    object LV: TListView
+      Touch.InteractiveGestures = [DoubleTap]
+      ItemAppearanceClassName = 'TDynamicAppearance'
+      ItemEditAppearanceClassName = 'TDynamicAppearance'
+      HeaderAppearanceClassName = 'TListHeaderObjects'
+      FooterAppearanceClassName = 'TListHeaderObjects'
+      OnUpdateObjects = LVUpdateObjects
+      Align = Client
+      Margins.Left = 10.000000000000000000
+      Margins.Top = 5.000000000000000000
+      Margins.Right = 10.000000000000000000
+      Size.Width = 363.000000000000000000
+      Size.Height = 366.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 0
+      ItemAppearance.ItemHeight = 150
+      ItemAppearanceObjects.ItemObjects.ObjectsCollection = <
+        item
+          AppearanceObjectName = 'title'
+          AppearanceClassName = 'TTextObjectAppearance'
+          Appearance.Font.Size = 18.000000000000000000
+          Appearance.Font.StyleExt = {00060000000000000004000000}
+          Appearance.TextAlign = Leading
+          Appearance.WordWrap = True
+          Appearance.Trimming = Character
+          Appearance.Width = 342.000000000000000000
+          Appearance.Height = 25.000000000000000000
+          Appearance.PlaceOffset.Y = 35.000000000000000000
+        end
+        item
+          AppearanceObjectName = 'user'
+          AppearanceClassName = 'TTextObjectAppearance'
+          Appearance.Font.Size = 16.000000000000000000
+          Appearance.TextAlign = Leading
+          Appearance.TextVertAlign = Leading
+          Appearance.WordWrap = True
+          Appearance.Width = 301.000000000000000000
+          Appearance.Height = 23.000000000000000000
+          Appearance.PlaceOffset.Y = 93.000000000000000000
+        end
+        item
+          AppearanceObjectName = 'mass_date'
+          AppearanceClassName = 'TTextObjectAppearance'
+          Appearance.Font.Size = 16.000000000000000000
+          Appearance.TextAlign = Leading
+          Appearance.Width = 135.000000000000000000
+          Appearance.Height = 19.000000000000000000
+          Appearance.PlaceOffset.Y = 128.000000000000000000
+        end
+        item
+          AppearanceObjectName = 'lbl_user'
+          AppearanceClassName = 'TTextObjectAppearance'
+          Appearance.Font.Size = 10.000000000000000000
+          Appearance.Font.StyleExt = {00060000000000000004000000}
+          Appearance.TextAlign = Leading
+          Appearance.WordWrap = True
+          Appearance.Trimming = Word
+          Appearance.Width = 301.000000000000000000
+          Appearance.Height = 14.000000000000000000
+          Appearance.PlaceOffset.Y = 80.000000000000000000
+        end
+        item
+          AppearanceObjectName = 'lbl_mass_date'
+          AppearanceClassName = 'TTextObjectAppearance'
+          Appearance.Font.Size = 10.000000000000000000
+          Appearance.Font.StyleExt = {00060000000000000004000000}
+          Appearance.TextAlign = Leading
+          Appearance.WordWrap = True
+          Appearance.Trimming = Word
+          Appearance.Width = 167.000000000000000000
+          Appearance.Height = 14.000000000000000000
+          Appearance.PlaceOffset.Y = 115.000000000000000000
+        end
+        item
+          AppearanceObjectName = 'lbl_gen_mass'
+          AppearanceClassName = 'TTextObjectAppearance'
+          Appearance.Font.Size = 10.000000000000000000
+          Appearance.Font.StyleExt = {00060000000000000004000000}
+          Appearance.TextAlign = Trailing
+          Appearance.TextVertAlign = Trailing
+          Appearance.WordWrap = True
+          Appearance.Trimming = Word
+          Appearance.Width = 145.000000000000000000
+          Appearance.Height = 14.000000000000000000
+          Appearance.Align = Trailing
+          Appearance.PlaceOffset.Y = 107.000000000000000000
+        end
+        item
+          AppearanceObjectName = 'gen_mass'
+          AppearanceClassName = 'TTextObjectAppearance'
+          Appearance.TextAlign = Trailing
+          Appearance.TextVertAlign = Leading
+          Appearance.WordWrap = True
+          Appearance.Trimming = Character
+          Appearance.Width = 167.000000000000000000
+          Appearance.Height = 23.000000000000000000
+          Appearance.Align = Trailing
+          Appearance.PlaceOffset.Y = 124.000000000000000000
+        end
+        item
+          AppearanceObjectName = 'img_status'
+          AppearanceClassName = 'TImageObjectAppearance'
+          Appearance.Width = 35.000000000000000000
+          Appearance.Height = 35.000000000000000000
+        end
+        item
+          AppearanceObjectName = 'img_share'
+          AppearanceClassName = 'TImageObjectAppearance'
+          Appearance.Width = 35.000000000000000000
+          Appearance.Height = 35.000000000000000000
+          Appearance.PlaceOffset.X = 45.000000000000000000
+        end>
+      ItemAppearanceObjects.ItemEditObjects.ObjectsCollection = <
+        item
+          AppearanceObjectName = 'Text1'
+          AppearanceClassName = 'TTextObjectAppearance'
+        end>
+      CanSwipeDelete = False
+      OnItemClickEx = LVItemClickEx
+      DeleteButtonText = 'Excluir'
+      object lbl_info_LV_Mass: TLabel
+        Align = Client
+        Size.Width = 311.000000000000000000
+        Size.Height = 353.000000000000000000
+        Size.PlatformDefault = False
+        TextSettings.HorzAlign = Center
+        TextSettings.Trimming = Word
+        Text = 'Nenhuma m'#250'sica adicionada'
+        Visible = False
+        TabOrder = 0
+      end
+      object Ani: TAniIndicator
+        Align = Center
+        Visible = False
+      end
+    end
+    object Rectangle1: TRectangle
+      Align = Top
+      Fill.Color = claWhite
+      Margins.Left = 10.000000000000000000
+      Margins.Top = 10.000000000000000000
+      Margins.Right = 10.000000000000000000
+      Position.X = 10.000000000000000000
+      Position.Y = 10.000000000000000000
+      Size.Width = 363.000000000000000000
+      Size.Height = 50.000000000000000000
+      Size.PlatformDefault = False
+      Stroke.Kind = None
+      XRadius = 15.000000000000000000
+      YRadius = 15.000000000000000000
+      object Label1: TLabel
+        Align = Client
+        AutoSize = True
+        StyledSettings = []
+        Size.Width = 363.000000000000000000
+        Size.Height = 50.000000000000000000
+        Size.PlatformDefault = False
+        TextSettings.Font.Family = 'Sylfaen'
+        TextSettings.Font.Size = 20.000000000000000000
+        TextSettings.Font.StyleExt = {00070000000000000004000000}
+        TextSettings.FontColor = claGray
+        TextSettings.HorzAlign = Center
+        Text = 'HIST'#211'RICO DE MISSAS'
+        TabOrder = 0
+      end
+    end
+    object Rectangle5: TRectangle
+      Align = Top
+      Fill.Color = claWhite
+      Margins.Left = 10.000000000000000000
+      Margins.Top = 5.000000000000000000
+      Margins.Right = 10.000000000000000000
+      Position.X = 10.000000000000000000
+      Position.Y = 65.000000000000000000
+      Size.Width = 363.000000000000000000
+      Size.Height = 32.000000000000000000
+      Size.PlatformDefault = False
+      Stroke.Kind = None
+      XRadius = 10.000000000000000000
+      YRadius = 10.000000000000000000
+      object Edt_Search: TEdit
+        Touch.InteractiveGestures = [LongTap, DoubleTap]
+        Align = Client
+        TabOrder = 0
+        Size.Width = 331.799987792968800000
+        Size.Height = 32.000000000000000000
+        Size.PlatformDefault = False
+        object SearchEditButton1: TSearchEditButton
+          CanFocus = False
+          Cursor = crArrow
+          Position.X = 32.000000000000000000
+          Size.Width = 32.000000000000000000
+          Size.Height = 32.000000000000000000
+          Size.PlatformDefault = False
+          TabOrder = 0
+          OnClick = SearchEditButton1Click
+        end
+        object ClearEditButton1: TClearEditButton
+          CanFocus = False
+          Cursor = crArrow
+          Size.Width = 32.000000000000000000
+          Size.Height = 30.000000000000000000
+          Size.PlatformDefault = False
+          TabOrder = 1
+          OnClick = ClearEditButton1Click
+        end
+      end
+      object btn_filter: TButton
+        Align = Left
+        Scale.X = 0.649999976158142100
+        Scale.Y = 0.649999976158142100
+        Size.Width = 48.000000000000000000
+        Size.Height = 48.000000000000000000
+        Size.PlatformDefault = False
+        StyleLookup = 'detailstoolbutton'
+        TabOrder = 1
+        Text = 'btn_filter'
+        OnClick = btn_filterClick
+      end
+    end
+    object Rec_Filter: TRectangle
+      Align = Top
+      Corners = [BottomLeft, BottomRight]
+      Fill.Color = xFFE6E98B
+      Margins.Left = 10.000000000000000000
+      Margins.Right = 10.000000000000000000
+      Position.X = 10.000000000000000000
+      Position.Y = 97.000000000000000000
+      Size.Width = 323.000000000000000000
+      Size.Height = 111.000000000000000000
+      Size.PlatformDefault = False
+      Stroke.Kind = None
+      Visible = False
+      object Label2: TLabel
+        Align = Top
+        StyledSettings = [Family, Style, FontColor]
+        Margins.Left = 3.000000000000000000
+        Margins.Top = 2.000000000000000000
+        Position.X = 3.000000000000000000
+        Position.Y = 2.000000000000000000
+        Size.Width = 320.000000000000000000
+        Size.Height = 13.000000000000000000
+        Size.PlatformDefault = False
+        Text = 'Ordenar busca por:'
+        TabOrder = 1
+      end
+      object cbb_Filter: TComboBox
+        Align = Top
+        ItemIndex = 0
+        Margins.Top = 5.000000000000000000
+        Margins.Right = 110.000000000000000000
+        Position.Y = 20.000000000000000000
+        Size.Width = 213.000000000000000000
+        Size.Height = 32.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 2
+        OnChange = cbb_FilterChange
+        object lbi_mass_date: TListBoxItem
+          IsSelected = True
+          Size.Width = 44.000000000000000000
+          Size.Height = 44.000000000000000000
+          Size.PlatformDefault = False
+          TabOrder = 0
+          Text = 'Data da Missa'
+        end
+        object lbi_gen_mass: TListBoxItem
+          TabOrder = 1
+          Text = 'Data de gera'#231#227'o'
+        end
+        object lbi_title: TListBoxItem
+          TabOrder = 2
+          Text = 'T'#237'tulo'
+        end
+        object lbi_user: TListBoxItem
+          TabOrder = 3
+          Text = 'Usu'#225'rio'
+        end
+      end
+      object Rectangle2: TRectangle
+        Align = Bottom
+        Fill.Color = claWhite
+        Margins.Left = 30.000000000000000000
+        Margins.Right = 30.000000000000000000
+        Margins.Bottom = 6.000000000000000000
+        Position.X = 30.000000000000000000
+        Position.Y = 101.000000000000000000
+        Size.Width = 263.000000000000000000
+        Size.Height = 4.000000000000000000
+        Size.PlatformDefault = False
+        Stroke.Kind = None
+        XRadius = 2.000000000000000000
+        YRadius = 2.000000000000000000
+      end
+      object btn_asc_desc: TButton
+        Anchors = [akTop, akRight]
+        Position.X = 212.000000000000000000
+        Position.Y = 22.000000000000000000
+        Size.Width = 113.000000000000000000
+        Size.Height = 32.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 4
+        Text = 'Decrescente'
+        OnClick = btn_asc_descClick
+      end
+      object Label3: TLabel
+        Align = Top
+        StyledSettings = [Family, Style, FontColor]
+        Margins.Left = 3.000000000000000000
+        Margins.Top = 2.000000000000000000
+        Position.X = 3.000000000000000000
+        Position.Y = 54.000000000000000000
+        Size.Width = 320.000000000000000000
+        Size.Height = 11.000000000000000000
+        Size.PlatformDefault = False
+        Text = 'Exibir Missas:'
+        TabOrder = 0
+      end
+      object btn_all_users: TButton
+        Align = Top
+        Margins.Left = 10.000000000000000000
+        Margins.Right = 10.000000000000000000
+        Position.X = 10.000000000000000000
+        Position.Y = 65.000000000000000000
+        Size.Width = 303.000000000000000000
+        Size.Height = 32.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 5
+        Text = ' Todos os usu'#225'rios'
+        OnClick = btn_all_usersClick
+      end
+    end
+    object lay: TLayout
+      Align = Bottom
+      Margins.Bottom = 3.000000000000000000
+      Position.Y = 468.000000000000000000
+      Size.Width = 383.000000000000000000
+      Size.Height = 30.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 1
+      object PB: TProgressBar
+        Align = Client
+        Orientation = Horizontal
+        Margins.Left = 10.000000000000000000
+        Margins.Right = 10.000000000000000000
+        Margins.Bottom = 5.000000000000000000
+        Size.Width = 301.000000000000000000
+        Size.Height = 10.000000000000000000
+        Size.PlatformDefault = False
+        Visible = False
+      end
+      object AniDownload: TAniIndicator
+        Align = Left
+        Margins.Left = 3.000000000000000000
+        Position.X = 3.000000000000000000
+        Size.Width = 30.000000000000000000
+        Size.Height = 30.000000000000000000
+        Size.PlatformDefault = False
+        Style = Circular
+        Visible = False
+      end
+    end
+  end
+  object ImageList1: TImageList
+    Source = <
+      item
+        MultiResBitmap = <
+          item
+            Scale = 3.000000000000000000
+            Width = 48
+            Height = 48
+            PNG = {
+              89504E470D0A1A0A0000000D49484452000000300000003008060000005702F9
+              87000000017352474200AECE1CE90000000467414D410000B18F0BFC61050000
+              029B494441546843EDD84BC80D611CC7F1E39A884891DBC6A55C52C282243656
+              6481854259091BB254CAF2956429CAAD14250A65816C5CA22C2465E35276446E
+              E592EBF7F79C39AF39C77FCECC33F3CC7B46CDAF3ECDC5798FE73FE79979E679
+              1A75EAD4A953A7480645DBBC198E95988349188D777882BB78814A663A4EE23D
+              7E77711F1B311895C850F4E11BAC06275121B3D1D38CC535580DCCE22356A127
+              19869BB01AE6E30B962158B2DEC447B0BDB95B38AF310F23B0054B31116FF010
+              67F118C1B218BF605DD1BC1EE16BC7B9969F3881510892EBB0FEA3B2E9C61F89
+              42998AD057DFC77114CA4E585F3C50D49D74BF24266D8059146DB344A3AF6E46
+              3D185AD48F2F236FD43E0D8489492B40AF0759731B7AC2C4F319579BBBB9B330
+              DA9A492B607CB4CD12FDE45692CE67CDB8686B26A9003D3A2FC0A70B9595CE5F
+              B52D9D05E85DE710EE611D86A0D7B9136DCDC40BD0C878057B508586B7B217E7
+              B0C21D75C919C41F61BE8EC2CA36589FCF43177802FAD3FA05F4A8DAD4DCAD74
+              D6E00166B823A202F4A679D01DFD1F99861BD0EBBD1B6C36E0BC0E32E6072EE1
+              AD3BFA9B5B5037ECCC726C6EEEF647EF386B31C61DE5CB696CD5CE2958FD2DC9
+              3184C80E58DF9F952EE42C75A125F0C97CA8DB15CD82689B377A52BA5FE003AC
+              0ABBD12057A488FDB0BED797C62B37CDB3FE314DDE2242355EDC28FD3C76C2D7
+              45F81411B2F1A2595DA19506C95A44E8C6CB4B3476C54EE4955644198D178D07
+              6EDA9834C1F6915444598D97DD70390CEB03BE3A8B28B3F19FA019A08B260DCF
+              607DD09746692DF61E889D2BC33EB44593E7B4C5DAAAD0528FE62EFF642E9EC2
+              FAA3AA50E3DD8B5C52D49D342B0B716387A43EAF6ED376E5BBAD8D4EC17AACC6
+              4C4C86666D0395EF78052DD76865436BA63AAE53A74E9D3AA1D268FC01C553C7
+              567051CD100000000049454E44AE426082}
+            FileName = 'C:\Users\pedro\Desktop\projeto_slide\Images\download.png'
+          end>
+        Name = 'download'
+      end
+      item
+        MultiResBitmap = <
+          item
+            Scale = 3.000000000000000000
+            Width = 48
+            Height = 48
+            PNG = {
+              89504E470D0A1A0A0000000D49484452000000300000003008060000005702F9
+              87000000017352474200AECE1CE90000000467414D410000B18F0BFC61050000
+              0207494441546843EDD8BD4B1C411CC6F1F3ADB151637C418C848058098174B6
+              DAA40804ADC422A501FF90D84848932285B5A260619FC24EF12D310A62826021
+              0185102C348926F9FEC08165F9CDDECCDEAAB3380F7C9A45E79E991BE6E6AE12
+              1313131353250FB18233BC9207654A073EE1DFB5BF788D5244CA7F86299F9CC4
+              24828EADBC718560B7532776A0154FBAC438828A94FF02ADB0E604C1A40BBBD0
+              8ADA7C441071DD3649DB9023F6CEE3BB6D4430E565DB94BABCEF9EBF1FE59F60
+              0E6FD0240F0A4E0FF6A195B4D9423BAAE619BEC3FCE3221A5154BA71632B3F8C
+              9F480FB080222621E5F7901E3F8BACBC53F909FC863688984703F2A61707D0C6
+              B671DE3653901B9E3648D22CEAE19B3CE537F1004ED1B68DCD07D4C1358FF015
+              DA58365EE5254BD006B2790F9749F4C1B7FC06BCCA4B9A215FD9B4016DDE216B
+              127956DE79CF6B69C13AB4816DDE424B9E95AFA9BC891C57BE67F40C9291F2DF
+              A0FDAD4D21E54DE453D277F5A621A7D3000EAF9FB99277BD0D85E6318EA0BDA0
+              CD0FFC493DABE646CA9BF4E318DA0B17418ECAC2B68D2D83388556A016DEE77C
+              2D790AD91E5A913C6EB5BCC910E4673DAD908F3B296F32827368C55CE4FA842D
+              3A2FF00B5AC12C6B684510798E0B68453541AC7C3A2F91F5DDC15845302B9FCE
+              28B22611E4CAA7639B4429CA9B8C21798590EB4169CA9BC83B2177A765C8B53C
+              262626E6DEA452F90F21BE20BEAE5248C40000000049454E44AE426082}
+            FileName = 'C:\Users\pedro\Desktop\projeto_slide\Images\ok.png'
+          end>
+        Name = 'ok'
+      end
+      item
+        MultiResBitmap.LoadSize = 0
+        MultiResBitmap = <
+          item
+            Scale = 3.000000000000000000
+            Width = 48
+            Height = 48
+            PNG = {
+              89504E470D0A1A0A0000000D49484452000000300000003008060000005702F9
+              87000000017352474200AECE1CE90000000467414D410000B18F0BFC61050000
+              01D7494441546843ED99494E033114441BC4780686E321400C4B4EC4519817C0
+              261700162C21881D812A644BADD68FFD2D21BB82BAA497569296523F71CAFE76
+              27AC0D700A6EC047E01A9C807520AD6DF008BEE7F000788FA4F8CDA7CC475884
+              E42FC1616319B6380672E298B7CC5A5C01394D8165D662BA8C0735CDC2D5A399
+              5201FCF3724CAFFE3EF36912AE4D158D3F036B98A43802CD9432FE65BC36E41E
+              AC81EA4A197F019C6977C15D78CD82E6B74055798CF39EA81570002EC01B603A
+              5D020E9BAADF3C3F6C0F58C65FC119D804725A78E34F60345E43A3F1BF1223AC
+              DF0131BA185B8C32465A14EF6394CD8B4346653F0EAB28D701DD821D20679CE2
+              877A3A206B7A6F6A3CAAA4038A48188F2AE9803E818CF1A8920EE81D48A9B4A1
+              29E996AA8805947435CC7EB921C465AC355C52304A650AE1E61037892CA37DAC
+              189529841359AA0826556A22932884BF044D70B388C9C4A504BBA17DE05D4A48
+              0DAD9C1676153AD458889AC642D4F46F0AC9C52FDFEBC72FA3FB10B02BE42252
+              E68CCC530827CDD4D6A2C41959AA10CFE6AECC1959AA901C9CF565140B61D767
+              99B5903C23E31FD6326B217946B614AE1E499D914595748813C502CEC3D5A392
+              7BABC9DB21363B23F328D7213639232BD5B04334CEC8BAEE079CE9B14618C0CA
+              080000000049454E44AE426082}
+            FileName = 'C:\Users\pedro\Desktop\projeto_slide\Images\share.png'
+          end>
+        Name = 'share'
+      end>
+    Destination = <
+      item
+        Layers = <
+          item
+            Name = 'download'
+          end>
+      end
+      item
+        Layers = <
+          item
+            Name = 'ok'
+          end>
+      end
+      item
+        Layers = <
+          item
+            Name = 'share'
+          end>
+      end>
+    Left = 24
+    Top = 8
+  end
+end

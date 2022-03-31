@@ -16,7 +16,7 @@ object Frm_Main: TFrm_Main
   OnFocusChanged = FormFocusChanged
   OnVirtualKeyboardShown = FormVirtualKeyboardShown
   OnVirtualKeyboardHidden = FormVirtualKeyboardHidden
-  DesignerMasterStyle = 2
+  DesignerMasterStyle = 3
   object VSB: TVertScrollBox
     Align = Contents
     Size.Width = 332.000000000000000000

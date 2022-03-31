@@ -326,8 +326,8 @@ begin
           FieldByName('PSALM_LYRICS').AsString    := Edt_PSalm_Lyrics.Text;
           FieldByName('PSALM_TITLE').AsString     := Edt_PSalm_Title.Text;
           FieldByName('EPRAYER_ID').AsInteger     := cbb_EPrayers.ListItems[cbb_EPrayers.ItemIndex].Tag;
-          FieldByName('USER_ID').AsInteger        := Frm_Main.ID_User;
-          FieldByName('PARISH_ID').AsInteger      := Frm_Main.ID_Parish_Active;
+          FieldByName('USER_ID').AsInteger        := Frm_Main.User_ID;
+          FieldByName('PARISH_ID').AsInteger      := Frm_Main.Parish_ID_Active;
 
           //default
           if not Trim(Edt_Prayers.Text).IsEmpty then
@@ -504,9 +504,9 @@ end;
 
 procedure TFrm_New_Mass.FormDestroy(Sender: TObject);
 begin
-  inherited;
   if Assigned(Mass) then
     FreeAndNil(Mass);
+  inherited;
 end;
 
 procedure TFrm_New_Mass.FormKeyUp(Sender: TObject; var Key: Word;

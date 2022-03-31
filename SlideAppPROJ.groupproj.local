@@ -1,9 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <BorlandProject>
 	<Transactions>
-    <Transaction>2022/01/21 09:33:55.000.279,C:\Users\pedro\Documents\Embarcadero\Studio\Projects\ProjectGroup1.groupproj=C:\Users\pedro\Desktop\projeto_slide\SlideAppPROJ.groupproj</Transaction>
+    <Transaction>2022/01/21 09:33:55.000.279,C:\Users\pedro\Desktop\projeto_slide\SlideAppPROJ.groupproj=C:\Users\pedro\Documents\Embarcadero\Studio\Projects\ProjectGroup1.groupproj</Transaction>
   </Transactions>
 	<Default.Personality>
-		<Projects ActiveProject="C:\Users\pedro\Desktop\SlideApp\Server\Server.dproj"/>
+		<Projects ActiveProject="C:\Users\pedro\Desktop\SlideApp\Cliente\Mobile\SlideApp.dproj"/>
 	</Default.Personality>
 </BorlandProject>

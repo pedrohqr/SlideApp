@@ -5,7 +5,7 @@ interface
 uses
   System.SysUtils, System.Classes, Data.DBXDataSnap,
   Data.DBXCommon, IPPeerClient, Data.DB, Data.SqlExpr, DS_Functions,
-  FireDAC.Stan.StorageJSON, FireDAC.Stan.StorageBin;
+  FireDAC.Stan.StorageJSON, FireDAC.Stan.StorageBin, SQLite_User;
 
 type
   TDM_DataSnap = class(TDataModule)
@@ -29,8 +29,6 @@ var
   DM_DataSnap: TDM_DataSnap;
 
 implementation
-
-{%CLASSGROUP 'FMX.Controls.TControl'}
 
 {$R *.dfm}
 

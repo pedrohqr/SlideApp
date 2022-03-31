@@ -1,0 +1,158 @@
+unit uLogin;
+
+interface
+
+uses
+  System.SysUtils, System.Classes, Datasnap.DSServer,
+  Datasnap.DSAuth, Datasnap.DSProviderDataModuleAdapter, LibDB,
+  Data.FireDACJSONReflect, FireDAC.Comp.Client;
+
+ {Provides management for the users of the Client Application}
+
+  {$METHODINFO ON}
+type
+  TLogin = class(TComponent)
+  private
+    FConn : TConnection;
+  public
+    constructor Create(AOwner : TComponent); override;
+    destructor Destroy; override;
+
+    function Auth_Login(Username, Password : String): TFDJSONDataSets;
+    function Register_User(AName, AUsername, APassword: String): Integer;
+    function LoadParish(ID_User : Integer): TFDJSONDataSets;
+    function Register_Parish_User(User_ID, Parish_ID : Integer; Token: String): String;
+    function getParishIDByToken(Token : String): Integer;
+  end;
+  {$METHODINFO OFF}
+
+implementation
+
+uses FireDAC.Stan.Param, FireDAC.Stan.Def, FireDAC.DApt, FireDAC.Stan.Async,
+Data.DB, LibGeneral;
+
+
+/// <summary> Verify integrity of the user by Username and Password
+/// through 'USER_APP' table of DataBase.
+/// </summary>
+/// <returns> Return USER_ID, PARISH_ID and PARISH_NAME if successfull
+/// authentication.
+/// </returns>
+function TLogin.Auth_Login(Username, Password: String): TFDJSONDataSets;
+begin
+  Result := TFDJSONDataSets.Create;
+  FConn.CreateQuery;
+  with FConn.Query do
+  begin
+    SQL.Text := 'SELECT                         '+
+                '    U.USER_ID,                 '+
+                '    P.NAME AS PARISH_NAME,     '+
+                '    P.PARISH_ID                '+
+                'FROM                           '+
+                '    USER_APP U                 '+
+                '    INNER JOIN PARISH_USER PU  '+
+                '    ON PU.USER_ID = U.USER_ID  '+
+                '    INNER JOIN PARISH P        '+
+                '    ON PU.PARISH_ID = P.PARISH_ID '+
+                'WHERE                          '+
+                '    U.LOGIN LIKE :vUsername AND   '+
+                '    U.PW    LIKE :vPassword;      ';
+    ParamByName('vUsername').AsString := Username;
+    ParamByName('vPassword').AsString := Encrypt(Password, 7);
+    Active := True;
+    TFDJSONDataSetsWriter.ListAdd(Result, FConn.Query);
+  end;
+end;
+
+constructor TLogin.Create(AOwner: TComponent);
+begin
+  inherited Create(AOwner);
+  FConn := TConnection.Create(AOwner);
+end;
+
+destructor TLogin.Destroy;
+begin
+  if Assigned(FConn) then
+    FreeAndNil(FConn);
+  inherited;
+end;
+
+
+/// <summary> Return the Parish ID find for Token
+/// </summary>
+function TLogin.getParishIDByToken(Token: String): Integer;
+begin
+  FConn.CreateQuery;
+  with FConn.Query do
+  begin
+    SQL.Text := 'SELECT COALESCE(PARISH_ID, 0) AS PARISH_ID '+
+                'FROM PARISH '+
+                'WHERE TOKEN LIKE :V_TOKEN;';
+    ParamByName('V_TOKEN').AsString := Token;
+    Active := True;
+    Result := FieldByName('PARISH_ID').AsInteger;
+  end;
+end;
+
+/// <summary> Load the Parishs that user is registred
+/// </summary>
+function TLogin.LoadParish(ID_User: Integer): TFDJSONDataSets;
+begin
+  Result := TFDJSONDataSets.Create;
+
+  FConn.CreateQuery;
+  with FConn.Query do
+  begin
+    SQL.Text := 'SELECT                                '+
+                '   P.*                                '+
+                'FROM                                  '+
+                '   PARISH_USER PU INNER JOIN PARISH P '+
+                '   ON PU.PARISH_ID = P.PARISH_ID      '+
+                'WHERE                                 '+
+                '    PU.USER_ID = :vID_User;           ';
+    ParamByName('vID_User').AsInteger := ID_User;
+    Active := True;
+    Close;
+    TFDJSONDataSetsWriter.ListAdd(Result, FConn.Query);
+  end;
+end;
+
+/// <summary> Register a new user in DataBase
+/// </summary>
+/// <returns> Return a empty string if sucess, else, return the exception.
+/// </returns>
+function TLogin.Register_User(AName, AUsername, APassword: String): Integer;
+begin
+  FConn.CreateSP('REG_USER');
+  with FConn.SP do
+  begin
+    Prepare;
+    ParamByName('V_NAME').AsString := AName;
+    ExecProc;
+  end;
+end;
+
+/// <summary> Register a user in a parish DataBase
+/// </summary>
+/// <returns> Return a empty string if sucess, else, return the exception.
+/// </returns>
+function TLogin.Register_Parish_User(User_ID, Parish_ID : Integer; Token: String): String;
+begin
+  Result := '';
+  try
+    FConn.CreateSP('REG_PARISH_USER');
+    with FConn.SP do
+    begin
+      Prepare;
+      Params.ParamByName('V_PARISH_ID').AsInteger := Parish_ID;
+      Params.ParamByName('V_USER_ID').AsInteger := User_ID;
+      Params.ParamByName('V_TOKEN').AsString := Token;
+
+      ExecProc;
+    end;
+  except on e : exception do
+    Result := e.Message;
+  end;
+end;
+end.
+
